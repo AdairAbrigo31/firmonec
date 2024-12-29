@@ -3,13 +3,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/persistence/persistence.dart';
-import 'package:tesis_firmonec/infrastructure/services/auth.dart';
 
 
 final credentialsQuipuxProvider = StateNotifierProvider<CredentialsQuipuxNotifier, CredentialsQuipuxState>((ref) {
   final SecureStorageService storageService = SecureStorageService();
   return CredentialsQuipuxNotifier(storageService);
 });
+
+
 
 class CredentialsQuipuxNotifier extends StateNotifier<CredentialsQuipuxState> {
   final SecureStorageService storageService;
@@ -56,16 +57,6 @@ class CredentialsQuipuxNotifier extends StateNotifier<CredentialsQuipuxState> {
 
   void updateCredentialSelected(CredentialQuipux credentialSelected) {
     state = state.copyWith(credentialSelected: credentialSelected);
-  }
-
-  Future<String?> loginQuipux(CredentialQuipux credential) async {
-    final authService = QuipuxAuthService();
-    final token = await authService.login(
-        email: credential.email,
-        password: credential.password,
-        type: credential.type
-    );
-    return token;
   }
 }
 

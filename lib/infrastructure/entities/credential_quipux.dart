@@ -1,20 +1,20 @@
 
 class CredentialQuipux {
   final String email;
-  final String password;
+  final String accessToken;
   final int type; // 'ESPOL' o 'ciudadano'
   final DateTime lastAccessed;
 
   CredentialQuipux({
     required this.email,
-    required this.password,
+    required this.accessToken,
     required this.type,
     required this.lastAccessed,
   });
 
   Map<String, dynamic> toJson() => {
     'email': email,
-    'password': password,
+    'accessToken': accessToken,
     'type': type,
     'lastAccessed': lastAccessed.toIso8601String(),
   };
@@ -22,7 +22,7 @@ class CredentialQuipux {
   factory CredentialQuipux.fromJson(Map<String, dynamic> json) {
     return CredentialQuipux(
       email: json['email'],
-      password: json['password'],
+      accessToken: json['accessToken'],
       type: json['type'],
       lastAccessed: DateTime.parse(json['lastAccessed']),
     );

@@ -4,6 +4,7 @@ import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/domain/repositories/repositories.dart';
 import 'package:tesis_firmonec/infrastructure/dto/dto.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
+import 'package:tesis_firmonec/infrastructure/entities/user_entity.dart';
 import 'package:tesis_firmonec/infrastructure/mapers/document_mapper.dart';
 import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
 
@@ -37,7 +38,7 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
 
   @override
-  Future<void> getNumberId(String email) {
+  Future<String> getNumberId(String email) {
     // TODO: implement getNumberId
 
     // En caso de Exito actualizar el campo id del userProvider
@@ -145,7 +146,7 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
 
   @override
-  Future<Map<String, dynamic>> getInfoUserAfterLogin(String tokenAccess) async {
+  Future<UserEntity> getInfoUserAfterLogin(String tokenAccess) async {
     final dio = Dio();
 
     try {
@@ -162,14 +163,8 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
       );
 
       final userData = response.data; // Dio ya parsea el JSON automáticamente
-
-      //print("Datos del usuario logeao: $userData");
-      return {
-        'id': userData['id'],
-        'displayName': userData['displayName'],
-        'email': userData['userPrincipalName'],
-        'photoUrl': userData['photoUrl'],
-      };
+      final userEntity = UserEntity.fromJson(userData);
+      return (userEntity);
     } on DioException catch (e) {
       throw Exception('Failed to get user info: ${e.response?.statusCode ??
           'No status code'} - ${e.message}');

@@ -1,5 +1,6 @@
 
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
+import 'package:tesis_firmonec/infrastructure/entities/user_entity.dart';
 
 enum AuthError {
   invalidCredentials,
@@ -33,10 +34,10 @@ abstract class RepositoryFirmonec {
   Future<AuthResult> loginWithMicrosoft();
 
 
-  Future<Map<String, dynamic>> getInfoUserAfterLogin(String tokenAccess);
+  Future<UserEntity> getInfoUserAfterLogin(String tokenAccess);
 
 
-  Future<void> getNumberId(String email);
+  Future<String> getNumberId(String email);
 
 
   Future<List<RolEntity>> getRoles(String numberId, String typeUser);
