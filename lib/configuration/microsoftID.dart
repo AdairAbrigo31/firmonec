@@ -7,7 +7,7 @@ class MicrosoftID {
   static final Config config = Config(
     tenant: "b7af8caf-83d8-4644-85ae-317c545223c1",
     clientId: "0af9f71a-8fd1-4b58-920b-25fb4aff687b",
-    scope: "openid profile offline_access",
+    scope: "openid profile email User.Read",
     redirectUri: "msauth://com.espol.firmonec/callback",
     navigatorKey: navigatorKey,
     webUseRedirect: false, // Útil si también quieres soporte web

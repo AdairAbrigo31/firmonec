@@ -9,33 +9,6 @@ import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
 
 class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
-  @override
-  Future<AuthResult> authUser() async {
-
-    final AadOAuth aadOAuth = AadOAuth(MicrosoftID.config);
-    print("Intenando login");
-    await  aadOAuth.login();
-    print("Logeado");
-    final accesToken = await aadOAuth.getAccessToken();
-    print(accesToken);
-    print(MicrosoftID.config.loginHint);
-    await aadOAuth.logout();
-    if(accesToken != null) {
-
-      //Setear el email, password, token en userActiveProvider
-
-      return AuthResult.success(accesToken);
-
-    } else {
-      return AuthResult.failure(
-
-        AuthError.invalidCredentials, "Credenciales invalidas"
-      );
-    }
-
-
-  }
-
 
   @override
   Future<AuthResult> loginWithMicrosoft() async {
@@ -45,18 +18,15 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
       final accessToken = await oauth.getAccessToken();
 
       if (accessToken != null) {
-
         //Crear un user active
-
-
+        print("acccess token: $accessToken");
+        oauth.logout();
         return AuthResult.success(accessToken);
-
       } else {
         return AuthResult.failure(
             AuthError.invalidCredentials, "Credenciales invalidas"
         );
       }
-
     } catch (e) {
       print('Error durante el login: $e');
       return AuthResult.failure(
@@ -78,47 +48,39 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   }
 
 
-
   @override
   Future<List<RolEntity>> getRoles(String numberId, String typeUser) async {
     final dio = Dio();
     try {
       final response = await dio.get(
-        "url",
-        queryParameters: {
-          'identificacion' : numberId,
-          'tipoUsuario': typeUser
-        }
+          "url",
+          queryParameters: {
+            'identificacion': numberId,
+            'tipoUsuario': typeUser
+          }
       );
 
-      if(response.statusCode != 200){
+      if (response.statusCode != 200) {
         throw Exception('Error al obtener roles: ${response.statusCode}');
       }
 
       final List<dynamic> jsonList = response.data;
-      if(jsonList.isEmpty) return [];
+      if (jsonList.isEmpty) return [];
 
-      final List<RolDto> rolesDto = jsonList.map((json) => RolDto.fromJson(json)).toList();
+      final List<RolDto> rolesDto = jsonList.map((json) =>
+          RolDto.fromJson(json)).toList();
 
       final List<RolEntity> roles = RolMapper.fromDtoList(rolesDto);
 
       return roles;
-
-    } on DioException catch (e){
-
+    } on DioException catch (e) {
       throw ("Error de conexión: ${e.message}");
-
     } catch (e) {
-
       throw Exception("Error inesperado: $e");
-
     } finally {
-
       dio.close();
-
     }
   }
-
 
 
   @override
@@ -128,7 +90,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   }
 
 
-
   @override
   Future<void> signAtLeastOneDocumentByRol() {
     // TODO: implement signAtLeastOneDocumentByRol
@@ -136,11 +97,11 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   }
 
   @override
-  Future<List<DocumentoPorElaborarEntity>> getDocumentPorElaborar(String codeRol) async {
+  Future<List<DocumentoPorElaborarEntity>> getDocumentPorElaborar(
+      String codeRol) async {
     final dio = Dio();
 
     try {
-
       final response = await dio.get(
           'URL',
           options: Options(
@@ -150,41 +111,73 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
           )
       );
 
-      if(response.statusCode != 200){
+      if (response.statusCode != 200) {
         throw Exception('Error al obtener roles: ${response.statusCode}');
       }
 
       final List<dynamic> jsonList = response.data;
-      if(jsonList.isEmpty) return [];
+      if (jsonList.isEmpty) return [];
 
-      final List<DocumentDto> dtos = jsonList.map((json) => DocumentDto.fromJson(json)).toList();
+      final List<DocumentDto> dtos = jsonList.map((json) =>
+          DocumentDto.fromJson(json)).toList();
 
-      final List<DocumentoPorElaborarEntity> documentsPorElaborar = DocumentMapper.fromDtoList(dtos);
+      final List<
+          DocumentoPorElaborarEntity> documentsPorElaborar = DocumentMapper
+          .fromDtoList(dtos);
 
       return documentsPorElaborar;
-
-    } on DioException catch (e){
-
+    } on DioException catch (e) {
       throw ("Error de conexión: ${e.message}");
-
     } catch (e) {
-
       throw Exception("Error inesperado: $e");
-
     } finally {
-
       dio.close();
-
     }
-
   }
 
 
   @override
-  Future<List<DocumentoPorElaborarEntity>> getDocumentReasignado(String codeRol) {
+  Future<List<DocumentoPorElaborarEntity>> getDocumentReasignado(
+      String codeRol) {
     // TODO: implement getDocumentReasignado
     throw UnimplementedError();
   }
 
+
+  @override
+  Future<Map<String, dynamic>> getInfoUserAfterLogin(String tokenAccess) async {
+    final dio = Dio();
+
+    try {
+      const graphApiUrl = 'https://graph.microsoft.com/v1.0/me';
+
+      final response = await dio.get(
+        graphApiUrl,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $tokenAccess',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      final userData = response.data; // Dio ya parsea el JSON automáticamente
+
+      //print("Datos del usuario logeao: $userData");
+      return {
+        'id': userData['id'],
+        'displayName': userData['displayName'],
+        'email': userData['userPrincipalName'],
+        'photoUrl': userData['photoUrl'],
+      };
+    } on DioException catch (e) {
+      throw Exception('Failed to get user info: ${e.response?.statusCode ??
+          'No status code'} - ${e.message}');
+    } catch (e) {
+      throw Exception('Error getting user info: $e');
+    } finally {
+      dio.close(); // Buena práctica cerrar el cliente
+    }
+  }
 
 }

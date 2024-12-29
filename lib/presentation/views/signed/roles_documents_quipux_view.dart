@@ -1,6 +1,9 @@
 
+import 'package:aad_oauth/aad_oauth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../configuration/microsoftID.dart';
 
 
 class RolesDocumentsQuipuxView extends ConsumerStatefulWidget {
@@ -17,8 +20,18 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
   Widget build(BuildContext context) {
 
 
-    return const SafeArea(
-      child: Text("Acordeones con documentos"),
+    return SafeArea(
+      child: Column(
+        children: [
+          Text("Acordeones de documentos"),
+          TextButton(
+              onPressed: (){
+                final oadd = AadOAuth(MicrosoftID.config);
+                oadd.logout();
+              },
+              child: Text("Cerrar sesión"))
+        ],
+      ),
     );
   }
 

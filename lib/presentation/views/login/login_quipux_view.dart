@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/domain/repositories/repositories.dart';
 import 'package:tesis_firmonec/infrastructure/repositories/repositories.dart';
+import 'package:tesis_firmonec/presentation/controllers/get_information_user_controller.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 
 class LoginQuipuxView extends ConsumerWidget{
@@ -44,6 +45,7 @@ class LoginQuipuxView extends ConsumerWidget{
 
                         final valid = await RepositoryFirmonecImplementation().loginWithMicrosoft();
                         if(valid.success && context.mounted) {
+                          GetInformationUserController.execute(valid.token!, ref);
                           context.goNamed('roles_documents_quipux');
                         }
                       },

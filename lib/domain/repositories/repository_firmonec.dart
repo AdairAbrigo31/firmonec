@@ -29,11 +29,11 @@ class AuthResult {
 abstract class RepositoryFirmonec {
   // Agregar los parametros necesarios para las peticiones
 
-  //REDIRECCIONAR a la libreria de MicrosoftID
-  Future<AuthResult> authUser();
-
 
   Future<AuthResult> loginWithMicrosoft();
+
+
+  Future<Map<String, dynamic>> getInfoUserAfterLogin(String tokenAccess);
 
 
   Future<void> getNumberId(String email);
