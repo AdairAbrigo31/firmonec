@@ -61,7 +61,6 @@ class LoginQuipuxView extends ConsumerWidget{
                     child: CircularProgressIndicator(),
                   ),
                 ),
-
             ],
           ),
 

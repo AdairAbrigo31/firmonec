@@ -1,5 +1,7 @@
 
-class DocumentoPorElaborarEntity {
+import 'package:tesis_firmonec/domain/entities/document_entity.dart';
+
+class DocumentoPorElaborarEntity extends DocumentEntity{
   final String id;
   final String de;
   final String para;
@@ -12,7 +14,7 @@ class DocumentoPorElaborarEntity {
   final String categoria;
   final String leido;
 
-  const DocumentoPorElaborarEntity({
+  DocumentoPorElaborarEntity({
     required this.id,
     required this.de,
     required this.para,

@@ -10,6 +10,9 @@ import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
 
 class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
+  //Revisar el si funciona con la palabra localhost
+  final String routeBase = 'http://localhost:5299/api';
+
 
   @override
   Future<AuthResult> loginWithMicrosoft() async {
@@ -19,7 +22,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
       final accessToken = await oauth.getAccessToken();
 
       if (accessToken != null) {
-        //Crear un user active
         print("acccess token: $accessToken");
         oauth.logout();
         return AuthResult.success(accessToken);
@@ -38,26 +40,36 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
 
   @override
-  Future<String> getNumberId(String email) {
-    // TODO: implement getNumberId
+  Future<String> getNumberId(String email) async {
 
-    // En caso de Exito actualizar el campo id del userProvider
-
-    // En caso de exito y si el usuario desea guardar la credencial, tambien guardar el id como parte de la credencial
+    final dio = Dio();
+    try {
+      final response = await dio.get(
+        '$routeBase/',
+        options: Options(
+            headers: {'':''})
+      );
+    } on DioException catch (e) {
+      throw ("Error de conexión: ${e.message}");
+    } catch (e) {
+      throw Exception("Error inesperado: $e");
+    } finally {
+      dio.close();
+    }
 
     throw UnimplementedError();
   }
 
 
   @override
-  Future<List<RolEntity>> getRoles(String numberId, String typeUser) async {
+  Future<List<RolEntity>> getRoles(String numberId, int typeQuipux) async {
     final dio = Dio();
     try {
       final response = await dio.get(
-          "url",
+          '$routeBase/',
           queryParameters: {
             'identificacion': numberId,
-            'tipoUsuario': typeUser
+            'tipoUsuario': typeQuipux
           }
       );
 
@@ -104,7 +116,7 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
     try {
       final response = await dio.get(
-          'URL',
+          '$routeBase/',
           options: Options(
               headers: {
                 "Authorization": "Bearer =================>  TOKEN",

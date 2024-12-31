@@ -9,6 +9,7 @@ class UserEntity {
   final String? preferredLanguage;
   final String? mobilePhone;
   final String? numberCI;
+  final int? typeQuipux;
 
   const UserEntity({
     required this.displayName,
@@ -20,7 +21,8 @@ class UserEntity {
     this.officeLocation,
     this.preferredLanguage,
     this.mobilePhone,
-    this.numberCI
+    this.numberCI,
+    this.typeQuipux
   });
 
   // Crear instancia desde JSON
@@ -66,6 +68,7 @@ class UserEntity {
     String? mobilePhone,
     List<String>? businessPhones,
     String? numberCI,
+    int? typeQuipux
   }) {
     return UserEntity(
       displayName: displayName ?? this.displayName,
@@ -78,6 +81,7 @@ class UserEntity {
       preferredLanguage: preferredLanguage ?? this.preferredLanguage,
       mobilePhone: mobilePhone ?? this.mobilePhone,
       numberCI: numberCI ?? this.numberCI,
+      typeQuipux: typeQuipux ?? this.typeQuipux
     );
   }
 

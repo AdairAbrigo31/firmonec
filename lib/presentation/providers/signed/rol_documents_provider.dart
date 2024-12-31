@@ -1,4 +1,3 @@
-/*
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/domain/entities/document_entity.dart';
 import 'package:tesis_firmonec/domain/repositories/repositories.dart';
@@ -24,43 +23,8 @@ class RolDocumentNotifier extends StateNotifier<RolDocumentsState> {
 
   RolDocumentNotifier(super.state, this.repository);
 
-  // Cargar documentos para un rol específico
-  Future<void> loadDocumentsForRol(String rolId) async {
-    try {
-      state = state.copyWith(isLoading: true, errorMessage: null);
-
-      final documents = await repository.getDocumentsByRol();
-      final currentDocs = Map<String, List<DocumentEntity>>.from(state.documentsByRol ?? {});
-      currentDocs[rolId] = documents;
-
-      state = state.copyWith(
-          documentsByRol: currentDocs,
-          isLoading: false
-      );
-    } catch (e) {
-      state = state.copyWith(
-          isLoading: false,
-          errorMessage: e.toString()
-      );
-    }
-  }
-
-  // Cargar documentos para múltiples roles
-  Future<void> loadDocumentsForRoles(List<String> rolIds) async {
-    try {
-      state = state.copyWith(isLoading: true, errorMessage: null);
-
-      for (final rolId in rolIds) {
-        await loadDocumentsForRol(rolId);
-      }
-
-      state = state.copyWith(isLoading: false);
-    } catch (e) {
-      state = state.copyWith(
-          isLoading: false,
-          errorMessage: e.toString()
-      );
-    }
+  void updateDocumentsByRol(Map<String, List<DocumentEntity>> documentsByRol){
+    state = state.copyWith(documentsByRol: documentsByRol);
   }
 
   // Limpiar documentos de un rol específico
@@ -104,4 +68,4 @@ class RolDocumentsState {
   List<DocumentEntity> getDocumentsForRol(String rolId) {
     return documentsByRol?[rolId] ?? [];
   }
-}*/
+}
