@@ -11,7 +11,7 @@ import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
 class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
   //Revisar el si funciona con la palabra localhost
-  final String routeBase = 'http://localhost:5299/api';
+  final String routeBase = 'http://10.0.2.2:5299/api';
 
 
   @override
@@ -62,15 +62,20 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
 
   @override
-  Future<List<RolEntity>> getRoles(String numberId, int typeQuipux) async {
+  Future<List<RolEntity>> getRoles( {required String email, required String token}) async {
     final dio = Dio();
     try {
       final response = await dio.get(
-          '$routeBase/',
-          queryParameters: {
-            'identificacion': numberId,
-            'tipoUsuario': typeQuipux
-          }
+        '$routeBase/Usuario/Cargos',
+        queryParameters: {
+          'correo': email,
+        },
+        /*options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),*/
       );
 
       if (response.statusCode != 200) {
@@ -87,14 +92,17 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
       return roles;
     } on DioException catch (e) {
-      throw ("Error de conexión: ${e.message}");
+      // Mejorado el manejo de errores
+      if (e.response?.statusCode == 401) {
+        throw "Error de autenticación: Token inválido o expirado";
+      }
+      throw "Error de conexión: ${e.message}";
     } catch (e) {
       throw Exception("Error inesperado: $e");
     } finally {
       dio.close();
     }
   }
-
 
   @override
   Future<void> signAllDocumentsByRol() {

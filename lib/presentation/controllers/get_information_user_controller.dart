@@ -11,15 +11,15 @@ class GetInformationUserController {
     print("EL token de acceso llego al controller : $tokenAccess");
     final repository = ref.read(repositoryProvider);
     final UserEntity user = await repository.getInfoUserAfterLogin(tokenAccess);
-    final idUser = await repository.getNumberId(user.mail);
-    user.copyWith(numberCI: idUser);
-    final List<RolEntity> roles = await  repository.getRoles(user.numberCI!, user.typeQuipux!);
+    print("Vamos a hacer la petición de los cargos");
+    final List<RolEntity> roles = await repository.getRoles(email: user.mail, token: tokenAccess);
+    print("roles: $roles");
     
-    final documentsProvider = ref.read(rolDocumentProvider.notifier);
+    /*final documentsProvider = ref.read(rolDocumentProvider.notifier);
     for (final rol in roles){
       final List<DocumentEntity> documentsPorElaborar = await repository.getDocumentPorElaborar(rol.codusuario);
       final List<DocumentEntity> documentsReasignado = await repository.getDocumentReasignado(rol.codusuario);
-    }
+    }*/
     //Recuperar el id
 
   }
