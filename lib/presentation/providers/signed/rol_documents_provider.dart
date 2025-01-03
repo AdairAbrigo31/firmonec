@@ -27,6 +27,17 @@ class RolDocumentNotifier extends StateNotifier<RolDocumentsState> {
     state = state.copyWith(documentsByRol: documentsByRol);
   }
 
+  void addDocumentToRol(String rol, List<DocumentEntity> newDocuments){
+    final currentDocs = Map<String, List<DocumentEntity>>.from(state.documentsByRol ?? {});
+    if(currentDocs.containsKey(rol)){
+      currentDocs[rol] = [...currentDocs[rol]!, ...newDocuments];
+    }else {
+      print("rol $rol agregado");
+      currentDocs[rol] = newDocuments;
+    }
+    state = state.copyWith(documentsByRol: currentDocs);
+  }
+
   // Limpiar documentos de un rol específico
   void clearDocumentsForRol(String rolId) {
     final currentDocs = Map<String, List<DocumentEntity>>.from(state.documentsByRol ?? {});

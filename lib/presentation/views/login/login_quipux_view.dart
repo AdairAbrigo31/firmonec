@@ -5,8 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/domain/repositories/repositories.dart';
 import 'package:tesis_firmonec/infrastructure/repositories/repositories.dart';
+import 'package:tesis_firmonec/presentation/components_shared/components_shared.dart';
 import 'package:tesis_firmonec/presentation/controllers/get_information_user_controller.dart';
-import 'package:tesis_firmonec/presentation/providers/providers.dart';
+import 'package:tesis_firmonec/presentation/providers/login/login.dart';
 
 class LoginQuipuxView extends ConsumerWidget{
   const LoginQuipuxView({super.key});
@@ -16,6 +17,10 @@ class LoginQuipuxView extends ConsumerWidget{
 
     final stateLogin = ref.watch(loginQuipuxFormProvider);
     final notifierLogin = ref.read(loginQuipuxFormProvider.notifier);
+    var isValid;
+
+    final stateUser = ref.watch(userActiveProvider);
+    final notifierUser = ref.watch(userActiveProvider.notifier);
 
     return SafeArea(
         child: Center(
@@ -40,17 +45,22 @@ class LoginQuipuxView extends ConsumerWidget{
                      )
                     ],
                   ),
-                  ElevatedButton(
+                  InputEmail(example: "aabrigo@espol.edu.ec", onChange: (value){
+                    notifierUser.updateEmail(value);
+                  }),
+                  /*ElevatedButton(
                       onPressed: () async {
-
-                        final valid = await RepositoryFirmonecImplementation().loginWithMicrosoft();
-                        if(valid.success && context.mounted) {
-                          GetInformationUserController.execute(valid.token!, ref);
-                          context.goNamed('roles_documents_quipux');
-                        }
+                        await GetInformationUserController.execute(ref: ref);
                       },
 
                       child: const Text("Iniciar sesión")
+                  ),*/
+                  ElevatedButton(
+                      onPressed: () async{
+                        await GetInformationUserController.executeActionsWithouToken(ref: ref);
+                        router.pushNamed('roles_documents_quipux');
+                      },
+                      child: const Text("Extraer documentos")
                   )
                 ],
               ),

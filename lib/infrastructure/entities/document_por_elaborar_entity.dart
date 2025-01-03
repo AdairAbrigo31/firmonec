@@ -1,16 +1,13 @@
+import '../../domain/entities/document_entity.dart';
 
-import 'package:tesis_firmonec/domain/entities/document_entity.dart';
-
-class DocumentoPorElaborarEntity extends DocumentEntity{
+class DocumentoPorElaborarEntity extends DocumentEntity {
   final String id;
   final String de;
   final String para;
-  final String asunto;
   final String fechaDocumento;
   final String numeroRadicado;
   final String numeroDocumento;
   final String numeroReferencia;
-  final String tipoDocumento;
   final String categoria;
   final String leido;
 
@@ -18,12 +15,12 @@ class DocumentoPorElaborarEntity extends DocumentEntity{
     required this.id,
     required this.de,
     required this.para,
-    required this.asunto,
+    required super.asunto,
     required this.fechaDocumento,
     required this.numeroRadicado,
     required this.numeroDocumento,
     required this.numeroReferencia,
-    required this.tipoDocumento,
+    required super.tipoDocumento,
     required this.categoria,
     required this.leido,
   });

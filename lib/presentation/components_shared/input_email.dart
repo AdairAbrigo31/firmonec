@@ -9,7 +9,9 @@ class InputEmail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-
+      decoration: InputDecoration(
+        hintText: example,
+      ),
       onChanged: (value) => onChange(value),
       keyboardType: TextInputType.emailAddress,
     );

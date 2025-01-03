@@ -40,7 +40,10 @@ abstract class RepositoryFirmonec {
   Future<String> getNumberId(String email);
 
 
-  Future<List<RolEntity>> getRoles( { required String email, required String token});
+  Future<List<RolEntity>> getRoles( { required String email, String? token});
+
+
+  Future<List<RolEntity>> getRolesWithoutToken( { required String email});
 
 
   Future<List<DocumentoPorElaborarEntity>> getDocumentReasignado(String codeRol);

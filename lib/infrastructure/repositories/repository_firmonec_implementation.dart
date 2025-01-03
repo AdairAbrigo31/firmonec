@@ -20,16 +20,16 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
       final oauth = AadOAuth(MicrosoftID.config);
       await oauth.login();
       final accessToken = await oauth.getAccessToken();
-
+      print("oken de acceso: $accessToken");
       if (accessToken != null) {
         print("acccess token: $accessToken");
-        oauth.logout();
         return AuthResult.success(accessToken);
       } else {
         return AuthResult.failure(
             AuthError.invalidCredentials, "Credenciales invalidas"
         );
       }
+
     } catch (e) {
       print('Error durante el login: $e');
       return AuthResult.failure(
@@ -62,24 +62,42 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
 
   @override
-  Future<List<RolEntity>> getRoles( {required String email, required String token}) async {
-    final dio = Dio();
+  Future<List<RolEntity>> getRoles({required String email, String? token}) async {
+    print("Email: $email y token: $token");
+    BaseOptions baseOptions = BaseOptions(
+      connectTimeout: const Duration(seconds: 30 * 1000),
+      receiveTimeout: const Duration(seconds: 30 * 1000),
+    );
+    final Dio dio = Dio(baseOptions);
     try {
+      print('$routeBase/Usuario/Cargos');
       final response = await dio.get(
         '$routeBase/Usuario/Cargos',
         queryParameters: {
           'correo': email,
+          'tipoUsuario': 0
         },
-        /*options: Options(
+        options: Options(
           headers: {
             'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
+            'Accept': 'application/json',
           },
-        ),*/
+        ),
       );
+
+      // Si la respuesta es un mensaje de error en formato string
+      if (response.data is String || response.data is Map<String, dynamic>) {
+        print("Usuario sin cargos");
+        return [];
+      }
 
       if (response.statusCode != 200) {
         throw Exception('Error al obtener roles: ${response.statusCode}');
+      }
+
+      // Verificar si la respuesta es una lista
+      if (response.data is! List) {
+        return [];
       }
 
       final List<dynamic> jsonList = response.data;
@@ -92,17 +110,127 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
       return roles;
     } on DioException catch (e) {
-      // Mejorado el manejo de errores
       if (e.response?.statusCode == 401) {
         throw "Error de autenticación: Token inválido o expirado";
       }
       throw "Error de conexión: ${e.message}";
     } catch (e) {
-      throw Exception("Error inesperado: $e");
+      // En caso de error de parseo, devolver lista vacía
+      print("Error inesperado: $e");
+      return [];
     } finally {
       dio.close();
     }
   }
+
+
+
+
+  Future<List<RolEntity>> getRolesWithoutToken({required String email}) async {
+    BaseOptions baseOptions = BaseOptions(
+      connectTimeout: const Duration(seconds: 30 * 1000),
+      receiveTimeout: const Duration(seconds: 30 * 1000),
+    );
+    final Dio dio = Dio(baseOptions);
+    try {
+      print('$routeBase/Usuario/Cargos');
+      final response = await dio.get(
+        '$routeBase/Usuario/Cargos',
+        queryParameters: {
+          'correo': email,
+          'tipoUsuario': 0
+        },
+      );
+
+      // Si la respuesta es un mensaje de error en formato string
+      if (response.data is String || response.data is Map<String, dynamic>) {
+        print("Usuario sin cargos");
+        return [];
+      }
+
+      if (response.statusCode != 200) {
+        throw Exception('Error al obtener roles: ${response.statusCode}');
+      }
+
+      // Verificar si la respuesta es una lista
+      if (response.data is! List) {
+        return [];
+      }
+
+      final List<dynamic> jsonList = response.data;
+      if (jsonList.isEmpty) return [];
+
+      final List<RolDto> rolesDto = jsonList.map((json) =>
+          RolDto.fromJson(json)).toList();
+
+      final List<RolEntity> roles = RolMapper.fromDtoList(rolesDto);
+
+      return roles;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw "Error de autenticación: Token inválido o expirado";
+      }
+      throw "Error de conexión: ${e.message}";
+    } catch (e) {
+      // En caso de error de parseo, devolver lista vacía
+      print("Error inesperado: $e");
+      return [];
+    } finally {
+      dio.close();
+    }
+  }
+
+
+  @override
+  Future<UserEntity> getInfoUserAfterLogin(String tokenAccess) async {
+    final dio = Dio();
+
+    try {
+      const graphApiUrl = 'https://graph.microsoft.com/v1.0/me';
+
+      final response = await dio.get(
+        graphApiUrl,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $tokenAccess',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      final userData = response.data; // Dio ya parsea el JSON automáticamente
+      final userEntity = UserEntity.fromJson(userData);
+      return (userEntity);
+    } on DioException catch (e) {
+      throw Exception('Failed to get user info: ${e.response?.statusCode ??
+          'No status code'} - ${e.message}');
+    } catch (e) {
+      throw Exception('Error getting user info: $e');
+    } finally {
+      dio.close(); // Buena práctica cerrar el cliente
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   @override
   Future<void> signAllDocumentsByRol() {
@@ -118,8 +246,7 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   }
 
   @override
-  Future<List<DocumentoPorElaborarEntity>> getDocumentPorElaborar(
-      String codeRol) async {
+  Future<List<DocumentoPorElaborarEntity>> getDocumentPorElaborar(String codeRol) async {
     final dio = Dio();
 
     try {
@@ -162,37 +289,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
       String codeRol) {
     // TODO: implement getDocumentReasignado
     throw UnimplementedError();
-  }
-
-
-  @override
-  Future<UserEntity> getInfoUserAfterLogin(String tokenAccess) async {
-    final dio = Dio();
-
-    try {
-      const graphApiUrl = 'https://graph.microsoft.com/v1.0/me';
-
-      final response = await dio.get(
-        graphApiUrl,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $tokenAccess',
-            'Accept': 'application/json',
-          },
-        ),
-      );
-
-      final userData = response.data; // Dio ya parsea el JSON automáticamente
-      final userEntity = UserEntity.fromJson(userData);
-      return (userEntity);
-    } on DioException catch (e) {
-      throw Exception('Failed to get user info: ${e.response?.statusCode ??
-          'No status code'} - ${e.message}');
-    } catch (e) {
-      throw Exception('Error getting user info: $e');
-    } finally {
-      dio.close(); // Buena práctica cerrar el cliente
-    }
   }
 
 }
