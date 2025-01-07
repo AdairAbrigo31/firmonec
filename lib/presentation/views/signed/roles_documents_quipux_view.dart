@@ -3,11 +3,10 @@ import 'package:aad_oauth/aad_oauth.dart';
 import 'package:accordion/accordion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tesis_firmonec/domain/entities/document_entity.dart';
+import 'package:tesis_firmonec/configuration/configuration.dart';
+import 'package:tesis_firmonec/domain/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
-import 'package:tesis_firmonec/presentation/providers/login/login.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
-import '../../../configuration/microsoftID.dart';
 
 
 class RolesDocumentsQuipuxView extends ConsumerStatefulWidget {
@@ -21,79 +20,208 @@ class RolesDocumentsQuipuxView extends ConsumerStatefulWidget {
 class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxView>{
 
 
-  Widget buildDocumentCard(DocumentEntity doc) {
+  Widget buildDocumentCard(RolEntity rol, DocumentEntity doc) {
+    final documentsSelectedNotifier = ref.read(documentSelectedProvider.notifier);
+    final oneDocumentSelectedPreviewNotifier = ref.read(oneDocumentSelectedPreviewProvider.notifier);
+
     if (doc is DocumentoPorElaborarEntity) {
+      final fecha = DateTime.parse(doc.fechaDocumento);
+      final fechaFormateada = "${fecha.day}/${fecha.month}/${fecha.year}";
 
       return Card(
         elevation: 2,
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        child: ListTile(
-          leading: const Icon(Icons.description),
-          title: Text(
-              doc.asunto,
-              style: const TextStyle(fontWeight: FontWeight.bold)
-          ),
-          subtitle: Column(
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('De: ${doc.de}'),
-              Text('Para: ${doc.para}'),
-              Text('Fecha: ${doc.fechaDocumento}'),
-              Text('Número: ${doc.numeroDocumento}'),
-              Text('Fecha: ${doc.fechaDocumento}'),
-            ],
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.visibility),
-                onPressed: () {
-                  // Acción para ver el documento
-                },
+              // Header con badge de tipo
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Fecha: $fechaFormateada',
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[100],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      'Por Elaborar',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              IconButton(
-                icon: const Icon(Icons.download),
-                onPressed: () {
-                  // Acción para descargar el documento
-                },
+              const SizedBox(height: 12),
+
+              // Asunto con manejo de overflow
+              Text(
+                doc.asunto,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 12),
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'De: ${doc.de}',
+                    style: const TextStyle(fontSize: 13),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Para: ${doc.para}',
+                    style: const TextStyle(fontSize: 13),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Tipo: ${doc.tipoDocumento}',
+                    style: const TextStyle(fontSize: 13),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+
+
+              // Botones y checkbox en el footer
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton.icon(
+                    icon: const Icon(Icons.visibility),
+                    label: const Text('Ver PDF'),
+                    onPressed: () {
+                      oneDocumentSelectedPreviewNotifier.setDocument(doc);
+                      router.pushNamed('preview_document_selected');
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  Checkbox(
+                    value: documentsSelectedNotifier.isDocumentSelected(rol, doc),
+                    onChanged: (val) {
+                      documentsSelectedNotifier.updateCheckBox(rol, doc, val ?? false);
+                    },
+                  ),
+                ],
               ),
             ],
           ),
         ),
       );
-    } else if (doc is DocumentReasignadoEntity) { // Asumiendo que tienes esta clase
+    } else if (doc is DocumentReasignadoEntity) {
+      final fecha = DateTime.parse(doc.fechaReasignacion);
+      final fechaFormateada = "${fecha.day}/${fecha.month}/${fecha.year}";
+
       return Card(
         elevation: 2,
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        child: ListTile(
-          leading: const Icon(Icons.description),
-          title: Text(
-              doc.asunto,
-              style: const TextStyle(fontWeight: FontWeight.bold)
-          ),
-          subtitle: Column(
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('De: ${doc.reasignadoPor}'),
-              Text('Motivo: ${doc.motivoReasignacion}'),
-              Text('Fecha: ${doc.fechaReasignacion}'),
-            ],
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.visibility),
-                onPressed: () {
-                  // Acción para ver el documento
-                },
+              // Header con badge de tipo
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Fecha: $fechaFormateada',
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.green[100],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      'Reenviado',
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              IconButton(
-                icon: const Icon(Icons.download),
-                onPressed: () {
-                  // Acción para descargar el documento
-                },
+              const SizedBox(height: 12),
+
+              Text(
+                doc.asunto,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 12),
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'De: ${doc.fechaReasignacion}',
+                    style: const TextStyle(fontSize: 13),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Para: ${doc.reasignadoPor}',
+                    style: const TextStyle(fontSize: 13),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Tipo: ${doc.tipoDocumento}',
+                    style: const TextStyle(fontSize: 13),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton.icon(
+                    icon: const Icon(Icons.visibility),
+                    label: const Text('Ver PDF'),
+                    onPressed: () {
+                      oneDocumentSelectedPreviewNotifier.setDocument(doc);
+                      router.pushNamed('preview_document_selected');
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  Checkbox(
+                    value: documentsSelectedNotifier.isDocumentSelected(rol, doc),
+                    onChanged: (val) {
+                      documentsSelectedNotifier.updateCheckBox(rol, doc, val ?? false);
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -124,15 +252,66 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
           children: [
             Text("Bienvenido ${userProvider.email}"),
             roles.isEmpty
-            ? Center(
+            ? const Center(
               child: Text("No hay roles para este usuario"),
             )
             : Expanded(
               child: Accordion(
+                maxOpenSections: 1,
                 children: roles.map((rol) {
                   final documents = rolDocProvider.getDocumentsForRol(rol);
                   return AccordionSection(
-                    header: Text(rol),
+                    onCloseSection: (){},
+                    onOpenSection: (){},
+                    header: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.blue[700]!, Colors.blue[500]!],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.blue.withOpacity(0.3),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              rol.cargo,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              '${documents.length}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     content: documents.isEmpty
                         ? const Center(
                       child: Text("No tiene documentos para este cargo"),
@@ -142,7 +321,7 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: documents.length,
                       itemBuilder: (context, index) {
-                        return buildDocumentCard(documents[index]);
+                        return buildDocumentCard(rol, documents[index]);
                       },
                     ),
                   );

@@ -34,5 +34,11 @@ final router = GoRouter(
         path: '/roles_documents_quipux',
         builder: (context, state) => const RolesDocumentsQuipuxScreen(),
       ),
+
+      GoRoute(
+        name: 'preview_document_selected',
+        path: '/preview_document_selected',
+        builder: (context, state) => const PreviewDocumentsSelectedScreen(),
+      )
     ]
 );

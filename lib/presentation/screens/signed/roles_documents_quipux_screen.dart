@@ -1,7 +1,6 @@
 
-
 import 'package:flutter/material.dart';
-import 'package:tesis_firmonec/presentation/views/signed/roles_documents_quipux_view.dart';
+import 'package:tesis_firmonec/presentation/views/signed/signed.dart';
 
 class RolesDocumentsQuipuxScreen extends StatelessWidget {
 

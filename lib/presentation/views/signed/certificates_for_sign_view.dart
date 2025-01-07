@@ -19,7 +19,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
         child: Center(
           child: Column(
             children: [
-              const Text("Estos son los certificados que usted ha decidido guardar"),
+              const Text("Estos son los certificados que ha seleccionado para firmar"),
               ListView.builder(itemCount: 2, itemBuilder: (_, index) {
                 return Text("Este es ek indice $index");
               },)

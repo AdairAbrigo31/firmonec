@@ -20,7 +20,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
       final oauth = AadOAuth(MicrosoftID.config);
       await oauth.login();
       final accessToken = await oauth.getAccessToken();
-      print("oken de acceso: $accessToken");
       if (accessToken != null) {
         print("acccess token: $accessToken");
         return AuthResult.success(accessToken);
@@ -63,14 +62,12 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
   @override
   Future<List<RolEntity>> getRoles({required String email, String? token}) async {
-    print("Email: $email y token: $token");
     BaseOptions baseOptions = BaseOptions(
       connectTimeout: const Duration(seconds: 30 * 1000),
       receiveTimeout: const Duration(seconds: 30 * 1000),
     );
     final Dio dio = Dio(baseOptions);
     try {
-      print('$routeBase/Usuario/Cargos');
       final response = await dio.get(
         '$routeBase/Usuario/Cargos',
         queryParameters: {
@@ -87,7 +84,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
       // Si la respuesta es un mensaje de error en formato string
       if (response.data is String || response.data is Map<String, dynamic>) {
-        print("Usuario sin cargos");
         return [];
       }
 
@@ -133,7 +129,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
     );
     final Dio dio = Dio(baseOptions);
     try {
-      print('$routeBase/Usuario/Cargos');
       final response = await dio.get(
         '$routeBase/Usuario/Cargos',
         queryParameters: {
@@ -144,7 +139,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
       // Si la respuesta es un mensaje de error en formato string
       if (response.data is String || response.data is Map<String, dynamic>) {
-        print("Usuario sin cargos");
         return [];
       }
 
@@ -222,16 +216,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
 
 
-
-
-
-
-
-
-
-
-
-
   @override
   Future<void> signAllDocumentsByRol() {
     // TODO: implement signAllDocumentsByRol
@@ -251,26 +235,30 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
     try {
       final response = await dio.get(
-          '$routeBase/',
-          options: Options(
+          '$routeBase/DocumentoPendiente/Pendientes',
+          queryParameters: {
+            'idUsuario': codeRol,
+          },
+/*          options: Options(
               headers: {
                 "Authorization": "Bearer =================>  TOKEN",
               }
-          )
+          )*/
       );
 
       if (response.statusCode != 200) {
         throw Exception('Error al obtener roles: ${response.statusCode}');
       }
 
+      print(response.data);
+
       final List<dynamic> jsonList = response.data;
       if (jsonList.isEmpty) return [];
 
-      final List<DocumentDto> dtos = jsonList.map((json) =>
-          DocumentDto.fromJson(json)).toList();
+      final List<DocumentPorElaborarDto> dtos = jsonList.map((json) =>
+          DocumentPorElaborarDto.fromJson(json)).toList();
 
-      final List<
-          DocumentoPorElaborarEntity> documentsPorElaborar = DocumentMapper
+      final List<DocumentoPorElaborarEntity> documentsPorElaborar = DocumentMapper
           .fromDtoList(dtos);
 
       return documentsPorElaborar;

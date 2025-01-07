@@ -1,51 +1,40 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/domain/entities/document_entity.dart';
-import 'package:tesis_firmonec/domain/repositories/repositories.dart';
-import 'package:tesis_firmonec/presentation/providers/signed/signed.dart';
+import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 
-// Provider
+
 final rolDocumentProvider = StateNotifierProvider<RolDocumentNotifier, RolDocumentsState>((ref) {
-  final repository = ref.watch(repositoryProvider); // Asumiendo que tienes un provider para el repository
   return RolDocumentNotifier(
       RolDocumentsState(
           documentsByRol: {},
           isLoading: false,
           errorMessage: null
       ),
-      repository
   );
 });
 
 
-// Notifier
 class RolDocumentNotifier extends StateNotifier<RolDocumentsState> {
-  final RepositoryFirmonec repository;
 
-  RolDocumentNotifier(super.state, this.repository);
+  RolDocumentNotifier(super.state);
 
-  void updateDocumentsByRol(Map<String, List<DocumentEntity>> documentsByRol){
-    state = state.copyWith(documentsByRol: documentsByRol);
-  }
-
-  void addDocumentToRol(String rol, List<DocumentEntity> newDocuments){
-    final currentDocs = Map<String, List<DocumentEntity>>.from(state.documentsByRol ?? {});
+  void addDocumentToRol(RolEntity rol, List<DocumentEntity> newDocuments){
+    final currentDocs = Map<RolEntity, List<DocumentEntity>>.from(state.documentsByRol ?? {});
     if(currentDocs.containsKey(rol)){
       currentDocs[rol] = [...currentDocs[rol]!, ...newDocuments];
     }else {
-      print("rol $rol agregado");
+      print("rol ${rol.cargo} agregado");
       currentDocs[rol] = newDocuments;
     }
     state = state.copyWith(documentsByRol: currentDocs);
   }
 
-  // Limpiar documentos de un rol específico
-  void clearDocumentsForRol(String rolId) {
-    final currentDocs = Map<String, List<DocumentEntity>>.from(state.documentsByRol ?? {});
-    currentDocs.remove(rolId);
+  void clearDocumentsForRol(RolEntity rol) {
+    final currentDocs = Map<RolEntity, List<DocumentEntity>>.from(state.documentsByRol ?? {});
+    currentDocs.remove(rol);
     state = state.copyWith(documentsByRol: currentDocs);
   }
 
-  // Limpiar todos los documentos
   void clearAllDocuments() {
     state = state.copyWith(documentsByRol: {});
   }
@@ -53,7 +42,7 @@ class RolDocumentNotifier extends StateNotifier<RolDocumentsState> {
 
 // Estado
 class RolDocumentsState {
-  final Map<String, List<DocumentEntity>>? documentsByRol;
+  final Map<RolEntity, List<DocumentEntity>>? documentsByRol;
   final bool isLoading;
   final String? errorMessage;
 
@@ -64,7 +53,7 @@ class RolDocumentsState {
   });
 
   RolDocumentsState copyWith({
-    Map<String, List<DocumentEntity>>? documentsByRol,
+    Map<RolEntity, List<DocumentEntity>>? documentsByRol,
     bool? isLoading,
     String? errorMessage,
   }) {
@@ -75,8 +64,8 @@ class RolDocumentsState {
     );
   }
 
-  // Método de utilidad para obtener documentos de un rol específico
-  List<DocumentEntity> getDocumentsForRol(String rolId) {
-    return documentsByRol?[rolId] ?? [];
+
+  List<DocumentEntity> getDocumentsForRol(RolEntity rol) {
+    return documentsByRol?[rol] ?? [];
   }
 }
