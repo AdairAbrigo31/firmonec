@@ -7,6 +7,7 @@ import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/domain/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
+import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 
 class RolesDocumentsQuipuxView extends ConsumerStatefulWidget {
@@ -19,9 +20,10 @@ class RolesDocumentsQuipuxView extends ConsumerStatefulWidget {
 
 class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxView>{
 
+  int? openSectionIndex;
+
 
   Widget buildDocumentCard(RolEntity rol, DocumentEntity doc) {
-    final documentsSelectedNotifier = ref.read(documentSelectedProvider.notifier);
     final oneDocumentSelectedPreviewNotifier = ref.read(oneDocumentSelectedPreviewProvider.notifier);
 
     if (doc is DocumentoPorElaborarEntity) {
@@ -115,12 +117,7 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                     },
                   ),
                   const SizedBox(width: 8),
-                  Checkbox(
-                    value: documentsSelectedNotifier.isDocumentSelected(rol, doc),
-                    onChanged: (val) {
-                      documentsSelectedNotifier.updateCheckBox(rol, doc, val ?? false);
-                    },
-                  ),
+                  CheckboxDocument(rol: rol, document: doc)
                 ],
               ),
             ],
@@ -215,12 +212,7 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                     },
                   ),
                   const SizedBox(width: 8),
-                  Checkbox(
-                    value: documentsSelectedNotifier.isDocumentSelected(rol, doc),
-                    onChanged: (val) {
-                      documentsSelectedNotifier.updateCheckBox(rol, doc, val ?? false);
-                    },
-                  ),
+                  CheckboxDocument(rol: rol, document: doc)
                 ],
               ),
             ],
@@ -243,8 +235,9 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
   Widget build(BuildContext context) {
 
     final userProvider = ref.watch(userActiveProvider);
-    final rolDocProvider = ref.watch(rolDocumentProvider);
+    final rolDocProvider = ref.read(rolDocumentProvider);
     final roles = rolDocProvider.documentsByRol?.keys.toList() ?? [];
+
 
     return SafeArea(
       child: Center(
@@ -258,11 +251,27 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
             : Expanded(
               child: Accordion(
                 maxOpenSections: 1,
-                children: roles.map((rol) {
+                scaleWhenAnimating: false, // Previene problemas de renderizado
+                openAndCloseAnimation: false, // Opcional: desactiva la animación
+                headerBackgroundColor: Colors.transparent,
+                headerBackgroundColorOpened: Colors.transparent,
+                contentBackgroundColor: Colors.transparent,
+                contentBorderColor: Colors.transparent,
+                // Importante: mantener el índice de la sección abierta
+                initialOpeningSequenceDelay: 0,
+                children: roles.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final rol = entry.value;
                   final documents = rolDocProvider.getDocumentsForRol(rol);
+
                   return AccordionSection(
-                    onCloseSection: (){},
-                    onOpenSection: (){},
+                    isOpen: index == openSectionIndex,
+                    onOpenSection: () {
+                      setState(() => openSectionIndex = index);
+                    },
+                    onCloseSection: () {
+                      setState(() => openSectionIndex = null);
+                    },
                     header: Container(
                       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                       decoration: BoxDecoration(

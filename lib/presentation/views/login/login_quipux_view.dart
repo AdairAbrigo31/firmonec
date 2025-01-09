@@ -1,13 +1,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
-import 'package:tesis_firmonec/domain/repositories/repositories.dart';
-import 'package:tesis_firmonec/infrastructure/repositories/repositories.dart';
-import 'package:tesis_firmonec/presentation/components_shared/components_shared.dart';
 import 'package:tesis_firmonec/presentation/controllers/get_information_user_controller.dart';
 import 'package:tesis_firmonec/presentation/providers/login/login.dart';
+import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 class LoginQuipuxView extends ConsumerWidget{
   const LoginQuipuxView({super.key});
@@ -44,7 +41,7 @@ class LoginQuipuxView extends ConsumerWidget{
                      )
                     ],
                   ),
-                  InputEmail(example: "aabrigo@espol.edu.ec", onChange: (value){
+                  InputEmail(example: "correo espol", onChange: (value){
                     notifierUser.updateEmail(value);
                   }),
                   /*ElevatedButton(

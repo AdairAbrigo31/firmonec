@@ -55,7 +55,7 @@ class UserActiveState {
   final String? id;
 
   UserActiveState({
-    this.email,
+    this.email = "dochoa@espol.edu.ec",
     this.password,
     this.token,
     this.id

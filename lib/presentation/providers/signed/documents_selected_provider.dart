@@ -1,80 +1,102 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/domain/entities/document_entity.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 
-
+// 1. Provider principal
 final documentSelectedProvider = StateNotifierProvider<DocumentSelectedNotifier, DocumentsSelectedState>((ref) {
-  return DocumentSelectedNotifier(
-    DocumentsSelectedState(
-      documentsSelected: {}
-    )
-  );
+  return DocumentSelectedNotifier();
 });
 
+// 2. Estado
+class DocumentsSelectedState {
+  final Map<RolEntity, Set<DocumentEntity>> documentsSelected;
 
+  const DocumentsSelectedState({
+    this.documentsSelected = const {},
+  });
+
+  int get totalDocuments => documentsSelected.values
+      .fold(0, (sum, docs) => sum + docs.length);
+
+  bool hasDocumentsForRol(RolEntity rol) =>
+      documentsSelected.containsKey(rol) &&
+          documentsSelected[rol]!.isNotEmpty;
+
+  int getDocumentCountForRol(RolEntity rol) =>
+      documentsSelected[rol]?.length ?? 0;
+
+  DocumentsSelectedState copyWith({
+    Map<RolEntity, Set<DocumentEntity>>? documentsSelected,
+  }) {
+    return DocumentsSelectedState(
+      documentsSelected: documentsSelected ?? this.documentsSelected,
+    );
+  }
+}
+
+// 3. Notifier
 class DocumentSelectedNotifier extends StateNotifier<DocumentsSelectedState> {
-  DocumentSelectedNotifier(super._state);
+  DocumentSelectedNotifier() : super(const DocumentsSelectedState());
 
-  void updateCheckBox(RolEntity rol, DocumentEntity document, bool check){
-    if(check){
-      addDocumentToRol(rol, document);
+  // Manejo de selección de documentos
+  void toggleDocumentSelection(RolEntity rol, DocumentEntity document) {
+    final currentDocs = Map<RolEntity, Set<DocumentEntity>>.from(state.documentsSelected);
+
+    if (!currentDocs.containsKey(rol)) {
+      currentDocs[rol] = {document};
     } else {
-      removeDocumentToRol(rol, document);
+      final documents = Set<DocumentEntity>.from(currentDocs[rol]!);
+      if (documents.contains(document)) {
+        documents.remove(document);
+      } else {
+        documents.add(document);
+      }
+
+      if (documents.isEmpty) {
+        currentDocs.remove(rol);
+      } else {
+        currentDocs[rol] = documents;
+      }
     }
+
+    state = state.copyWith(documentsSelected: currentDocs);
   }
 
+  // Verificación de estado
   bool isDocumentSelected(RolEntity rol, DocumentEntity document) {
     return state.documentsSelected[rol]?.contains(document) ?? false;
   }
 
-  void removeDocumentToRol(RolEntity rol, DocumentEntity document){
-    final currentDocs = Map<RolEntity, List<DocumentEntity>>.from(state.documentsSelected);
-    if(currentDocs.containsKey(rol)){
-      currentDocs[rol]!.remove(document);
-    }
+  // Operaciones por rol
+  void clearRol(RolEntity rol) {
+    if (!state.documentsSelected.containsKey(rol)) return;
+
+    final currentDocs = Map<RolEntity, Set<DocumentEntity>>.from(state.documentsSelected);
+    currentDocs.remove(rol);
     state = state.copyWith(documentsSelected: currentDocs);
   }
 
-  int get totalDocumentsSelected {
-    return state.documentsSelected.values.fold(0, (sum, docs) => sum + docs.length);
+  // Obtener documentos
+  Set<DocumentEntity> getDocumentsForRol(RolEntity rol) {
+    return state.documentsSelected[rol]?.toSet() ?? {};
   }
 
-
-  void addDocumentToRol(RolEntity rol, DocumentEntity newDocument){
-    final currentDocs = Map<RolEntity, List<DocumentEntity>>.from(state.documentsSelected ?? {});
-    if(currentDocs.containsKey(rol)){
-      currentDocs[rol] = [...currentDocs[rol]!, newDocument];
-    } else {
-      currentDocs[rol] = [newDocument];
-    }
-    state = state.copyWith(documentsSelected: currentDocs);
+  List<DocumentEntity> getAllDocuments() {
+    return state.documentsSelected.values
+        .expand((docs) => docs)
+        .toList();
   }
 
-  void clearDocumentForRol(RolEntity rol, DocumentEntity document){
-
+  // Operaciones globales
+  void clearAllDocuments() {
+    state = const DocumentsSelectedState();
   }
 
-  void clearAllDocuments(){
-    state = state.copyWith(documentsSelected: {});
-  }
-
-}
-
-
-
-class DocumentsSelectedState {
-  final Map<RolEntity, List<DocumentEntity>> documentsSelected;
-
-  DocumentsSelectedState({
-    required this.documentsSelected
-  });
-
-  DocumentsSelectedState copyWith({
-    Map<RolEntity, List<DocumentEntity>>? documentsSelected,
-  }){
-    return DocumentsSelectedState(
-        documentsSelected: documentsSelected ?? this.documentsSelected
-    );
+  // Métricas y estadísticas
+  Map<String, int> getSelectionMetrics() {
+    return {
+      'totalRoles': state.documentsSelected.length,
+      'totalDocuments': state.totalDocuments,
+    };
   }
 }
