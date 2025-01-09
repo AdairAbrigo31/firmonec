@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:aad_oauth/aad_oauth.dart';
 import 'package:dio/dio.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
@@ -21,7 +23,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
       await oauth.login();
       final accessToken = await oauth.getAccessToken();
       if (accessToken != null) {
-        print("acccess token: $accessToken");
         return AuthResult.success(accessToken);
       } else {
         return AuthResult.failure(
@@ -123,11 +124,7 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
 
   Future<List<RolEntity>> getRolesWithoutToken({required String email}) async {
-    BaseOptions baseOptions = BaseOptions(
-      connectTimeout: const Duration(seconds: 30 * 1000),
-      receiveTimeout: const Duration(seconds: 30 * 1000),
-    );
-    final Dio dio = Dio(baseOptions);
+    final dio = Dio();
     try {
       final response = await dio.get(
         '$routeBase/Usuario/Cargos',
@@ -177,6 +174,26 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
   @override
   Future<UserEntity> getInfoUserAfterLogin(String tokenAccess) async {
+
+    print("Longitud del token: ${tokenAccess.length}");
+
+    // Dividir el token en partes para ver su estructura completa
+    final parts = tokenAccess.split('.');
+    if (parts.length == 3) {
+      print("Header: ${parts[0]}");
+      print("Payload: ${parts[1]}");
+      print("Signature: ${parts[2]}");
+    }
+
+    // Decodificar el payload para ver su contenido
+    try {
+      final payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
+      print("Payload decodificado: $payload");
+    } catch (e) {
+      print("Error decodificando payload: $e");
+    }
+
+
     final dio = Dio();
 
     try {
@@ -192,7 +209,8 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
         ),
       );
 
-      final userData = response.data; // Dio ya parsea el JSON automáticamente
+      final userData = response.data;
+      print(response.data);// Dio ya parsea el JSON automáticamente
       final userEntity = UserEntity.fromJson(userData);
       return (userEntity);
     } on DioException catch (e) {

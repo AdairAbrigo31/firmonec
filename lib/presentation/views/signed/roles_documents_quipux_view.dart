@@ -111,7 +111,7 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                     label: const Text('Ver PDF'),
                     onPressed: () {
                       oneDocumentSelectedPreviewNotifier.setDocument(doc);
-                      router.pushNamed('preview_document_selected');
+                      Navigator.pushNamed(context, "preview_document_selected");
                     },
                   ),
                   const SizedBox(width: 8),

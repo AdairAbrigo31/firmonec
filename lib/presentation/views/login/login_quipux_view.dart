@@ -17,7 +17,6 @@ class LoginQuipuxView extends ConsumerWidget{
 
     final stateLogin = ref.watch(loginQuipuxFormProvider);
     final notifierLogin = ref.read(loginQuipuxFormProvider.notifier);
-    var isValid;
 
     final stateUser = ref.watch(userActiveProvider);
     final notifierUser = ref.watch(userActiveProvider.notifier);
@@ -61,7 +60,7 @@ class LoginQuipuxView extends ConsumerWidget{
                         router.pushNamed('roles_documents_quipux');
                       },
                       child: const Text("Extraer documentos")
-                  )
+                  ),
                 ],
               ),
               if(stateLogin.isLoading)
