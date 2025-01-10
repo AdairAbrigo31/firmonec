@@ -1,4 +1,5 @@
-import '../../domain/entities/document_entity.dart';
+
+import 'package:tesis_firmonec/domain/entities/entities.dart';
 
 class DocumentoPorElaborarEntity extends DocumentEntity {
   final String id;
