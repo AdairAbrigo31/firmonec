@@ -7,6 +7,7 @@ import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/domain/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
+import 'package:tesis_firmonec/presentation/screens/signed/certificates_for_sign_screen.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 
@@ -350,7 +351,7 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                       showDialog(
                           context: context,
                           builder: (context) {
-                            return const ModalCertificates();
+                            return const CertificatesForSignScreen();
                           }
                       );
                     }

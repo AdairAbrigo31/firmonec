@@ -9,20 +9,20 @@ class DocumentMapper {
       para: dto.para,
       asunto: dto.asunto,
       fechaDocumento: dto.datFechaDocumento,
-      numeroRadicado: dto.hidRadiNumeRadi,  // Corregido
+      numeroRadicado: dto.hidRadiNumeRadi, // Corregido
       numeroDocumento: dto.numeroDocumento,
       numeroReferencia: dto.noReferencia,
       tipoDocumento: dto.tipoDocumento,
       categoria: dto.categoria,
-      leido: dto.hidRadiLeido,  // Corregido
-      contenido: dto.contenido,  // Nuevo
-      rutaDocumento: dto.rutaDocumento,  // Nuevo
-      base64: dto.base64,  // Nuevo
+      leido: dto.hidRadiLeido, // Corregido
+      contenido: dto.contenido, // Nuevo
+      base64: dto.base64, // Nuevo
     );
   }
 
   // Método para mapear una lista de DTOs
-  static List<DocumentoPorElaborarEntity> fromDtoList(List<DocumentPorElaborarDto> dtos) {
+  static List<DocumentoPorElaborarEntity> fromDtoList(
+      List<DocumentPorElaborarDto> dtos) {
     return dtos.map((dto) => fromDto(dto)).toList();
   }
 
@@ -34,15 +34,14 @@ class DocumentMapper {
       para: entity.para,
       asunto: entity.asunto,
       datFechaDocumento: entity.fechaDocumento,
-      hidRadiNumeRadi: entity.numeroRadicado,  // Corregido
+      hidRadiNumeRadi: entity.numeroRadicado, // Corregido
       numeroDocumento: entity.numeroDocumento,
       noReferencia: entity.numeroReferencia,
       tipoDocumento: entity.tipoDocumento,
       categoria: entity.categoria,
-      hidRadiLeido: entity.leido,  // Corregido
-      contenido: entity.contenido,  // Nuevo
-      rutaDocumento: entity.rutaDocumento,  // Nuevo
-      base64: entity.base64 ?? '',  // Nuevo
+      hidRadiLeido: entity.leido, // Corregido
+      contenido: entity.contenido, // Nuevo
+      base64: entity.base64 ?? '', // Nuevo
     );
   }
 }

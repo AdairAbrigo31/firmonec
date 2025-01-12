@@ -1,4 +1,3 @@
-
 import 'package:tesis_firmonec/domain/entities/entities.dart';
 
 class DocumentoPorElaborarEntity extends DocumentEntity {
@@ -12,7 +11,6 @@ class DocumentoPorElaborarEntity extends DocumentEntity {
   final String categoria;
   final String leido;
   final String contenido;
-  final String rutaDocumento;
   final String? base64;
 
   DocumentoPorElaborarEntity({
@@ -28,7 +26,6 @@ class DocumentoPorElaborarEntity extends DocumentEntity {
     required this.categoria,
     required this.leido,
     required this.contenido,
-    required this.rutaDocumento,
     this.base64,
   });
 
@@ -46,25 +43,22 @@ class DocumentoPorElaborarEntity extends DocumentEntity {
     String? categoria,
     String? leido,
     String? contenido,
-    String? rutaDocumento,
     String? base64,
   }) {
     return DocumentoPorElaborarEntity(
-      id: id ?? this.id,
-      de: de ?? this.de,
-      para: para ?? this.para,
-      asunto: asunto ?? this.asunto,
-      fechaDocumento: fechaDocumento ?? this.fechaDocumento,
-      numeroRadicado: numeroRadicado ?? this.numeroRadicado,
-      numeroDocumento: numeroDocumento ?? this.numeroDocumento,
-      numeroReferencia: numeroReferencia ?? this.numeroReferencia,
-      tipoDocumento: tipoDocumento ?? this.tipoDocumento,
-      categoria: categoria ?? this.categoria,
-      leido: leido ?? this.leido,
-      contenido: contenido ?? this.contenido,
-      rutaDocumento: rutaDocumento ?? this.rutaDocumento,
-      base64: base64 ?? this.base64
-    );
+        id: id ?? this.id,
+        de: de ?? this.de,
+        para: para ?? this.para,
+        asunto: asunto ?? this.asunto,
+        fechaDocumento: fechaDocumento ?? this.fechaDocumento,
+        numeroRadicado: numeroRadicado ?? this.numeroRadicado,
+        numeroDocumento: numeroDocumento ?? this.numeroDocumento,
+        numeroReferencia: numeroReferencia ?? this.numeroReferencia,
+        tipoDocumento: tipoDocumento ?? this.tipoDocumento,
+        categoria: categoria ?? this.categoria,
+        leido: leido ?? this.leido,
+        contenido: contenido ?? this.contenido,
+        base64: base64 ?? this.base64);
   }
 
   @override

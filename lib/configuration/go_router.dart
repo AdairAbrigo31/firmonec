@@ -10,7 +10,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: navigatorKey,
-  initialLocation: '/button_entraid',
+  initialLocation: '/certificates_for_sign',
     routes: [
       GoRoute(
         name: 'button_entraid',
@@ -40,6 +40,12 @@ final router = GoRouter(
         name: 'preview_document_selected',
         path: '/preview_document_selected',
         builder: (context, state) => const PreviewDocumentsSelectedScreen(),
+      ),
+
+      GoRoute(
+        name: 'certificates_for_sign',
+        path: '/certificates_for_sign',
+        builder: (context, state) => const CertificatesForSignScreen(),
       )
     ]
 );

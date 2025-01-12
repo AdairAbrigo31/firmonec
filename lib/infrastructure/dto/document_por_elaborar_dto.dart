@@ -10,9 +10,8 @@ class DocumentPorElaborarDto {
   final String tipoDocumento;
   final String categoria;
   final String hidRadiLeido; // Corregido el nombre
-  final String contenido;    // Nuevo
-  final String rutaDocumento; // Nuevo
-  final String base64;       // Nuevo (para cuando se necesite el PDF)
+  final String contenido; // Nuevo
+  final String base64; // Nuevo (para cuando se necesite el PDF)
 
   const DocumentPorElaborarDto({
     required this.id,
@@ -27,7 +26,6 @@ class DocumentPorElaborarDto {
     required this.categoria,
     required this.hidRadiLeido,
     required this.contenido,
-    required this.rutaDocumento,
     this.base64 = '', // Opcional, ya que podría no venir en el JSON inicial
   });
 
@@ -39,14 +37,15 @@ class DocumentPorElaborarDto {
       para: json['para'] ?? '',
       asunto: json['asunto'] ?? '',
       datFechaDocumento: json['DAT_Fecha_Documento'] ?? '',
-      hidRadiNumeRadi: json['HID_RADI_NUME_RADI'] ?? '', // Corregido el nombre del campo
+      hidRadiNumeRadi:
+          json['HID_RADI_NUME_RADI'] ?? '', // Corregido el nombre del campo
       numeroDocumento: json['Número_Documento'] ?? '',
       noReferencia: json['No_Referencia'] ?? '',
       tipoDocumento: json['Tipo_Documento'] ?? '',
       categoria: json['Categoría'] ?? '',
-      hidRadiLeido: json['HID_RADI_LEIDO'] ?? '', // Corregido el nombre del campo
+      hidRadiLeido:
+          json['HID_RADI_LEIDO'] ?? '', // Corregido el nombre del campo
       contenido: json['contenido'] ?? '',
-      rutaDocumento: json['ruta_documento'] ?? '',
       base64: json['base64'] ?? '',
     );
   }
@@ -65,7 +64,6 @@ class DocumentPorElaborarDto {
       'Categoría': categoria,
       'HID_RADI_LEIDO': hidRadiLeido,
       'contenido': contenido,
-      'ruta_documento': rutaDocumento,
       'base64': base64,
     };
   }

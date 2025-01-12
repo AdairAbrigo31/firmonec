@@ -42,9 +42,7 @@ dependencies:
   flutter_secure_storage: ^9.2.2
   aad_oauth: ^1.0.1
   dio: ^5.7.0
-  flutter_pdfview: ^1.4.0
   path_provider: ^2.1.5
-  webview_flutter: ^4.10.0
   syncfusion_flutter_pdfviewer: 24.1.41
   file_picker: ^8.1.7
   shared_preferences: ^2.3.5
