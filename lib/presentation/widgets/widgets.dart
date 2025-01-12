@@ -5,3 +5,4 @@ export 'checkbox_document.dart';
 export 'buttons/buttons.dart';
 export 'modal_certificates.dart';
 export 'modal_widget.dart';
+export 'pane_modals/pane_modals.dart';
