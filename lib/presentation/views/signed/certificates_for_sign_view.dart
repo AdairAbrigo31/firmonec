@@ -1,11 +1,13 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/persistence/certificate_storage.dart';
 import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
 import 'package:tesis_firmonec/presentation/providers/login/user_active_provider.dart';
-import 'package:tesis_firmonec/presentation/widgets/buttons/buttons.dart';
+import 'package:tesis_firmonec/presentation/providers/signed/documents_selected_provider.dart';
+import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 class CertificatesForSignView extends ConsumerStatefulWidget {
   const CertificatesForSignView({super.key});
@@ -35,61 +37,43 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
       if (result != null) {
         
         //Modal para introducir descripcion y contraseña para validar el guardado
-        final description = await showDialog<String>(
-          context: context,
-          builder: (context) {
-            final nameCertificate = result.files.single.name;
-            final controller = TextEditingController();
-            final passwordController = TextEditingController();
+        await showDialog<String>(
 
-            return AlertDialog(
-              title: const Text('Agregar certificado'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Nombre del certificado: $nameCertificate',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextField(
-                    controller: controller,
-                    decoration: const InputDecoration(
-                      labelText: 'Descripción',
-                    ),
-                  ),
-                  TextField(
-                    controller: passwordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Contraseña',
-                    ),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancelar'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    final CertificateEntity certificateEntity = CertificateEntity(
+          context: context,
+
+          builder: (context) {
+
+            final nameCertificate = result.files.single.name;
+            String description = '';
+
+            return ModalLayouts(context).showSimpleModal(
+
+              child: PaneSaveCertificates(
+
+                nameCertificate: nameCertificate,
+                onChangedDescription: (value) {
+                  description = value;
+                },
+
+                onPressedAccept: () {
+
+                  final CertificateEntity certificate = CertificateEntity(
                       id: DateTime.now().millisecondsSinceEpoch.toString(),
                       name: nameCertificate,
-                      alias: controller.text,
-                      password: passwordController.text,
+                      alias: description,
+                      password: "contrasena",
                       emailOwner: emaiUser,
                       createdAt: DateTime.now(),
                       lastUsed: null,
                       filePath: result.files.single.path!,
                     ); 
-                    CertificateStorage.saveCertificate(certificateEntity);
-                    Navigator.pop(context, controller.text);
-                  },
-                  child: const Text('Guardar'),
-                ),
-              ],
+
+                    CertificatesUserController.saveCertificateUser(certificate);
+
+                    context.pop();
+
+                },
+              ),
             );
           },
         );
@@ -142,8 +126,10 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                   }
 
                   if (snapshot.hasError) {
+
                     return Center(
                       child: Column(
+
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(Icons.error_outline,
@@ -154,16 +140,22 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                             textAlign: TextAlign.center,
                           ),
                         ],
+
                       ),
                     );
+
                   }
 
                   final certificates = snapshot.data ?? [];
 
                   if (certificates.isEmpty) {
+
                     return Center(
+
                       child: Column(
+
                         mainAxisAlignment: MainAxisAlignment.center,
+
                         children: [
                           Icon(Icons.folder_open,
                               size: 64, color: Colors.grey[400]),
@@ -175,8 +167,11 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                               color: Colors.grey[600],
                             ),
                           ),
+
                         ],
+
                       ),
+
                     );
                   }
 
@@ -220,22 +215,62 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
 
                           trailing: PopupMenuButton(
+
+
                             icon: const Icon(Icons.more_vert),
                             itemBuilder: (context) => [
                               const PopupMenuItem(
                                 value: 'use',
                                 child: Text('Usar certificado'),
                               ),
+
+
                               const PopupMenuItem(
                                 value: 'delete',
                                 child: Text('Eliminar'),
                               ),
                             ],
+
+
                             onSelected: (value) async {
 
                               if (value == 'use') {
 
-                                SignDocumentsController.handleSignDocuments(context, ref, cert);
+                                ref.read(documentSelectedProvider.notifier).updateCertificate(cert);
+
+                                showDialog(
+                                  
+                                  context: context, 
+                                  
+                                  builder: (context) => ModalLayouts(context).showSimpleModal(
+
+                                    child: PaneUseCertificate(
+
+                                      descriptionCertificate: cert.alias,
+
+
+                                      onPressedAccept: (){
+
+                                        SignDocumentsController.handleSignDocuments(context, ref, cert);
+
+                                        if(context.mounted){
+
+                                          Navigator.of(context).pop();
+                                        
+                                        }
+
+                                      }, 
+                                      
+                                      onChagedPassword: (value) {
+
+                                        ref.read(documentSelectedProvider.notifier).updatePassword(value);
+
+
+                                      }
+                                    )
+                                  )
+                                );
+                    
 
                                 await CertificateStorage.updateLastUsed(cert.id, user.email ?? 'prueba');
 
@@ -243,34 +278,14 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                               } else if (value == 'delete') {
 
+                                await CertificateStorage.deleteCertificate(
 
-                                // Confirmar eliminación
-                                final confirm = await showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('Eliminar certificado'),
-                                    content: const Text(
-                                        '¿Está seguro que desea eliminar este certificado?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, false),
-                                        child: const Text('Cancelar'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, true),
-                                        child: const Text('Eliminar'),
-                                      ),
-                                    ],
-                                  ),
+                                  cert.id, user.email ?? 'prueba'
+                              
                                 );
 
-                                if (confirm == true) {
-                                  await CertificateStorage.deleteCertificate(
-                                      cert.id, user.email ?? 'prueba');
-                                  setState(() {}); // Recargar lista
-                                }
+                                setState(() {});
+
                               }
                             },
                           ),
@@ -281,22 +296,20 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                 },
               ),
             ),
+
+
             const SizedBox(height: 16),
             PrimaryButton(
               text: "Agregar certificado",
               onPressed: () {
 
                 _pickFile(user.email ?? 'prueba');
-                // Implementar lógica para agregar certificado
+
               },
             ),
           ],
         ),
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
   }
 }

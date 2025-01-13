@@ -9,7 +9,9 @@ class PaneUseCertificate extends ConsumerWidget{
 
   final void Function(String) onChagedPassword;
 
-  const PaneUseCertificate({super.key , required this.onPressedAccept, required this.onChagedPassword});
+  final String descriptionCertificate;
+
+  const PaneUseCertificate({super.key , required this.onPressedAccept, required this.onChagedPassword, required this.descriptionCertificate});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,6 +29,8 @@ class PaneUseCertificate extends ConsumerWidget{
       child: Column(
 
         children: [
+
+           Text("El certificado seleccionado es: $descriptionCertificate"),
 
           const Text( "Por favor ingrese la contraseña del certificado"),
 
