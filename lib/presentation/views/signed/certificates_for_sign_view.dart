@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/persistence/certificate_storage.dart';
+import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
 import 'package:tesis_firmonec/presentation/providers/login/user_active_provider.dart';
 import 'package:tesis_firmonec/presentation/widgets/buttons/buttons.dart';
 
@@ -216,6 +217,8 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                               Text(cert.alias),
                             ],
                           ),
+
+
                           trailing: PopupMenuButton(
                             icon: const Icon(Icons.more_vert),
                             itemBuilder: (context) => [
@@ -229,10 +232,18 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                               ),
                             ],
                             onSelected: (value) async {
+
                               if (value == 'use') {
+
+                                SignDocumentsController.handleSignDocuments(context, ref, cert);
+
                                 await CertificateStorage.updateLastUsed(cert.id, user.email ?? 'prueba');
-                                // Implementar lógica para usar el certificado
+
+
+
                               } else if (value == 'delete') {
+
+
                                 // Confirmar eliminación
                                 final confirm = await showDialog(
                                   context: context,
