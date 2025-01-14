@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
@@ -12,14 +11,11 @@ class LoginWithEntraIDView extends ConsumerWidget {
     return SafeArea(
         child: TextButton(
             onPressed: () async {
-
-              //await GetInformationUserController.executeActionsWithouToken(ref: ref);
+              await GetInformationUserController.executeActionsWithMicrosoft(
+                  ref);
 
               router.pushNamed('login_quipux');
             },
-            
-            child: Text("Iniciar sesión con MIcrosoft"))
-    );
+            child: Text("Iniciar sesión con MIcrosoft")));
   }
-
 }
