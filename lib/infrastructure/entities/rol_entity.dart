@@ -1,5 +1,5 @@
 
-import 'package:tesis_firmonec/infrastructure/dto/dto.dart';
+import 'package:tesis_firmonec/domain/entities/document_entity.dart';
 
 class RolEntity {
   final String codusuario;
@@ -17,6 +17,7 @@ class RolEntity {
   final String dependencia;
   final String dependenciaSigla;
   final String instNombre;
+  final List<DocumentEntity>? listDocuments;
 
   const RolEntity({
     required this.codusuario,
@@ -34,6 +35,7 @@ class RolEntity {
     required this.dependencia,
     required this.dependenciaSigla,
     required this.instNombre,
+    this.listDocuments
   });
 
   // Constructor de copia
@@ -53,6 +55,7 @@ class RolEntity {
     String? dependencia,
     String? dependenciaSigla,
     String? instNombre,
+    List<DocumentEntity>? listDocuments
   }) {
     return RolEntity(
       codusuario: codusuario ?? this.codusuario,
@@ -70,6 +73,7 @@ class RolEntity {
       dependencia: dependencia ?? this.dependencia,
       dependenciaSigla: dependenciaSigla ?? this.dependenciaSigla,
       instNombre: instNombre ?? this.instNombre,
+      listDocuments: listDocuments ?? this.listDocuments
     );
   }
 

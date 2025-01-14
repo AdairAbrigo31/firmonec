@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/domain/entities/document_entity.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/entities/user_entity.dart';
-import 'package:tesis_firmonec/infrastructure/repositories/repositories.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 
 import '../../configuration/microsoftID.dart';
@@ -12,16 +11,36 @@ import '../../configuration/microsoftID.dart';
 class GetInformationUserController {
 
   static Future<void> executeActionsWithMicrosoft(WidgetRef ref) async {
-    final valid = await RepositoryFirmonecImplementation().loginWithMicrosoft();
+
     final repository = ref.read(repositoryProvider);
-    final UserEntity user = await repository.getInfoUserAfterLogin(valid.token!);
-    final userNotifier = ref.read(userActiveProvider.notifier);
-    userNotifier.updateUser(email: user.mail, token: valid.token);
-    final stateUserProvider = ref.read(userActiveProvider);
-    print("Su usuario es : ${stateUserProvider.email}, y token: ${stateUserProvider.token}");
+
+    final valid = await repository.loginWithMicrosoft();
+
+    print("Paso el login con exito");
+
+    //Ejecutar acciones para enviar el token y recuperar el nuevo desde el backend
+    final responseToken = await repository.getTokenBackend(valid.token!);
+
+    if(responseToken != null){
+
+      print("response token : $responseToken");
+      
+      /* final userNotifier = ref.read(userActiveProvider.notifier);
+
+      userNotifier.updateUser(email: user.mail, token: valid.token);
+
+      final stateUserProvider = ref.read(userActiveProvider);
+
+      print("Su usuario es : ${stateUserProvider.email}, y token: ${stateUserProvider.token}"); */
+
+    }
+
     final oauth = AadOAuth(MicrosoftID.config);
+
     oauth.logout();
   }
+
+
 
   static Future<void> executeActionWithVPN({ required WidgetRef ref }) async {
     final userProvider = ref.read(userActiveProvider);

@@ -346,19 +346,16 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                 ),
 
                 PrimaryButton(
-                    text: "Firmar",
-                    onPressed: (){
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return const CertificatesForSignScreen();
-                          }
-                      );
-                    }
-                  )
-
-
-
+                  text: "Firmar",
+                  onPressed: (){
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return const CertificatesForSignScreen();
+                        }
+                    );
+                  }
+                )
           ],
         ),
       )

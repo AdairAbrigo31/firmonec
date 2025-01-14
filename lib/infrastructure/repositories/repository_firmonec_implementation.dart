@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:aad_oauth/aad_oauth.dart';
 import 'package:dio/dio.dart';
@@ -6,7 +5,6 @@ import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/domain/repositories/repositories.dart';
 import 'package:tesis_firmonec/infrastructure/dto/dto.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
-import 'package:tesis_firmonec/infrastructure/entities/user_entity.dart';
 import 'package:tesis_firmonec/infrastructure/mapers/document_mapper.dart';
 import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
 
@@ -19,12 +17,14 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   @override
   Future<AuthResult> loginWithMicrosoft() async {
     try {
+      print("Logearse");
       final oauth = AadOAuth(MicrosoftID.config);
       await oauth.login();
       final accessToken = await oauth.getAccessToken();
       if (accessToken != null) {
         return AuthResult.success(accessToken);
       } else {
+        print("Fallo");
         return AuthResult.failure(
             AuthError.invalidCredentials, "Credenciales invalidas"
         );
@@ -38,27 +38,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
     }
   }
 
-
-  @override
-  Future<String> getNumberId(String email) async {
-
-    final dio = Dio();
-    try {
-      final response = await dio.get(
-        '$routeBase/',
-        options: Options(
-            headers: {'':''})
-      );
-    } on DioException catch (e) {
-      throw ("Error de conexión: ${e.message}");
-    } catch (e) {
-      throw Exception("Error inesperado: $e");
-    } finally {
-      dio.close();
-    }
-
-    throw UnimplementedError();
-  }
 
 
   @override
@@ -122,7 +101,7 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
 
 
-
+  @override
   Future<List<RolEntity>> getRolesWithoutToken({required String email}) async {
     final dio = Dio();
     try {
@@ -172,54 +151,40 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   }
 
 
+
   @override
-  Future<UserEntity> getInfoUserAfterLogin(String tokenAccess) async {
-
-    print("Longitud del token: ${tokenAccess.length}");
-
-    // Dividir el token en partes para ver su estructura completa
-    final parts = tokenAccess.split('.');
-    if (parts.length == 3) {
-      print("Header: ${parts[0]}");
-      print("Payload: ${parts[1]}");
-      print("Signature: ${parts[2]}");
-    }
-
-    // Decodificar el payload para ver su contenido
-    try {
-      final payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
-      print("Payload decodificado: $payload");
-    } catch (e) {
-      print("Error decodificando payload: $e");
-    }
-
-
+  Future <String?> getTokenBackend (String tokenEntraID) async {
     final dio = Dio();
-
     try {
-      const graphApiUrl = 'https://graph.microsoft.com/v1.0/me';
 
-      final response = await dio.get(
-        graphApiUrl,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $tokenAccess',
-            'Accept': 'application/json',
-          },
-        ),
+      final response = await dio.post(
+        
+        '$routeBase/Auth/Login', 
+        
+        data: {
+        'AccessToken': tokenEntraID,
+        
+        }
       );
 
-      final userData = response.data;
-      print(response.data);// Dio ya parsea el JSON automáticamente
-      final userEntity = UserEntity.fromJson(userData);
-      return (userEntity);
+      if (response.statusCode != 200) {
+        throw Exception('Error al obtener token: ${response.statusCode}');
+      }
+
+      return response.data['token'];
+
     } on DioException catch (e) {
-      throw Exception('Failed to get user info: ${e.response?.statusCode ??
-          'No status code'} - ${e.message}');
+
+      throw ("Error de conexión: ${e.message}");
+
     } catch (e) {
-      throw Exception('Error getting user info: $e');
+
+      throw Exception("Error inesperado: $e");
+
     } finally {
-      dio.close(); // Buena práctica cerrar el cliente
+
+      dio.close();
+
     }
   }
 

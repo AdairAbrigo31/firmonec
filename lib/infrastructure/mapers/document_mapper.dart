@@ -16,7 +16,6 @@ class DocumentMapper {
       categoria: dto.categoria,
       leido: dto.hidRadiLeido, // Corregido
       contenido: dto.contenido, // Nuevo
-      base64: dto.base64, // Nuevo
     );
   }
 
@@ -41,7 +40,6 @@ class DocumentMapper {
       categoria: entity.categoria,
       hidRadiLeido: entity.leido, // Corregido
       contenido: entity.contenido, // Nuevo
-      base64: entity.base64 ?? '', // Nuevo
     );
   }
 }

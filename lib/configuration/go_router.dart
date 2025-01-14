@@ -10,7 +10,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: navigatorKey,
-  initialLocation: '/certificates_for_sign',
+  initialLocation: '/button_entraid',
     routes: [
       GoRoute(
         name: 'button_entraid',

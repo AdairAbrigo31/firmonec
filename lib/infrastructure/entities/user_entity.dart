@@ -1,3 +1,5 @@
+import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
+
 class UserEntity {
   final String displayName;
   final String givenName;
@@ -10,6 +12,8 @@ class UserEntity {
   final String? mobilePhone;
   final String? numberCI;
   final int? typeQuipux;
+  final List<RolEntity>? roles;
+  final List<CertificateEntity>? certificates;
 
   const UserEntity({
     required this.displayName,
@@ -22,7 +26,9 @@ class UserEntity {
     this.preferredLanguage,
     this.mobilePhone,
     this.numberCI,
-    this.typeQuipux
+    this.typeQuipux,
+    this.roles,
+    this.certificates
   });
 
   // Crear instancia desde JSON
@@ -68,7 +74,8 @@ class UserEntity {
     String? mobilePhone,
     List<String>? businessPhones,
     String? numberCI,
-    int? typeQuipux
+    int? typeQuipux,
+    List<RolEntity>? roles,
   }) {
     return UserEntity(
       displayName: displayName ?? this.displayName,
@@ -81,7 +88,8 @@ class UserEntity {
       preferredLanguage: preferredLanguage ?? this.preferredLanguage,
       mobilePhone: mobilePhone ?? this.mobilePhone,
       numberCI: numberCI ?? this.numberCI,
-      typeQuipux: typeQuipux ?? this.typeQuipux
+      typeQuipux: typeQuipux ?? this.typeQuipux,
+      roles: roles ?? this.roles
     );
   }
 

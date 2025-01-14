@@ -18,6 +18,7 @@ class CertificatesForSignView extends ConsumerStatefulWidget {
 }
 
 class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView> {
+
   String? _errorMessage;
   bool _isLoading = false;
 
@@ -89,6 +90,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
 
@@ -100,6 +102,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             const Text(
               "Certificados guardados",
               style: TextStyle(
@@ -107,7 +110,9 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                 fontWeight: FontWeight.bold,
               ),
             ),
+
             const SizedBox(height: 8),
+            
             const Text(
               "Seleccione un certificado para firmar o agregue uno nuevo",
               style: TextStyle(
@@ -158,8 +163,10 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                         children: [
                           Icon(Icons.folder_open,
-                              size: 64, color: Colors.grey[400]),
+                            size: 64, color: Colors.grey[400]),
+
                           const SizedBox(height: 16),
+
                           Text(
                             'No hay certificados guardados',
                             style: TextStyle(
@@ -183,6 +190,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                       return Card(
                         margin: const EdgeInsets.only(bottom: 12),
                         child: ListTile(
+
                           leading: Container(
                             width: 40,
                             height: 40,
@@ -194,6 +202,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                               color: Colors.blue,
                             ),
                           ),
+
                           title: Row(
                             children: [
                               Expanded(
@@ -206,16 +215,18 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                               ),
                             ],
                           ),
+
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+
                               Text(cert.alias),
+
                             ],
                           ),
 
 
                           trailing: PopupMenuButton(
-
 
                             icon: const Icon(Icons.more_vert),
                             itemBuilder: (context) => [

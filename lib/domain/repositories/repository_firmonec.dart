@@ -34,10 +34,7 @@ abstract class RepositoryFirmonec {
   Future<AuthResult> loginWithMicrosoft();
 
 
-  Future<UserEntity> getInfoUserAfterLogin(String tokenAccess);
-
-
-  Future<String> getNumberId(String email);
+  Future<String?> getTokenBackend (String tokenEntraID);
 
 
   Future<List<RolEntity>> getRoles( { required String email, String? token});

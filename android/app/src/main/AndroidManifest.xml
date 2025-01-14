@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="tesis_firmonec"
+        android:label="firmonec"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -33,7 +33,7 @@
                 <!-- Agrega tu esquema URI -->
                 <data
                     android:scheme="msauth"
-                    android:host="com.espol.firmonec"
+                    android:host="com.espol.firmonec2"
                     android:path="/callback"/>
             </intent-filter>
 

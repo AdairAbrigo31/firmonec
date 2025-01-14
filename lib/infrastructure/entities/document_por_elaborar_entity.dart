@@ -11,7 +11,6 @@ class DocumentoPorElaborarEntity extends DocumentEntity {
   final String categoria;
   final String leido;
   final String contenido;
-  final String? base64;
 
   DocumentoPorElaborarEntity({
     required this.id,
@@ -26,7 +25,6 @@ class DocumentoPorElaborarEntity extends DocumentEntity {
     required this.categoria,
     required this.leido,
     required this.contenido,
-    this.base64,
   });
 
   // Constructor de copia
@@ -43,7 +41,6 @@ class DocumentoPorElaborarEntity extends DocumentEntity {
     String? categoria,
     String? leido,
     String? contenido,
-    String? base64,
   }) {
     return DocumentoPorElaborarEntity(
         id: id ?? this.id,
@@ -58,7 +55,7 @@ class DocumentoPorElaborarEntity extends DocumentEntity {
         categoria: categoria ?? this.categoria,
         leido: leido ?? this.leido,
         contenido: contenido ?? this.contenido,
-        base64: base64 ?? this.base64);
+    );
   }
 
   @override

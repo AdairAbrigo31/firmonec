@@ -27,6 +27,7 @@ class QuipuxSaveView extends ConsumerWidget {
             children: [
 
               if (stateCredentials.credentials.isEmpty)
+
                 const Center(
                   child: Text(
                     "No hay cuentas Quipux guardadas",
@@ -34,11 +35,14 @@ class QuipuxSaveView extends ConsumerWidget {
                   ),
                 )
 
+
               else
+
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      
                       const Text(
                         "Quipux guardados",
                         style: TextStyle(
