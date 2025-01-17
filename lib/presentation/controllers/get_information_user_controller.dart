@@ -60,21 +60,28 @@ class GetInformationUserController {
   }
 
 
-  static Future<void> executeActionsWithouToken(
-      {required WidgetRef ref}) async {
+  static Future<void> executeActionsWithouToken({required WidgetRef ref}) async {
+
     final userProvider = ref.read(userActiveProvider);
+
     print(ref.watch(userActiveProvider).email);
+
     final repository = ref.read(repositoryProvider);
-    final List<RolEntity> roles =
-        await repository.getRolesWithoutToken(email: userProvider.email!);
+
+    final List<RolEntity> roles = await repository.getRolesWithoutToken(email: userProvider.email!);
+
     final rolDocProvider = ref.read(rolDocumentsProvider.notifier);
+
     rolDocProvider.clearAllDocuments();
     for (final rol in roles) {
-      final List<DocumentEntity> documentPorElaborar =
-          await repository.getDocumentPorElaborar(rol.codusuario);
+
+      final List<DocumentEntity> documentPorElaborar = await repository.getDocumentPorElaborar(rol.codusuario);
       //final List<DocumentEntity> documentReasignado = await repository.getDocumentReasignado(rol.codusuario);
+
       final List<DocumentEntity> documentReasignado = [];
+
       final allDocuments = [...documentPorElaborar, ...documentReasignado];
+
       rolDocProvider.addDocumentToRol(rol, allDocuments);
     }
   }

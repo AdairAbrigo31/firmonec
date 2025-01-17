@@ -12,25 +12,15 @@ class LoginWithEntraIDView extends ConsumerWidget {
 
     return SafeArea(
 
-        child: FutureBuilder(
-            future: GetInformationUserController.executeActionsWithMicrosoft(ref),
-            builder: (context, snapshot) {
+        child: TextButton(
 
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
+            onPressed: () {
 
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text("Error en la autenticación: ${snapshot.error}"),
-                );
-              }
+              router.pushNamed("login_quipux");
 
-              return const RolesDocumentsQuipuxScreen();
+            },
 
-            }
+            child: const Text("Saltarse EntraID")
         )
     );
 

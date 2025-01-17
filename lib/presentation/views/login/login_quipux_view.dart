@@ -41,19 +41,18 @@ class LoginQuipuxView extends ConsumerWidget{
                      )
                     ],
                   ),
-                  InputEmail(example: "correo espol", onChange: (value){
-                    notifierUser.updateEmail(value);
-                  }),
-                  /*ElevatedButton(
-                      onPressed: () async {
-                        await GetInformationUserController.execute(ref: ref);
-                      },
+                  InputEmail(
+                    example: "correo espol",
+                    onChange: (value){
+                      notifierUser.updateEmail(value);
+                    },
+                  ),
 
-                      child: const Text("Iniciar sesión")
-                  ),*/
                   ElevatedButton(
                       onPressed: () async{
+
                         await GetInformationUserController.executeActionsWithouToken(ref: ref);
+
                         router.pushNamed('roles_documents_quipux');
                       },
                       child: const Text("Extraer documentos")
