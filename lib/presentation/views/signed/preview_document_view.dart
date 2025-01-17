@@ -1,10 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:tesis_firmonec/infrastructure/entities/document_por_elaborar_entity.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
+import 'package:tesis_firmonec/presentation/widgets/buttons/buttons.dart';
 
 class PreviewDocumentView extends ConsumerStatefulWidget {
   const PreviewDocumentView({super.key});
@@ -55,17 +54,19 @@ class PreviewDocumentViewState extends ConsumerState<PreviewDocumentView> {
 
   @override
   Widget build(BuildContext context) {
-    final oneDocumentSelectedState =
-        ref.read(oneDocumentSelectedPreviewProvider).currentDocument;
-    final DocumentoPorElaborarEntity doc =
-        oneDocumentSelectedState as DocumentoPorElaborarEntity;
-    final pdfUrl = doc.rutaDocumento;
 
-    testPdfAccess();
-    print("Cargando PDF desde: $pdfUrl");
+    final oneDocumentSelectedState = ref.read(oneDocumentSelectedPreviewProvider).currentDocument;
+    final pdfUrl = oneDocumentSelectedState?.rutaDocumento;
+
+    /*testPdfAccess();
+    print("Cargando PDF desde: $pdfUrl");*/
+
+
     return SafeArea(
+
       child: Column(
         children: [
+
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
@@ -73,11 +74,25 @@ class PreviewDocumentViewState extends ConsumerState<PreviewDocumentView> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
+
           Expanded(
-            child: SfPdfViewer.network(pdfUrl!),
+            child: pdfUrl == null ?
+            Column(
+              children: [
+                SfPdfViewer.network(pdfUrl!),
+                PrimaryButton(text: "Firmar", onPressed: (){
+
+                })
+
+              ],
+            )
+                :
+            Text("El documento seleccionado no tiene ruta de documento")
           ),
+
         ],
       ),
+
     );
   }
 }

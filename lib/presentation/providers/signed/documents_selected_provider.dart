@@ -40,6 +40,13 @@ class DocumentSelectedNotifier extends StateNotifier<DocumentsSelectedState> {
     return state.documentsSelected[rol]?.contains(document) ?? false;
   }
 
+  bool hasDocument(DocumentEntity document) {
+    for (final docSet in state.documentsSelected.values) {
+      if (docSet.contains(document)) return true;
+    }
+    return false;
+  }
+
   // Operaciones por rol
   void clearRol(RolEntity rol) {
     if (!state.documentsSelected.containsKey(rol)) return;
@@ -49,16 +56,32 @@ class DocumentSelectedNotifier extends StateNotifier<DocumentsSelectedState> {
     state = state.copyWith(documentsSelected: currentDocs);
   }
 
-  // Obtener documentos
+
   Set<DocumentEntity> getDocumentsForRol(RolEntity rol) {
     return state.documentsSelected[rol]?.toSet() ?? {};
   }
 
+
   List<DocumentEntity> getAllDocuments() {
-    return state.documentsSelected.values
-        .expand((docs) => docs)
-        .toList();
+
+    if (state.documentsSelected.isEmpty) return [];
+
+    final totalSize = state.documentsSelected.values
+        .fold(0, (sum, docs) => sum + docs.length);
+
+    final result = List<DocumentEntity>.empty(growable: true)..length = totalSize;
+    var index = 0;
+
+    for (final docSet in state.documentsSelected.values) {
+      for (final doc in docSet) {
+        result[index++] = doc;
+      }
+    }
+
+    return result;
+
   }
+
 
   // Operaciones globales
   void clearAllDocuments() {

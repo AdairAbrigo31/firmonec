@@ -1,3 +1,6 @@
+import 'dart:isolate';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
@@ -14,8 +17,28 @@ class SignDocumentsController {
       print("No hay documentos que firmar");
       return;
 
+    } else {
+
+      final dio = Dio(
+        BaseOptions(
+          baseUrl: "",
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 10)
+        )
+      );
+
+      //En caso de poder firmar multiples archivos
+      await Isolate.run(() {
+
+        dio.post("path", data: {
+          "rol" : "",
+          "document": "document",
+          "cetificado": "certificado"
+        });
+
+      });
+
     }
-    //LLAMAR AL ENDPOINT PARA FIRMAR
 
   }
 }
