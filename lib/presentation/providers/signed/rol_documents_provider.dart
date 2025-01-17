@@ -3,7 +3,7 @@ import 'package:tesis_firmonec/domain/entities/document_entity.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 
 
-final rolDocumentProvider = StateNotifierProvider<RolDocumentNotifier, RolDocumentsState>((ref) {
+final rolDocumentsProvider = StateNotifierProvider<RolDocumentNotifier, RolDocumentsState>((ref) {
   return RolDocumentNotifier(
       RolDocumentsState(
           documentsByRol: {},

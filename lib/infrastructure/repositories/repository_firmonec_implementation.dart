@@ -16,6 +16,7 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
     try {
       print("Logearse");
       final oauth = AadOAuth(MicrosoftID.config);
+      await oauth.logout();
       await oauth.login();
       final accessToken = await oauth.getAccessToken();
       if (accessToken != null) {
@@ -31,20 +32,30 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
     }
   }
 
+
+
   @override
-  Future<List<RolEntity>> getRoles(
-      {required String email, String? token}) async {
+  Future<List<RolEntity>> getRoles( {required String email, required String token}) async {
+
     BaseOptions baseOptions = BaseOptions(
       connectTimeout: const Duration(seconds: 30 * 1000),
       receiveTimeout: const Duration(seconds: 30 * 1000),
     );
+
     final Dio dio = Dio(baseOptions);
+
     try {
+
       final response = await dio.get(
+
         '$routeBase/Usuario/Cargos',
+
         queryParameters: {'correo': email, 'tipoUsuario': 0},
+
         options: Options(
+
           headers: {
+
             'Authorization': 'Bearer $token',
             'Accept': 'application/json',
           },

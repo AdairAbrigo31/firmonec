@@ -26,7 +26,7 @@ abstract class RepositoryFirmonec {
 
   Future<Map<String, dynamic>?> getTokenBackend(String tokenEntraID);
 
-  Future<List<RolEntity>> getRoles({required String email, String? token});
+  Future<List<RolEntity>> getRoles({required String email, required String token});
 
   Future<List<RolEntity>> getRolesWithoutToken({required String email});
 
