@@ -7,7 +7,8 @@ import 'package:tesis_firmonec/presentation/providers/signed/signed.dart';
 
 class SignDocumentsController {
 
-  static Future<List<ResponseSignDocument>> signDocumentBatch( SignBatchData batchData, WidgetRef ref ) async {
+
+  static Future<List<ResponseSignDocument>> _signDocumentBatch( SignBatchData batchData, WidgetRef ref ) async {
 
     final repository = ref.read(repositoryProvider);
 
@@ -41,14 +42,31 @@ class SignDocumentsController {
     }
 
     return results;
+
   }
 
 
-  static Future<List<ResponseSignDocument>> handleSignDocuments(BuildContext context, WidgetRef ref, CertificateEntity certificate) async {
+
+
+  static Map<String, dynamic> processResults (List<ResponseSignDocument> results) {
+
+    final success = results.where((element) => element.success).length;
+    final errors = results.where((element) => !element.success).length;
+
+    return {
+      'success': success,
+      'errors': errors,
+      'total': results.length
+    };
+
+  }
+
+  
+
+
+  static Future<List<ResponseSignDocument>> signDocuments(BuildContext context, WidgetRef ref, CertificateEntity certificate) async {
 
     final documentsSelected = ref.read(documentSelectedProvider);
-
-    final repository = ref.read(repositoryProvider);
 
     final keyCertificate = documentsSelected.password;
 
@@ -74,15 +92,13 @@ class SignDocumentsController {
         codeUser: rol.codusuario,
         documentIds: documents.map((e) => e.id).toList(),
         base64Certificate: certificate.base64,
-        keyCertificate: keyCertificate!,
-      );
-
-      
+        keyCertificate: keyCertificate,
+      );      
 
       // Crear un isolate para cada rol
       allSigningFutures.add(
 
-        Isolate.run(() => signDocumentBatch(batchData, ref))
+        Isolate.run(() => _signDocumentBatch(batchData, ref))
         
       );
 
@@ -92,9 +108,10 @@ class SignDocumentsController {
 
       final batchResults = await Future.wait(allSigningFutures);
 
-      return batchResults.expand( (batch) => batch ).toList();
+      final results =  batchResults.expand( (batch) => batch ).toList();
 
-
+      return results;
+      
     } catch (error) {
 
       throw ("$error");

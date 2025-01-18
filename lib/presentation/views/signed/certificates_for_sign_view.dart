@@ -287,7 +287,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                                       onPressedAccept: () async {
 
-                                        await SignDocumentsController.handleSignDocuments(context, ref, cert);
+                                        await SignDocumentsController.signDocuments(context, ref, cert);
 
                                         //Actualizar la ultima fecha de uso del certificado
                                         
