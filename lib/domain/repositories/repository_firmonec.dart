@@ -1,5 +1,5 @@
+import 'dart:convert';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
-import 'package:tesis_firmonec/infrastructure/entities/user_entity.dart';
 
 enum AuthError { invalidCredentials, networkError, serverError, unknown }
 
@@ -22,7 +22,7 @@ class AuthResult {
 abstract class RepositoryFirmonec {
   // Agregar los parametros necesarios para las peticiones
 
-  Future<AuthResult> loginWithMicrosoft();
+  Future<AuthResult> login();
 
   Future<Map<String, dynamic>?> getTokenBackend(String tokenEntraID);
 
@@ -36,7 +36,6 @@ abstract class RepositoryFirmonec {
   Future<List<DocumentoPorElaborarEntity>> getDocumentPorElaborar(
       String codeRol);
 
-  Future<void> signAllDocumentsByRol();
+  Future<void> signDocument(String idDocument, String codeUser, Base64Codec certificate, String keyCertificate);
 
-  Future<void> signAtLeastOneDocumentByRol();
 }

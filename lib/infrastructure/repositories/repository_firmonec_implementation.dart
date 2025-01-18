@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:aad_oauth/aad_oauth.dart';
 import 'package:dio/dio.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
@@ -8,11 +10,14 @@ import 'package:tesis_firmonec/infrastructure/mapers/document_mapper.dart';
 import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
 
 class RepositoryFirmonecImplementation extends RepositoryFirmonec {
-  //Revisar el si funciona con la palabra localhost
+
+
   final String routeBase = 'http://10.0.2.2:5299/api';
 
+
+
   @override
-  Future<AuthResult> loginWithMicrosoft() async {
+  Future<AuthResult> login() async {
     try {
       print("Logearse");
       final oauth = AadOAuth(MicrosoftID.config);
@@ -168,18 +173,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   }
 
   @override
-  Future<void> signAllDocumentsByRol() {
-    // TODO: implement signAllDocumentsByRol
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> signAtLeastOneDocumentByRol() {
-    // TODO: implement signAtLeastOneDocumentByRol
-    throw UnimplementedError();
-  }
-
-  @override
   Future<List<DocumentoPorElaborarEntity>> getDocumentPorElaborar(
       String codeRol) async {
     final dio = Dio();
@@ -227,6 +220,15 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   Future<List<DocumentoPorElaborarEntity>> getDocumentReasignado(
       String codeRol) {
     // TODO: implement getDocumentReasignado
+    throw UnimplementedError();
+  }
+
+
+  
+
+  @override
+  Future<void> signDocument(String idDocument, String codeUser, Base64Codec certificate, String keyCertificate) {
+    // TODO: implement signDocument
     throw UnimplementedError();
   }
 }

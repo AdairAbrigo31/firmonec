@@ -1,18 +1,15 @@
-import 'package:aad_oauth/aad_oauth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/domain/entities/document_entity.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
-import 'package:tesis_firmonec/infrastructure/entities/user_entity.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 
-import '../../configuration/microsoftID.dart';
 
 class GetInformationUserController {
   static Future<void> executeActionsWithMicrosoft(WidgetRef ref) async {
 
     final repository = ref.read(repositoryProvider);
 
-    final valid = await repository.loginWithMicrosoft();
+    final valid = await repository.login();
 
     print("Paso el login de microsoft exito");
 
