@@ -1,2 +1,2 @@
 export 'login_quipux_view.dart';
-export 'quipux_saved_view.dart';
+export 'login_with_entraid_view.dart';

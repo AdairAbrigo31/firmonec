@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,8 +40,11 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
       );
 
       if (result != null) {
+
+        final file = File(result.files.single.path!);
+        final bytes = await file.readAsBytes();
+        final base64String = base64Encode( bytes );
         
-        //Modal para introducir descripcion y contraseña para validar el guardado
         await showDialog<String>(
 
           context: context,
@@ -74,6 +80,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                       createdAt: DateTime.now(),
                       lastUsed: null,
                       filePath: result.files.single.path!,
+                      base64: base64String
                     ); 
 
                     CertificatesUserController.saveCertificateUser(certificate);
@@ -121,15 +128,19 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
             const SizedBox(height: 8),
             
             const Text(
+
               "Seleccione un certificado para firmar o agregue uno nuevo",
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 16,
               ),
+
             ),
+
             const SizedBox(height: 24),
 
             Expanded(
+
               child: FutureBuilder(
                 future: CertificateStorage.getCertificates(user.email ?? 'prueba'),
                 builder: (context, snapshot) {
@@ -239,6 +250,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                             icon: const Icon(Icons.more_vert),
                             itemBuilder: (context) => [
+
                               const PopupMenuItem(
                                 value: 'use',
                                 child: Text('Usar certificado'),
@@ -268,10 +280,12 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                                       descriptionCertificate: cert.alias,
 
-                                      onPressedAccept: (){
+                                      onPressedAccept: () async {
 
-                                        SignDocumentsController.handleSignDocuments(context, ref, cert);
+                                        await SignDocumentsController.handleSignDocuments(context, ref, cert);
 
+                                        //Actualizar la ultima fecha de uso del certificado
+                                        
                                         if(context.mounted){
 
                                           Navigator.of(context).pop();
@@ -318,7 +332,9 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
 
             const SizedBox(height: 16),
+
             PrimaryButton(
+
               text: "Agregar certificado",
               onPressed: () {
 

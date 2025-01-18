@@ -77,6 +77,7 @@ class CertificateStorage {
       lastUsed: DateTime.now(),
       alias: certificate.alias,
       emailOwner: certificate.emailOwner,
+      base64: certificate.base64,
     );
 
     await updateCertificate(updatedCertificate);

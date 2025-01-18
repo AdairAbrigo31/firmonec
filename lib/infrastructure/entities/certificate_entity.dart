@@ -8,6 +8,7 @@ class CertificateEntity {
   final DateTime? lastUsed; // Última vez que se usó
   final String alias;       // Alias o nombre común del certificado
   final String emailOwner;   // Nombre del propietario del certificado
+  final String base64;
 
   CertificateEntity({
     required this.id,
@@ -18,6 +19,7 @@ class CertificateEntity {
     this.lastUsed,
     required this.alias,
     required this.emailOwner,
+    required this.base64
   });
 
   // Convertir a Map
@@ -31,6 +33,7 @@ class CertificateEntity {
       'lastUsed': lastUsed?.toIso8601String(),
       'alias': alias,
       'emailOwner': emailOwner,
+      'base64': base64
     };
   }
 
@@ -45,6 +48,7 @@ class CertificateEntity {
       lastUsed: map['lastUsed'] != null ? DateTime.parse(map['lastUsed']) : null,
       alias: map['alias'],
       emailOwner: map['emailOwner'],
+      base64: map['base64']
     );
   }
 }

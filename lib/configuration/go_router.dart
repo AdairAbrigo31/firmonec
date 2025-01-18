@@ -19,12 +19,6 @@ final router = GoRouter(
       ),
 
       GoRoute(
-        name: 'quipux_saved',
-        path: '/quipux_saved',
-        builder: (context, state) => const QuipuxSavedScreen(),
-      ),
-
-      GoRoute(
           name: 'login_quipux',
           path: '/login_quipux',
         builder: (context, state) => const LoginQuipuxScreen()
