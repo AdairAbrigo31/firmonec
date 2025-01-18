@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:aad_oauth/aad_oauth.dart';
 import 'package:dio/dio.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
@@ -173,8 +171,8 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   }
 
   @override
-  Future<List<DocumentoPorElaborarEntity>> getDocumentPorElaborar(
-      String codeRol) async {
+  Future<List<DocumentoPorElaborarEntity>> getDocumentPorElaborar( String codeRol) async {
+    
     final dio = Dio();
 
     try {
@@ -227,8 +225,47 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   
 
   @override
-  Future<void> signDocument(String idDocument, String codeUser, Base64Codec certificate, String keyCertificate) {
-    // TODO: implement signDocument
-    throw UnimplementedError();
+  Future<ResponseSignDocument> signDocument(String idDocument, String codeUser, String base64Certificate, String keyCertificate) async {
+    
+    try { 
+
+      final dio = Dio(
+      BaseOptions(
+        baseUrl: routeBase,
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10)
+        )
+      );
+
+      final response = await dio.post(
+        'FirmarDocumento/Firmar', 
+        data: {
+          'radicado_numero' : idDocument,
+          'idusuario' : codeUser,
+          'firma' : base64Certificate,
+          'key': keyCertificate
+        }
+      );
+
+      //Crear la instancia de ResponseSignDocument con los datos de la respuesta
+
+      //Mapper de la respuesta
+
+      final responseProcess = ResponseSignDocument(
+            success: true,
+            documentId: "",
+            error: null
+          );
+      
+      return responseProcess;
+
+
+    } catch (error) {
+
+      throw ("$error");
+    }
+
+    
+
   }
 }

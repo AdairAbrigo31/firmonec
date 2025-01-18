@@ -3,7 +3,7 @@ class CertificateEntity {
   final String id;          // Identificador único
   final String name;        // Nombre del certificado
   final String filePath;    // Ruta del archivo
-  final String password;    // Contraseña encriptada
+  final String? password;    // Contraseña encriptada
   final DateTime createdAt; // Fecha de registro
   final DateTime? lastUsed; // Última vez que se usó
   final String alias;       // Alias o nombre común del certificado
@@ -14,7 +14,7 @@ class CertificateEntity {
     required this.id,
     required this.name,
     required this.filePath,
-    required this.password,
+    this.password,
     required this.createdAt,
     this.lastUsed,
     required this.alias,

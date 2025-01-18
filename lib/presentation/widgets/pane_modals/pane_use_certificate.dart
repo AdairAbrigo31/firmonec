@@ -1,17 +1,23 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/presentation/widgets/buttons/buttons.dart';
 
 class PaneUseCertificate extends ConsumerWidget{
   
   final void Function() onPressedAccept;
 
-  final void Function(String) onChagedPassword;
+  final void Function(String) onChangedPassword;
 
-  final String descriptionCertificate;
+  final CertificateEntity certificateEntity;
 
-  const PaneUseCertificate({super.key , required this.onPressedAccept, required this.onChagedPassword, required this.descriptionCertificate});
+  const PaneUseCertificate({
+    super.key , 
+    required this.onPressedAccept, 
+    required this.onChangedPassword, 
+    required this.certificateEntity
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,7 +36,7 @@ class PaneUseCertificate extends ConsumerWidget{
 
         children: [
 
-           Text("El certificado seleccionado es: $descriptionCertificate"),
+           Text("El certificado seleccionado es: ${certificateEntity.alias}"),
 
           const Text( "Por favor ingrese la contraseña del certificado"),
 
@@ -42,7 +48,7 @@ class PaneUseCertificate extends ConsumerWidget{
 
             ),
 
-            onChanged: onChagedPassword,
+            onChanged: onChangedPassword,
 
           ),
 
@@ -59,7 +65,13 @@ class PaneUseCertificate extends ConsumerWidget{
               }),
               
               
-              PrimaryButton(text: "Aceptar", onPressed: onPressedAccept),
+              PrimaryButton(
+                
+                text: "Aceptar", 
+                
+                onPressed: onPressedAccept
+                
+              ),
 
             ],
 

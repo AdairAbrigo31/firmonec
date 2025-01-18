@@ -1,7 +1,6 @@
 import 'package:tesis_firmonec/domain/entities/entities.dart';
 
 class DocumentoPorElaborarEntity extends DocumentEntity {
-  final String id;
   final String de;
   final String para;
   final String fechaDocumento;
@@ -13,7 +12,7 @@ class DocumentoPorElaborarEntity extends DocumentEntity {
   final String contenido;
 
   DocumentoPorElaborarEntity({
-    required this.id,
+    required super.id,
     required this.de,
     required this.para,
     required super.asunto,

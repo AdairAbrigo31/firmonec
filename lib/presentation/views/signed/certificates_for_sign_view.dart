@@ -13,6 +13,7 @@ import 'package:tesis_firmonec/presentation/providers/signed/signed.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 class CertificatesForSignView extends ConsumerStatefulWidget {
+
   const CertificatesForSignView({super.key});
 
   @override
@@ -109,6 +110,8 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
   Widget build(BuildContext context) {
 
     final user = ref.watch(userActiveProvider);
+
+    String password;
 
     return SafeArea(
       child: Padding(
@@ -268,7 +271,9 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                               if (value == 'use') {
 
-                                ref.read(documentSelectedProvider.notifier).updateCertificate(cert);
+                                final notifierCertificate = ref.read(documentSelectedProvider.notifier);
+
+                                notifierCertificate.updateCertificate(cert);
 
                                 showDialog(
                                   
@@ -278,7 +283,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                                     child: PaneUseCertificate(
 
-                                      descriptionCertificate: cert.alias,
+                                      certificateEntity: cert,
 
                                       onPressedAccept: () async {
 
@@ -294,10 +299,9 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                                       }, 
                                       
-                                      onChagedPassword: (value) {
+                                      onChangedPassword: (value) {
 
-                                        ref.read(documentSelectedProvider.notifier).updatePassword(value);
-
+                                        notifierCertificate.updatePassword(value);
 
                                       }
                                     )

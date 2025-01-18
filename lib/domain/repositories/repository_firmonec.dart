@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 
 enum AuthError { invalidCredentials, networkError, serverError, unknown }
@@ -36,6 +35,6 @@ abstract class RepositoryFirmonec {
   Future<List<DocumentoPorElaborarEntity>> getDocumentPorElaborar(
       String codeRol);
 
-  Future<void> signDocument(String idDocument, String codeUser, Base64Codec certificate, String keyCertificate);
+  Future<ResponseSignDocument> signDocument(String idDocument, String codeUser, String base64Certificate, String keyCertificate);
 
 }

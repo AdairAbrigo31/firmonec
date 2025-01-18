@@ -1,43 +1,103 @@
 import 'dart:isolate';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
-import 'package:tesis_firmonec/presentation/providers/signed/documents_selected_provider.dart';
+import 'package:tesis_firmonec/presentation/providers/signed/signed.dart';
+
 
 class SignDocumentsController {
 
-  static Future<void> handleSignDocuments(BuildContext context, WidgetRef ref, CertificateEntity certificate) async {
+  static Future<List<ResponseSignDocument>> signDocumentBatch( SignBatchData batchData, WidgetRef ref ) async {
+
+    final repository = ref.read(repositoryProvider);
+
+    final results = <ResponseSignDocument>[];
+
+    for (final docId in batchData.documentIds) {
+
+      try {
+
+        final response = await repository.signDocument(
+          docId,
+          batchData.codeUser,
+          batchData.base64Certificate,
+          batchData.keyCertificate,
+        );
+
+        results.add(
+          response
+        );
+
+      } catch (e) {
+
+        results.add(
+          ResponseSignDocument(
+            success: false,
+            documentId: docId,
+            error: null
+          )
+        );
+      }
+    }
+
+    return results;
+  }
+
+
+  static Future<List<ResponseSignDocument>> handleSignDocuments(BuildContext context, WidgetRef ref, CertificateEntity certificate) async {
 
     final documentsSelected = ref.read(documentSelectedProvider);
 
+    final repository = ref.read(repositoryProvider);
+
+    final keyCertificate = documentsSelected.password;
+
+    final documentsForSign = documentsSelected.documentsSelected;
+
+
     if (documentsSelected.totalDocuments == 0) {
+      throw Exception("No hay documentos que firmar");
+    }
 
-      print("No hay documentos que firmar");
-      return;
+    if (keyCertificate == null) {
+      throw Exception("No se ha proporcionado la clave del certificado");
+    }
 
-    } else {
+    final allSigningFutures = <Future<List<ResponseSignDocument>>>[];
 
-      final dio = Dio(
-        BaseOptions(
-          baseUrl: "",
-          connectTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 10)
-        )
+    for (final entry in documentsForSign.entries) {
+
+      final rol = entry.key;
+      final documents = entry.value;
+      
+      final batchData = SignBatchData(
+        codeUser: rol.codusuario,
+        documentIds: documents.map((e) => e.id).toList(),
+        base64Certificate: certificate.base64,
+        keyCertificate: keyCertificate!,
       );
 
-      //En caso de poder firmar multiples archivos
-      await Isolate.run(() {
+      
 
-        dio.post("path", data: {
-          "rol" : "",
-          "document": "document",
-          "cetificado": "certificado"
-        });
+      // Crear un isolate para cada rol
+      allSigningFutures.add(
 
-      });
+        Isolate.run(() => signDocumentBatch(batchData, ref))
+        
+      );
 
+    }
+
+    try {
+
+      final batchResults = await Future.wait(allSigningFutures);
+
+      return batchResults.expand( (batch) => batch ).toList();
+
+
+    } catch (error) {
+
+      throw ("$error");
     }
 
   }
