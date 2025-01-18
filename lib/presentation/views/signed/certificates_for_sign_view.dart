@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/persistence/certificate_storage.dart';
 import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
-import 'package:tesis_firmonec/presentation/providers/login/user_active_provider.dart';
-import 'package:tesis_firmonec/presentation/providers/signed/documents_selected_provider.dart';
+import 'package:tesis_firmonec/presentation/providers/login/login.dart';
+import 'package:tesis_firmonec/presentation/providers/signed/signed.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 class CertificatesForSignView extends ConsumerStatefulWidget {
@@ -29,6 +29,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
     });
 
     try {
+
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['p12'],
@@ -46,12 +47,18 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
             final nameCertificate = result.files.single.name;
             String description = '';
+            String password = '';
 
             return ModalLayouts(context).showSimpleModal(
 
               child: PaneSaveCertificates(
 
                 nameCertificate: nameCertificate,
+
+                onChangedPassword: (value) {
+                  password = value;
+                },
+
                 onChangedDescription: (value) {
                   description = value;
                 },
@@ -62,7 +69,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                       id: DateTime.now().millisecondsSinceEpoch.toString(),
                       name: nameCertificate,
                       alias: description,
-                      password: "contrasena",
+                      password: password,
                       emailOwner: emaiUser,
                       createdAt: DateTime.now(),
                       lastUsed: null,
