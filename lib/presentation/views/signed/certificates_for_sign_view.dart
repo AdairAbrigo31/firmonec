@@ -9,6 +9,7 @@ import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/persistence/certificate_storage.dart';
 import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
 import 'package:tesis_firmonec/presentation/providers/login/login.dart';
+import 'package:tesis_firmonec/presentation/providers/signed/results_documents_signed_provider.dart';
 import 'package:tesis_firmonec/presentation/providers/signed/signed.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
@@ -287,14 +288,33 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                                       onPressedAccept: () async {
 
-                                        await SignDocumentsController.signDocuments(context, ref, cert);
+                                        try {
 
-                                        //Actualizar la ultima fecha de uso del certificado
-                                        
-                                        if(context.mounted){
+                                          //Modal Loading
 
-                                          Navigator.of(context).pop();
+                                          final signedDocuments = await SignDocumentsController.signDocuments(context, ref, cert);
+
+                                          final results = SignDocumentsController.processResults(signedDocuments);
+
+                                          //Actualizar la ultima fecha de uso del certificado
+
+                                          ref.read(resultsDocumentsSignedProvider.notifier).update((old) => results);
+                                          
+                                          if(context.mounted){
+
+                                            Navigator.of(context).pop();
+                                          
+                                          }
+
+                                        } 
                                         
+                                        catch (error) {
+
+                                          throw ("$error");
+
+                                        } finally {
+
+                                          //Cerrar Loading
                                         }
 
                                       }, 
