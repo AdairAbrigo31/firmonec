@@ -107,14 +107,21 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+
+                  if (doc.rutaDocumento != null)
                   TextButton.icon(
                     icon: const Icon(Icons.visibility),
                     label: const Text('Ver PDF'),
                     onPressed: () {
+
                       oneDocumentSelectedPreviewNotifier.setDocument(doc);
-                      Navigator.pushNamed(context, "preview_document_selected");
+                      router.pushNamed("preview_one_document");
+
                     },
-                  ),
+                  )
+                  else 
+                  const Text("No hay PDF"),
+
                   const SizedBox(width: 8),
                   CheckboxDocument(rol: rol, document: doc)
                 ],
@@ -217,8 +224,10 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                     icon: const Icon(Icons.visibility),
                     label: const Text('Ver PDF'),
                     onPressed: () {
+
                       oneDocumentSelectedPreviewNotifier.setDocument(doc);
-                      router.pushNamed('preview_document_selected');
+                      router.pushNamed('preview_one_document');
+                      
                     },
                   )
                   else 
@@ -247,140 +256,145 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
 
   @override
   Widget build(BuildContext context) {
-
     final userProvider = ref.watch(userActiveProvider);
     final rolDocProvider = ref.read(rolDocumentsProvider);
     final roles = rolDocProvider.documentsByRol?.keys.toList() ?? [];
 
-
     return SafeArea(
-
-      child: Center(
-
-        child: Column(
-
-          children: [
-
-            Text("Bienvenido ${userProvider.email}"),
-            roles.isEmpty ?
-
-            const Center(
-              child: Text("No hay roles para este usuario"),
-            )
-
-            :
-
-            Expanded(
-              flex: 5,
-              child: Column(
-                children: [
-
-                  Accordion(
-                    maxOpenSections: 1,
-                    scaleWhenAnimating: false, // Previene problemas de renderizado
-                    openAndCloseAnimation: false, // Opcional: desactiva la animación
-                    headerBackgroundColor: Colors.transparent,
-                    headerBackgroundColorOpened: Colors.transparent,
-                    contentBackgroundColor: Colors.transparent,
-                    contentBorderColor: Colors.transparent,
-                    // Importante: mantener el índice de la sección abierta
-                    initialOpeningSequenceDelay: 0,
-                    children: roles.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final rol = entry.value;
-                      final documents = rolDocProvider.getDocumentsForRol(rol);
-
-                      return AccordionSection(
-                        isOpen: index == openSectionIndex,
-                        onOpenSection: () {
-                          setState(() => openSectionIndex = index);
-                        },
-                        onCloseSection: () {
-                          setState(() => openSectionIndex = null);
-                        },
-                        header: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Colors.blue[700]!, Colors.blue[500]!],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.blue.withOpacity(0.3),
-                                blurRadius: 5,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  rol.cargo,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.5,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  '${documents.length}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        content: documents.isEmpty
-                            ? const Center(
-                          child: Text("No tiene documentos para este cargo"),
-                        )
-                            : ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: documents.length,
-                          itemBuilder: (context, index) {
-                            return buildDocumentCard(rol, documents[index]);
-                          },
-                        ),
-                      );
-                    }).toList(),
-                  ),
-
-                  PrimaryButton(
-
-                    text: "Firmar",
-
-                    onPressed: (){
-
-                      router.pushNamed("certificates_for_sign");
-
-                    }
+      child: Column(
+        children: [
+          // Header con el email
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text("Bienvenido ${userProvider.email}"),
+          ),
+          
+          // Contenido principal
+          Expanded(
+            child: roles.isEmpty
+                ? const Center(
+                    child: Text("No hay roles para este usuario"),
                   )
-                ],
-              )
+                : Column(
+                    children: [
+                      // Accordion en un Expanded con scroll
+                      Expanded(
+                        child: Accordion(
+                          maxOpenSections: 1,
+                          scaleWhenAnimating: false,
+                          openAndCloseAnimation: false,
+                          headerBackgroundColor: Colors.transparent,
+                          headerBackgroundColorOpened: Colors.transparent,
+                          contentBackgroundColor: Colors.transparent,
+                          contentBorderColor: Colors.transparent,
+                          initialOpeningSequenceDelay: 0,
+                          children: roles.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final rol = entry.value;
+                            final documents = rolDocProvider.getDocumentsForRol(rol);
+
+                            return AccordionSection(
+                              isOpen: index == openSectionIndex,
+                              onOpenSection: () {
+                                setState(() => openSectionIndex = index);
+                              },
+                              onCloseSection: () {
+                                setState(() => openSectionIndex = null);
+                              },
+                              header: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                  horizontal: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [Colors.blue[700]!, Colors.blue[500]!],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.blue.withOpacity(0.3),
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        rol.cargo,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 0.5,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        '${documents.length}',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              content: Container(
+                                // Contenedor con altura máxima para el scroll
+                                constraints: const BoxConstraints(
+                                  maxHeight: 300, // Altura máxima para el contenido
+                                ),
+                                child: documents.isEmpty
+                                    ? const Center(
+                                        child: Text(
+                                          "No tiene documentos para este cargo",
+                                        ),
+                                      )
+                                    : SingleChildScrollView(
+                                        child: Column(
+                                          children: documents.map((document) {
+                                            return buildDocumentCard(rol, document);
+                                          }).toList(),
+                                        ),
+                                      ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+          
+          // Botón fijo en la parte inferior
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: PrimaryButton(
+              text: "Firmar",
+              onPressed: () {
+                router.pushNamed("preview_all_documents_selected");
+              },
             ),
-
-          ],
-
-        ),
-      )
+          ),
+        ],
+      ),
     );
   }
 

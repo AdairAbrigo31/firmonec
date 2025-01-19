@@ -2,7 +2,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tesis_firmonec/presentation/screens/login/login_with_entraid_screen.dart';
 import 'package:tesis_firmonec/presentation/screens/screens.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -10,7 +9,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: navigatorKey,
-  initialLocation: '/button_entraid',
+  initialLocation: '/login_quipux',
     routes: [
       GoRoute(
         name: 'button_entraid',
@@ -31,9 +30,15 @@ final router = GoRouter(
       ),
 
       GoRoute(
-        name: 'preview_document_selected',
-        path: '/preview_document_selected',
-        builder: (context, state) => const PreviewDocumentsSelectedScreen(),
+        name: 'preview_one_document',
+        path: '/preview_one_document',
+        builder: (context, state) => const PreviewOneDocumentScreen(),
+      ),
+
+      GoRoute(
+        name: 'preview_all_documents_selected',
+        path: '/preview_all_documents_selected',
+        builder: (context, state) => const PreviewAllDocumentsSelectedScreen(),
       ),
 
       GoRoute(

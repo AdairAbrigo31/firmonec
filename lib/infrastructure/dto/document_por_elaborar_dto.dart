@@ -12,6 +12,7 @@ class DocumentPorElaborarDto {
   final String hidRadiLeido; // Corregido el nombre
   final String contenido; // Nuevo
   final String base64; // Nuevo (para cuando se necesite el PDF)
+  final String? rutaDocumento;
 
   const DocumentPorElaborarDto({
     required this.id,
@@ -27,26 +28,25 @@ class DocumentPorElaborarDto {
     required this.hidRadiLeido,
     required this.contenido,
     this.base64 = '', // Opcional, ya que podría no venir en el JSON inicial
+    this.rutaDocumento,
   });
 
   factory DocumentPorElaborarDto.fromJson(Map<String, dynamic> json) {
-    print('response: $json');
     return DocumentPorElaborarDto(
       id: json['id'] ?? '',
       de: json['de'] ?? '',
       para: json['para'] ?? '',
       asunto: json['asunto'] ?? '',
       datFechaDocumento: json['DAT_Fecha_Documento'] ?? '',
-      hidRadiNumeRadi:
-          json['HID_RADI_NUME_RADI'] ?? '', // Corregido el nombre del campo
+      hidRadiNumeRadi:json['HID_RADI_NUME_RADI'] ?? '', // Corregido el nombre del campo
       numeroDocumento: json['Número_Documento'] ?? '',
       noReferencia: json['No_Referencia'] ?? '',
       tipoDocumento: json['Tipo_Documento'] ?? '',
       categoria: json['Categoría'] ?? '',
-      hidRadiLeido:
-          json['HID_RADI_LEIDO'] ?? '', // Corregido el nombre del campo
+      hidRadiLeido: json['HID_RADI_LEIDO'] ?? '', // Corregido el nombre del campo
       contenido: json['contenido'] ?? '',
       base64: json['base64'] ?? '',
+      rutaDocumento: json['ruta_documento'],
     );
   }
 
@@ -65,6 +65,7 @@ class DocumentPorElaborarDto {
       'HID_RADI_LEIDO': hidRadiLeido,
       'contenido': contenido,
       'base64': base64,
+      'rutaDocumento': rutaDocumento
     };
   }
 

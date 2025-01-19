@@ -16,6 +16,7 @@ class DocumentMapper {
       categoria: dto.categoria,
       leido: dto.hidRadiLeido, // Corregido
       contenido: dto.contenido, // Nuevo
+      rutaDocumento: dto.rutaDocumento,
     );
   }
 
@@ -40,6 +41,7 @@ class DocumentMapper {
       categoria: entity.categoria,
       hidRadiLeido: entity.leido, // Corregido
       contenido: entity.contenido, // Nuevo
+      rutaDocumento: entity.rutaDocumento
     );
   }
 }

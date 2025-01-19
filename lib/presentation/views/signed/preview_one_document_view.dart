@@ -5,15 +5,15 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 import 'package:tesis_firmonec/presentation/widgets/buttons/buttons.dart';
 
-class PreviewDocumentView extends ConsumerStatefulWidget {
-  const PreviewDocumentView({super.key});
+class PreviewOneDocumentView extends ConsumerStatefulWidget {
+  const PreviewOneDocumentView({super.key});
 
   @override
-  ConsumerState<PreviewDocumentView> createState() =>
-      PreviewDocumentViewState();
+  ConsumerState<PreviewOneDocumentView> createState() =>
+      PreviewOneDocumentViewState();
 }
 
-class PreviewDocumentViewState extends ConsumerState<PreviewDocumentView> {
+class PreviewOneDocumentViewState extends ConsumerState<PreviewOneDocumentView> {
   bool isLoading = true;
 
   @override
@@ -54,45 +54,56 @@ class PreviewDocumentViewState extends ConsumerState<PreviewDocumentView> {
 
   @override
   Widget build(BuildContext context) {
-
     final oneDocumentSelectedState = ref.read(oneDocumentSelectedPreviewProvider).currentDocument;
     final pdfUrl = oneDocumentSelectedState?.rutaDocumento;
 
-    /*testPdfAccess();
-    print("Cargando PDF desde: $pdfUrl");*/
-
-
     return SafeArea(
-
       child: Column(
         children: [
-
-          const Padding(
-            padding: EdgeInsets.all(8.0),
+          // Título
+          Padding(
+            padding: const EdgeInsets.all(4.0),
             child: Text(
-              "Previsualización del documento seleccionado",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              "Documento con asunto: ${oneDocumentSelectedState!.asunto}",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              maxLines: 4,
             ),
           ),
-
+          
+          // Contenido principal
           Expanded(
-            child: pdfUrl == null ?
-            Column(
+            child: Column(
               children: [
-                SfPdfViewer.network(pdfUrl!),
-                PrimaryButton(text: "Firmar", onPressed: (){
-
-                })
-
+                // Área del PDF o mensaje de error
+                Expanded(
+                  child: pdfUrl != null
+                      ? SfPdfViewer.network(
+                          pdfUrl,
+                          // Opcional: mostrar indicador de carga mientras se descarga el PDF
+                          onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
+                            // Manejar error de carga si es necesario
+                          },
+                        )
+                      : const Center(
+                          child: Text("El documento seleccionado no tiene ruta de documento"),
+                        ),
+                ),
+                
+                // Botón siempre visible en la parte inferior
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: PrimaryButton(
+                    text: "Firmar",
+                    onPressed: () {
+                      // Tu lógica de firma aquí
+                    },
+                  ),
+                ),
               ],
-            )
-                :
-            Text("El documento seleccionado no tiene ruta de documento")
+            ),
           ),
-
         ],
       ),
-
     );
   }
 }

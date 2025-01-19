@@ -24,6 +24,7 @@ class DocumentoPorElaborarEntity extends DocumentEntity {
     required this.categoria,
     required this.leido,
     required this.contenido,
+    required super.rutaDocumento,
   });
 
   // Constructor de copia
@@ -40,6 +41,7 @@ class DocumentoPorElaborarEntity extends DocumentEntity {
     String? categoria,
     String? leido,
     String? contenido,
+    String? rutaDocumento,
   }) {
     return DocumentoPorElaborarEntity(
         id: id ?? this.id,
@@ -54,6 +56,7 @@ class DocumentoPorElaborarEntity extends DocumentEntity {
         categoria: categoria ?? this.categoria,
         leido: leido ?? this.leido,
         contenido: contenido ?? this.contenido,
+        rutaDocumento: rutaDocumento ?? this.rutaDocumento
     );
   }
 

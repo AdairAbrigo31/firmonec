@@ -10,7 +10,7 @@ import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
 class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
 
-  final String routeBase = 'http://10.0.2.2:5299/api';
+  final String routeBase = 'https://28fd-192-188-59-82.ngrok-free.app/api';
 
 
 
@@ -82,8 +82,7 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
       final List<dynamic> jsonList = response.data;
       if (jsonList.isEmpty) return [];
 
-      final List<RolDto> rolesDto =
-          jsonList.map((json) => RolDto.fromJson(json)).toList();
+      final List<RolDto> rolesDto = jsonList.map((json) => RolDto.fromJson(json)).toList();
 
       final List<RolEntity> roles = RolMapper.fromDtoList(rolesDto);
 
@@ -181,11 +180,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
         queryParameters: {
           'idUsuario': codeRol,
         },
-/*          options: Options(
-              headers: {
-                "Authorization": "Bearer =================>  TOKEN",
-              }
-          )*/
       );
 
       if (response.statusCode != 200) {
