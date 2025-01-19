@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +8,6 @@ import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/persistence/certificate_storage.dart';
 import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
 import 'package:tesis_firmonec/presentation/providers/login/login.dart';
-import 'package:tesis_firmonec/presentation/providers/signed/results_documents_signed_provider.dart';
 import 'package:tesis_firmonec/presentation/providers/signed/signed.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
@@ -55,17 +53,12 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
             final nameCertificate = result.files.single.name;
             String description = '';
-            String password = '';
 
             return ModalLayouts(context).showSimpleModal(
 
               child: PaneSaveCertificates(
 
                 nameCertificate: nameCertificate,
-
-                onChangedPassword: (value) {
-                  password = value;
-                },
 
                 onChangedDescription: (value) {
                   description = value;
@@ -77,7 +70,6 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                       id: DateTime.now().millisecondsSinceEpoch.toString(),
                       name: nameCertificate,
                       alias: description,
-                      password: password,
                       emailOwner: emaiUser,
                       createdAt: DateTime.now(),
                       lastUsed: null,
@@ -292,7 +284,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                                           //Modal Loading
 
-                                          final signedDocuments = await SignDocumentsController.signDocuments(context, ref, cert);
+                                          final signedDocuments = await SignDocumentsController.signDocuments(context, ref);
 
                                           final results = SignDocumentsController.processResults(signedDocuments);
 

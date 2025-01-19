@@ -19,6 +19,8 @@ class GetInformationUserController {
 
       final responseData = await repository.getTokenBackend(valid.token!);
 
+      print("Paso el login firmonec exito");
+
       return responseData;
 
     } catch (error) {

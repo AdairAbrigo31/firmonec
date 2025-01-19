@@ -5,14 +5,12 @@ import 'package:tesis_firmonec/presentation/widgets/buttons/buttons.dart';
 class PaneSaveCertificates extends ConsumerWidget {
   final void Function() onPressedAccept;
   final void Function(String) onChangedDescription;
-  final void Function(String) onChangedPassword;
   final String nameCertificate;
 
   const PaneSaveCertificates({
     super.key,
     required this.onPressedAccept,
     required this.onChangedDescription,
-    required this.onChangedPassword,
     required this.nameCertificate
   });
 
@@ -57,26 +55,6 @@ class PaneSaveCertificates extends ConsumerWidget {
 
             ),
             onChanged: onChangedDescription,
-          ),
-
-          const SizedBox(height: 16),
-
-          const Text(
-            "Ingrese la contraseña del cetificado",
-            textAlign: TextAlign.center,
-          ),
-
-          const SizedBox(height: 8),
-
-          TextField(
-
-            decoration: const
-             InputDecoration(
-
-              border: OutlineInputBorder(),
-
-            ),
-            onChanged: onChangedPassword,
           ),
 
           const SizedBox(height: 16),

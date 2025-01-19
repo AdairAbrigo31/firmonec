@@ -2,7 +2,7 @@ import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
-import 'package:tesis_firmonec/presentation/providers/signed/signed.dart';
+import 'package:tesis_firmonec/presentation/providers/providers.dart';
 
 
 class SignDocumentsController {
@@ -64,9 +64,11 @@ class SignDocumentsController {
   
 
 
-  static Future<List<ResponseSignDocument>> signDocuments(BuildContext context, WidgetRef ref, CertificateEntity certificate) async {
+  static Future<List<ResponseSignDocument>> signDocuments(BuildContext context, WidgetRef ref) async {
 
     final documentsSelected = ref.read(documentSelectedProvider);
+
+    final certificate = documentsSelected.certificate;
 
     final keyCertificate = documentsSelected.password;
 
@@ -89,9 +91,9 @@ class SignDocumentsController {
       final documents = entry.value;
       
       final batchData = SignBatchData(
-        codeUser: rol.codusuario,
+        codeUser: int.parse( rol.codusuario ),
         documentIds: documents.map((e) => e.id).toList(),
-        base64Certificate: certificate.base64,
+        base64Certificate: certificate!.base64,
         keyCertificate: keyCertificate,
       );      
 

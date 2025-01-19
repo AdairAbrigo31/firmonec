@@ -35,6 +35,6 @@ abstract class RepositoryFirmonec {
   Future<List<DocumentoPorElaborarEntity>> getDocumentPorElaborar(
       String codeRol);
 
-  Future<ResponseSignDocument> signDocument(String idDocument, String codeUser, String base64Certificate, String keyCertificate);
+  Future<ResponseSignDocument> signDocument(String idDocument, int codeUser, String base64Certificate, String keyCertificate);
 
 }

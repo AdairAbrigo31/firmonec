@@ -1,7 +1,7 @@
 
 class SignBatchData {
 
-  final String codeUser;
+  final int codeUser;
   final List<String> documentIds;
   final String base64Certificate;
   final String keyCertificate;

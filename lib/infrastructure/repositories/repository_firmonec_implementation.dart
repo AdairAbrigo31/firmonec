@@ -225,7 +225,7 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   
 
   @override
-  Future<ResponseSignDocument> signDocument(String idDocument, String codeUser, String base64Certificate, String keyCertificate) async {
+  Future<ResponseSignDocument> signDocument(String idDocument, int codeUser, String base64Certificate, String keyCertificate) async {
     
     try { 
 
@@ -246,6 +246,8 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
           'key': keyCertificate
         }
       );
+
+      print(response);
 
       //Crear la instancia de ResponseSignDocument con los datos de la respuesta
 
