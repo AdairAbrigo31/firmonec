@@ -65,7 +65,7 @@ class DocumentsSignedView extends ConsumerWidget {
 
                   LoadingModal.show(context);
 
-                  await GetInformationUserController.refreshDataQuipux(ref);
+                  await GetInformationUserController.refreshDataQuipuxWithoutToken(ref, context);
 
 
                 } catch (error) {
