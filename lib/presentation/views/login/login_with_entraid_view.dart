@@ -12,7 +12,9 @@ class LoginWithEntraIDView extends ConsumerWidget {
     return SafeArea(
 
         child: FutureBuilder(
-            future: GetInformationUserController.getDataQuipux(ref),
+
+            future: GetInformationUserController.getDataQuipux(ref, context),
+            
             builder: (context, snapshot) {
 
               if (snapshot.connectionState == ConnectionState.waiting) {

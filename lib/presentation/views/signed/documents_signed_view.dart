@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
-import 'package:tesis_firmonec/presentation/providers/signed/results_documents_signed_provider.dart';
-import 'package:tesis_firmonec/presentation/widgets/buttons/buttons.dart';
+import 'package:tesis_firmonec/presentation/providers/signed/signed.dart';
+import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 class DocumentsSignedView extends ConsumerWidget {
 
@@ -61,12 +61,27 @@ class DocumentsSignedView extends ConsumerWidget {
               
               onPressed: () async {
 
-                //Modal Loading
+                try {
 
-                await GetInformationUserController.refreshDataQuipux(ref);
+                  LoadingModal.show(context);
 
-                //Cerrar Modal Loading
+                  await GetInformationUserController.refreshDataQuipux(ref);
 
+
+                } catch (error) {
+
+                  throw ("$error");
+
+
+                }  finally {
+
+                  LoadingModal.hide(context);
+
+                }
+
+                
+
+                
 
                 router.goNamed( "roles_documents_quipux" );
               }

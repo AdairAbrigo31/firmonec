@@ -24,6 +24,8 @@ class PaneUseCertificate extends ConsumerWidget{
     
     
     return Container(
+
+      width: double.infinity,
       decoration: BoxDecoration(
 
         color: Colors.white,
@@ -34,9 +36,14 @@ class PaneUseCertificate extends ConsumerWidget{
 
       child: Column(
 
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+
         children: [
 
            Text("El certificado seleccionado es: ${certificateEntity.alias}"),
+
+           const SizedBox(height: 16),
 
           const Text( "Por favor ingrese la contraseña del certificado"),
 
@@ -45,6 +52,7 @@ class PaneUseCertificate extends ConsumerWidget{
             decoration: const InputDecoration(
 
               hintText: "Contraseña",
+              border: OutlineInputBorder(),
 
             ),
 
@@ -52,30 +60,48 @@ class PaneUseCertificate extends ConsumerWidget{
 
           ),
 
+          const SizedBox(height: 16),
+
           Row(
-
+            
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribuye botones
             children: [
+              Expanded(
 
-              PrimaryButton(text: "Cancelar", onPressed: (){
+                child: Padding(
 
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                }
-                
-              }),
-              
-              
-              PrimaryButton(
-                
-                text: "Aceptar", 
-                
-                onPressed: onPressedAccept
-                
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: PrimaryButton(
+
+                    text: "Cancelar",
+
+                    onPressed: () {
+
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                      }
+                    }
+
+                  ),
+                ),
               ),
 
-            ],
+              Expanded(
 
-          )
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+
+                  child: PrimaryButton(
+
+                    text: "Aceptar",
+
+                    onPressed: onPressedAccept
+
+                  ),
+                ),
+              ),
+            ],
+          ),
 
           
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:tesis_firmonec/configuration/go_router.dart';
 import 'package:tesis_firmonec/presentation/providers/signed/signed.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
@@ -101,7 +102,9 @@ class _PreviewDocumentViewState extends ConsumerState<PreviewAllDocumentsSelecte
                   child: PrimaryButton(
                     text: "Firmar Documentos",
                     onPressed: () {
-                      // Tu lógica de firma aquí
+
+                      router.pushNamed("certificates_for_sign");
+
                     },
                   ),
                 ),

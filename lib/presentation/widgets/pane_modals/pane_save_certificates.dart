@@ -67,7 +67,7 @@ class PaneSaveCertificates extends ConsumerWidget {
 
                 child: Padding(
 
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
                   child: PrimaryButton(
 
                     text: "Cancelar",
@@ -86,7 +86,7 @@ class PaneSaveCertificates extends ConsumerWidget {
               Expanded(
 
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
 
                   child: PrimaryButton(
 

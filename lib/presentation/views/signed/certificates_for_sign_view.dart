@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/persistence/certificate_storage.dart';
 import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
@@ -104,7 +105,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
     final user = ref.watch(userActiveProvider);
 
-    String password;
+    final documentsSelected = ref.read(documentSelectedProvider);
 
     return SafeArea(
       child: Padding(
@@ -268,7 +269,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                                 notifierCertificate.updateCertificate(cert);
 
-                                showDialog(
+                                await showDialog(
                                   
                                   context: context, 
                                   
@@ -277,26 +278,32 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                                     child: PaneUseCertificate(
 
                                       certificateEntity: cert,
+                                      
+                                      onChangedPassword: (value) {
+
+                                        notifierCertificate.updatePassword(value);
+
+                                      },
 
                                       onPressedAccept: () async {
 
+                                        final documentsSelectedState = ref.read(documentSelectedProvider);
+
+                                        if(documentsSelectedState.documentsSelected.isEmpty) {
+
+                                          return;
+                                        }
+
+                                        if( documentsSelectedState.password == null ){
+
+                                          return;
+                                        }
+
                                         try {
 
-                                          //Modal Loading
+                                          await SignDocumentsController.signDocuments(context, ref);
 
-                                          final signedDocuments = await SignDocumentsController.signDocuments(context, ref);
-
-                                          final results = SignDocumentsController.processResults(signedDocuments);
-
-                                          //Actualizar la ultima fecha de uso del certificado
-
-                                          ref.read(resultsDocumentsSignedProvider.notifier).update((old) => results);
-                                          
-                                          if(context.mounted){
-
-                                            Navigator.of(context).pop();
-                                          
-                                          }
+                                          router.goNamed('documents_signed');
 
                                         } 
                                         
@@ -304,18 +311,9 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                                           throw ("$error");
 
-                                        } finally {
-
-                                          //Cerrar Loading
                                         }
 
                                       }, 
-                                      
-                                      onChangedPassword: (value) {
-
-                                        notifierCertificate.updatePassword(value);
-
-                                      }
                                     )
                                   )
                                 );

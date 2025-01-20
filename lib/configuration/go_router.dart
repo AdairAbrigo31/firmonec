@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tesis_firmonec/presentation/screens/screens.dart';
+import 'package:tesis_firmonec/presentation/screens/signed/documents_signed_screen.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -45,6 +46,12 @@ final router = GoRouter(
         name: 'certificates_for_sign',
         path: '/certificates_for_sign',
         builder: (context, state) => const CertificatesForSignScreen(),
+      ),
+
+      GoRoute(
+        name: 'documents_signed',
+        path: '/documents_signed',
+        builder: (context , state) => const DocumentsSignedScreen(),  
       )
     ]
 );

@@ -51,7 +51,7 @@ class LoginQuipuxView extends ConsumerWidget{
                   ElevatedButton(
                       onPressed: () async{
 
-                        await GetInformationUserController.executeActionsWithouToken(ref: ref);
+                        await GetInformationUserController.executeActionsWithouToken(ref, context);
 
                         router.pushNamed('roles_documents_quipux');
                       },

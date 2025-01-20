@@ -8,9 +8,11 @@ class CertificatesForSignScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return const Scaffold(
+    return Scaffold(
 
-      body: CertificatesForSignView(),
+      appBar: AppBar(),
+
+      body: const CertificatesForSignView(),
       
     );
   }

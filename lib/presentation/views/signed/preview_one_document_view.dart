@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 import 'package:tesis_firmonec/presentation/widgets/buttons/buttons.dart';
 
@@ -58,10 +59,13 @@ class PreviewOneDocumentViewState extends ConsumerState<PreviewOneDocumentView> 
     final pdfUrl = oneDocumentSelectedState?.rutaDocumento;
 
     return SafeArea(
+
       child: Column(
+
         children: [
           // Título
           Padding(
+
             padding: const EdgeInsets.all(4.0),
             child: Text(
               "Documento con asunto: ${oneDocumentSelectedState!.asunto}",
@@ -72,7 +76,9 @@ class PreviewOneDocumentViewState extends ConsumerState<PreviewOneDocumentView> 
           
           // Contenido principal
           Expanded(
+
             child: Column(
+
               children: [
                 // Área del PDF o mensaje de error
                 Expanded(
@@ -88,14 +94,18 @@ class PreviewOneDocumentViewState extends ConsumerState<PreviewOneDocumentView> 
                           child: Text("El documento seleccionado no tiene ruta de documento"),
                         ),
                 ),
+
                 
-                // Botón siempre visible en la parte inferior
                 Padding(
+
                   padding: const EdgeInsets.all(4.0),
                   child: PrimaryButton(
+
                     text: "Firmar",
                     onPressed: () {
-                      // Tu lógica de firma aquí
+
+                      router.pushNamed("certificates_for_sign");
+
                     },
                   ),
                 ),
@@ -103,6 +113,7 @@ class PreviewOneDocumentViewState extends ConsumerState<PreviewOneDocumentView> 
             ),
           ),
         ],
+        
       ),
     );
   }

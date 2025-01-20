@@ -10,7 +10,7 @@ import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
 class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
 
-  final String routeBase = 'https://28fd-192-188-59-82.ngrok-free.app/api';
+  final String routeBase = 'https://5b81-192-188-59-82.ngrok-free.app/api';
 
 
 
@@ -231,8 +231,10 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
         )
       );
 
+      print ("Id doc por firmar: $idDocument");
+
       final response = await dio.post(
-        'FirmarDocumento/Firmar', 
+        '/FirmarDocumento/Firmar', 
         data: {
           'radicado_numero' : idDocument,
           'idusuario' : codeUser,
@@ -241,17 +243,30 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
         }
       );
 
-      print(response);
+      print("response status ======>  ${response.statusCode}");
 
-      //Crear la instancia de ResponseSignDocument con los datos de la respuesta
+      print("response data ======> ${response.data}");
 
-      //Mapper de la respuesta
+      final data = response.data;
+
+      if (response.statusCode != 200) {
+
+        final responseProcess = ResponseSignDocument(
+          success: false,
+          documentId: idDocument,
+          error: data["message"],
+        );
+
+        return responseProcess;
+
+
+      }
 
       final responseProcess = ResponseSignDocument(
-            success: true,
-            documentId: "",
-            error: null
-          );
+        success: true,
+        documentId: idDocument,
+        error: null
+      );
       
       return responseProcess;
 
