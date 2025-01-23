@@ -13,8 +13,8 @@ final router = GoRouter(
   initialLocation: '/login_quipux',
     routes: [
       GoRoute(
-        name: 'button_entraid',
-        path: '/button_entraid',
+        name: 'login_entraID',
+        path: '/login_entraID',
         builder: (context, state) => const LoginWithEntraIDScreen(),
       ),
 
