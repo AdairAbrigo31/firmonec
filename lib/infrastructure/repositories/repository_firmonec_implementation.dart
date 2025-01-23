@@ -10,7 +10,7 @@ import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
 class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
 
-  final String routeBase = 'https://1a40-192-188-59-82.ngrok-free.app/api';
+  final String routeBase = 'https://6a2a-200-126-15-190.ngrok-free.app/api';
 
 
 

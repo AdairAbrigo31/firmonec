@@ -11,6 +11,7 @@ class InputEmail extends StatelessWidget {
     return TextField(
       decoration: InputDecoration(
         hintText: example,
+        hintStyle: const TextStyle(color: Colors.black)
       ),
       onChanged: (value) => onChange(value),
       keyboardType: TextInputType.emailAddress,

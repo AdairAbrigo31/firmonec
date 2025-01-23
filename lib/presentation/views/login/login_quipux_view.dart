@@ -42,6 +42,7 @@ class LoginQuipuxView extends ConsumerWidget{
                     ],
                   ),
                   InputEmail(
+                    
                     example: "correo espol",
                     onChange: (value){
                       notifierUser.updateEmail(value);
