@@ -83,6 +83,11 @@ class DocumentSelectedNotifier extends StateNotifier<DocumentsSelectedState> {
   }
 
 
+  bool isEmpty () {
+    return state.documentsSelected.isEmpty;
+  }
+
+
   // Operaciones globales
   void clearAllDocuments() {
     state = const DocumentsSelectedState();

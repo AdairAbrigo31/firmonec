@@ -212,6 +212,8 @@ class GetInformationUserController {
 
     try {
 
+      ref.read(documentSelectedProvider.notifier).clearAllDocuments();
+
       final repository = ref.read(repositoryProvider);
 
       final stateUserProvider = ref.read(userActiveProvider);

@@ -291,7 +291,6 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
               )
 
             )
-            
 
             : 
 
@@ -318,16 +317,24 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                   return AccordionSection(
                     
                     contentHorizontalPadding: 0,
+
                     headerPadding: const EdgeInsets.only(left: 22),
+
                     isOpen: index == openSectionIndex,
+
                     onOpenSection: () => setState(() => openSectionIndex = index),
+
                     onCloseSection: () => setState(() => openSectionIndex = null),
+
                     header: Container(
+
                       width: double.infinity,
+
                       padding: const EdgeInsets.symmetric(
                         vertical: 16,
                         horizontal: 16  // Aumentado de 4 a 16
                       ),
+
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [Colors.blue[700]!, Colors.blue[500]!],
@@ -341,10 +348,14 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                           ),
                         ],
                       ),
+
                       child: Row(
+
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+
                           Expanded(
+
                             child: Text(
                               rol.cargo,
                               style: const TextStyle(
@@ -361,6 +372,7 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
 
                             padding: const EdgeInsets.symmetric(
                               vertical: 6,
+                              horizontal: 10
                             ),
 
                             decoration: BoxDecoration(
@@ -411,7 +423,18 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
           padding: const EdgeInsets.all(16.0),
           child: PrimaryButton(
             text: "Firmar",
-            onPressed: () => router.pushNamed("preview_all_documents_selected"),
+            onPressed: () {
+
+              final stateDocumentsSelected = ref.read(documentSelectedProvider.notifier);
+
+              if (stateDocumentsSelected.isEmpty()) {
+                var snackBar = const SnackBar(content: Text('Debes seleccionar al menos un docuento'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                return;
+              }
+
+              router.pushNamed("preview_all_documents_selected");
+            },
           ),
         ),
       ],
