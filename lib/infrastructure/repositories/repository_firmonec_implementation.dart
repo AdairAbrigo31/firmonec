@@ -1,5 +1,6 @@
 import 'package:aad_oauth/aad_oauth.dart';
 import 'package:dio/dio.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/domain/repositories/repositories.dart';
 import 'package:tesis_firmonec/infrastructure/dto/dto.dart';
@@ -9,27 +10,45 @@ import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
 
 class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
+  final String routeBase = 'https://0c10-2800-bf0-8045-e58-399c-cf6e-ed5f-61aa.ngrok-free.app/api';
 
-  final String routeBase = 'http://10.0.2.2:5299/api';
-
-
+  //final String routeBase = 'http://10.0.2.2:5299/api';
 
   @override
   Future<AuthResult> login() async {
+
     try {
-      print("Logearse");
-      final oauth = AadOAuth(MicrosoftID.config);
-      await oauth.logout();
-      await oauth.login();
-      final accessToken = await oauth.getAccessToken();
-      if (accessToken != null) {
-        return AuthResult.success(accessToken);
-      } else {
-        print("Fallo");
+
+      bool hasInternet = await InternetConnectionChecker.instance.hasConnection;
+
+      if (!hasInternet) {
+
         return AuthResult.failure(
-            AuthError.invalidCredentials, "Credenciales invalidas");
+          AuthError.networkError, "Revise su conexión a internet"
+        );
+
+      }
+
+      final oauth = AadOAuth(MicrosoftID.config);
+
+      await oauth.logout();
+
+      await oauth.login();
+
+      final accessToken = await oauth.getAccessToken();
+
+      if (accessToken != null) {
+
+        return AuthResult.success(accessToken);
+
+      } else {
+
+        return AuthResult.failure(
+          AuthError.invalidCredentials, "Credenciales invalidas"
+        );
       }
     } catch (e) {
+
       print('Error durante el login: $e');
       return AuthResult.failure(AuthError.unknown, "Algo ha salido mal");
     }
@@ -88,23 +107,31 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
       return roles;
     } on DioException catch (e) {
+
       if (e.response?.statusCode == 401) {
         throw "Error de autenticación: Token inválido o expirado";
       }
       throw "Error de conexión: ${e.message}";
+
     } catch (e) {
-      // En caso de error de parseo, devolver lista vacía
+
       print("Error inesperado: $e");
       return [];
+
     } finally {
       dio.close();
     }
   }
 
+
+
   @override
   Future<List<RolEntity>> getRolesWithoutToken({required String email}) async {
+
     final dio = Dio();
+
     try {
+
       final response = await dio.get(
         '$routeBase/Usuario/Cargos',
         queryParameters: {'correo': email, 'tipoUsuario': 0},
@@ -134,21 +161,27 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
       return roles;
     } on DioException catch (e) {
+
       if (e.response?.statusCode == 401) {
         throw "Error de autenticación: Token inválido o expirado";
       }
       throw "Error de conexión: ${e.message}";
+
     } catch (e) {
-      // En caso de error de parseo, devolver lista vacía
+
       print("Error inesperado: $e");
       return [];
+
     } finally {
       dio.close();
     }
   }
 
+
+
   @override
   Future<Map<String, dynamic>?> getTokenBackend(String tokenEntraID) async {
+
     final dio = Dio();
     try {
       final response = await dio.post('$routeBase/Auth/Login', data: {
@@ -161,13 +194,19 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
       return response.data;
     } on DioException catch (e) {
+
       throw ("Error de conexión: ${e.message}");
+
     } catch (e) {
+
       throw Exception("Error inesperado: $e");
+
     } finally {
       dio.close();
     }
   }
+
+
 
   @override
   Future<List<DocumentoPorElaborarEntity>> getDocumentPorElaborar( String codeRol) async {
@@ -199,10 +238,15 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
           DocumentMapper.fromDtoList(dtos);
 
       return documentsPorElaborar;
+
     } on DioException catch (e) {
+
       throw ("Error de conexión: ${e.message}");
+
     } catch (e) {
+
       throw Exception("Error inesperado: $e");
+
     } finally {
       dio.close();
     }
@@ -219,22 +263,31 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   
 
   @override
-  Future<ResponseSignDocument> signDocument(String idDocument, int codeUser, String base64Certificate, String keyCertificate) async {
+  Future<ResponseSignDocument> signDocument({
+    required String idDocument, 
+    required int codeUser, 
+    required String base64Certificate, 
+    required String keyCertificate}) async 
+    
+    {
     
     try { 
 
       final dio = Dio(
+
       BaseOptions(
         baseUrl: routeBase,
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10)
+        connectTimeout: const Duration(seconds: 20),
+        receiveTimeout: const Duration(seconds: 20)
         )
       );
 
       print ("Id doc por firmar: $idDocument");
 
       final response = await dio.post(
+
         '/FirmarDocumento/Firmar', 
+
         data: {
           'radicado_numero' : idDocument,
           'idusuario' : codeUser,
@@ -243,22 +296,31 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
         }
       );
 
-      print("response status ======>  ${response.statusCode}");
+      if (response.statusCode == 500) {
+        final responseProcess = ResponseSignDocument(
+          success: false,
+          documentId: idDocument,
+          error: "Algo ha salido mal",
+        );
+
+        return responseProcess;
+      }
 
       print("response data ======> ${response.data}");
 
-      final data = response.data;
+      final data = response.data[0];
 
-      if (response.statusCode != 200) {
+      if (data['est'] != 200) {
 
         final responseProcess = ResponseSignDocument(
           success: false,
           documentId: idDocument,
-          error: data["message"],
+          error: data["msg"],
         );
 
-        return responseProcess;
+        print(responseProcess);
 
+        return responseProcess;
 
       }
 
@@ -273,10 +335,17 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
     } catch (error) {
 
-      throw ("$error");
+      final responseProcess = ResponseSignDocument(
+        success: false,
+        documentId: idDocument,
+        error: "Algo ha salido mal con el documenti $idDocument",
+      );
+
+      return responseProcess;
+
+      //throw RequestFailedException();
+
     }
-
     
-
   }
 }

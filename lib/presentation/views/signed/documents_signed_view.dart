@@ -79,10 +79,6 @@ class DocumentsSignedView extends ConsumerWidget {
 
                 }
 
-                
-
-                
-
                 router.goNamed( "roles_documents_quipux" );
               }
             

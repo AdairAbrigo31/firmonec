@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:tesis_firmonec/domain/entities/document_entity.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
@@ -85,7 +86,19 @@ class GetInformationUserController {
 
     } catch (error) {
 
-      throw ("$error");
+      LoadingModal.hide(context);
+    
+        String errorMessage = "Error inesperado";
+        if (error.toString().contains("networkError")) {
+          errorMessage = "Sin conexión a internet";
+        }
+        
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage))
+        );
+        
+        rethrow;
 
     }
   }
@@ -139,31 +152,60 @@ class GetInformationUserController {
 
     final repository = ref.read(repositoryProvider);
 
-    LoadingModal.show(context);
+    try {
 
-    final List<RolEntity> roles = await repository.getRolesWithoutToken(email: userProvider.email!);
+      LoadingModal.show(context);
 
-    final rolDocumentProvider = ref.read(rolDocumentsProvider.notifier);
+      bool hasInternet = await InternetConnectionChecker.instance.hasConnection;
 
-    rolDocumentProvider.clearAllDocuments();
+      if (!hasInternet) {
 
-    for (final rol in roles) {
+        throw ("Revisar su conexión a internet");
 
-      final List<DocumentEntity> documentPorElaborar = await repository.getDocumentPorElaborar(rol.codusuario);
+      }
 
-      //final List<DocumentEntity> documentReasignado = await repository.getDocumentReasignado(rol.codusuario);
 
-      final List<DocumentEntity> documentReasignado = [];
+      final List<RolEntity> roles = await repository.getRolesWithoutToken(email: userProvider.email!);
 
-      final allDocuments = [...documentPorElaborar, ...documentReasignado];
+      final rolDocumentProvider = ref.read(rolDocumentsProvider.notifier);
 
-      rolDocumentProvider.addDocumentToRol(rol, allDocuments);
-    }
+      rolDocumentProvider.clearAllDocuments();
 
-    if(!context.mounted) return;
+      for (final rol in roles) {
+
+        final List<DocumentEntity> documentPorElaborar = await repository.getDocumentPorElaborar(rol.codusuario);
+
+        print(documentPorElaborar);
+
+        //final List<DocumentEntity> documentReasignado = await repository.getDocumentReasignado(rol.codusuario);
+
+        final List<DocumentEntity> documentReasignado = [];
+
+        final allDocuments = [...documentPorElaborar, ...documentReasignado];
+
+        rolDocumentProvider.addDocumentToRol(rol, allDocuments);
+      }
+
+      if(!context.mounted) return;
+
+        LoadingModal.hide(context);
+
+
+    } catch (error) {
+
+      if(!context.mounted) return;
 
       LoadingModal.hide(context);
+
+      rethrow;
+
+
+    }
+
+    
   }
+
+
 
 
   static Future<void> refreshDataQuipuxWithoutToken (WidgetRef ref, BuildContext context) async {

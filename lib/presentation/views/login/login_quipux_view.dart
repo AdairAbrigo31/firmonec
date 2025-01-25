@@ -50,11 +50,31 @@ class LoginQuipuxView extends ConsumerWidget{
                   ),
 
                   ElevatedButton(
-                      onPressed: () async{
+                      onPressed: () async {
 
-                        await GetInformationUserController.executeActionsWithouToken(ref, context);
+                        try {
 
-                        router.pushNamed('roles_documents_quipux');
+                          await GetInformationUserController.executeActionsWithouToken(ref, context);
+
+                          router.pushNamed('roles_documents_quipux');
+
+                        } catch (error) {
+
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Error'),
+                              content: Text(error.toString()),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Aceptar'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        
                       },
                       child: const Text("Extraer documentos")
                   ),

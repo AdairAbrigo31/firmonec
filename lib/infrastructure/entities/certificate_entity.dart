@@ -1,13 +1,13 @@
 
 class CertificateEntity {
-  final String id;          // Identificador único
-  final String name;        // Nombre del certificado
-  final String filePath;    // Ruta del archivo
-  final String? password;    // Contraseña encriptada
-  final DateTime createdAt; // Fecha de registro
-  final DateTime? lastUsed; // Última vez que se usó
-  final String alias;       // Alias o nombre común del certificado
-  final String emailOwner;   // Nombre del propietario del certificado
+  final String id;          
+  final String name;       
+  final String filePath;    
+  final String? password;    
+  final DateTime createdAt; 
+  final DateTime? lastUsed; 
+  final String alias;       
+  final String emailOwner;  
   final String base64;
 
   CertificateEntity({
@@ -43,7 +43,7 @@ class CertificateEntity {
       id: map['id'],
       name: map['name'],
       filePath: map['filePath'],
-      password: map['password'],
+      password: map['password'] ?? "",
       createdAt: DateTime.parse(map['createdAt']),
       lastUsed: map['lastUsed'] != null ? DateTime.parse(map['lastUsed']) : null,
       alias: map['alias'],

@@ -59,6 +59,7 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                       color: Colors.blue[100],
                       borderRadius: BorderRadius.circular(12),
                     ),
+
                     child: const Text(
                       'Por Elaborar',
                       style: TextStyle(
@@ -83,20 +84,11 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                 overflow: TextOverflow.ellipsis,
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  Text(
-                    'De: ${doc.de}',
-                    style: const TextStyle(fontSize: 13),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-
-                  const SizedBox(height: 4),
 
                   Text(
                     'Para: ${doc.para}',
@@ -105,17 +97,13 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                     overflow: TextOverflow.ellipsis,
                   ),
 
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 5),
 
                   Text(
-                    'Tipo: ${doc.tipoDocumento}',
-                    style: const TextStyle(fontSize: 13),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                    'Categoria: ${doc.categoria}'
+                  )
                 ],
               ),
-
 
               // Botones y checkbox en el footer
               const SizedBox(height: 12),
@@ -176,11 +164,13 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                   ),
 
                   Container(
+
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.green[100],
                       borderRadius: BorderRadius.circular(12),
                     ),
+
                     child: const Text(
                       'Reenviado',
                       style: TextStyle(
@@ -222,15 +212,6 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
 
                   Text(
                     'Para: ${doc.reasignadoPor}',
-                    style: const TextStyle(fontSize: 13),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  Text(
-                    'Tipo: ${doc.tipoDocumento}',
                     style: const TextStyle(fontSize: 13),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -284,8 +265,11 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
 
   @override
   Widget build(BuildContext context) {
+
     final userProvider = ref.watch(userActiveProvider);
+
     final rolDocProvider = ref.read(rolDocumentsProvider);
+
     final roles = rolDocProvider.documentsByRol?.keys.toList() ?? [];
 
     return Column(
@@ -298,17 +282,26 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
         
         Expanded(
 
-          child: roles.isEmpty 
-            ? 
-            const Center(child: Text("No hay roles para este usuario"))
-            : 
+          child: roles.isEmpty ? 
+
+            const Center(
+
+              child: Text(
+                "No hay roles para este usuario"
+              )
+
+            )
             
-            Accordion(
+
+            : 
+
+            SingleChildScrollView(
+              
+              child: Accordion(
                 
                 paddingBetweenClosedSections: 10,
                 contentHorizontalPadding: 0,
                 headerPadding: const EdgeInsets.symmetric(horizontal: 0),
-                //paddingListHorizontal: 0,
                 maxOpenSections: 1,
                 scaleWhenAnimating: false,
                 openAndCloseAnimation: false,
@@ -363,14 +356,18 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
+                          
                           Container(
+
                             padding: const EdgeInsets.symmetric(
                               vertical: 6,
                             ),
+
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(20),
                             ),
+
                             child: Text(
                               '${documents.length}',
                               style: const TextStyle(
@@ -383,28 +380,31 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                         ],
                       ),
                     ),
-                    content: ClipRRect( // También aquí para el contenido
-                      child: Container(
-                        constraints: const BoxConstraints(
-                          maxHeight: 300,
-                          maxWidth: double.infinity
+                    content: Container(
+                      constraints: const BoxConstraints(
+                        maxHeight: 300, // o el valor que necesites
+                      ),
+
+                      child: documents.isEmpty ? 
+                      
+                      const Center(child: Text("No tiene documentos para este cargo"))
+                      : 
+                      SingleChildScrollView(
+                        clipBehavior: Clip.none,
+                        padding: EdgeInsets.zero,
+                        child: Column(
+                          children: documents.map((document) => 
+                            buildDocumentCard(rol, document)
+                          ).toList(),
                         ),
-                        child: documents.isEmpty
-                          ? const Center(child: Text("No tiene documentos para este cargo"))
-                          : SingleChildScrollView(
-                              clipBehavior: Clip.none, // Evita que el scroll se vea fuera
-                              padding: EdgeInsets.zero,
-                              child: Column(
-                                children: documents.map((document) => 
-                                  buildDocumentCard(rol, document)
-                                ).toList(),
-                              ),
-                            ),
                       ),
                     ),
+
                   );
                 }).toList(),
               ),
+
+            )
         ),
         
         Padding(

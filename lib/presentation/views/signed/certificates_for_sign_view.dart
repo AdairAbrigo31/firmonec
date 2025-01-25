@@ -26,77 +26,80 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
   String? _errorMessage;
   bool _isLoading = false;
 
-  Future<void> _pickFile(String emaiUser) async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+
+  Future<void> _pickFile(String emailUser) async {
 
     try {
+      setState(() => _isLoading = true);
+      
+      final result = await CertificatesUserController.pickCertificateFile();
+      if (result == null) return;
 
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['p12'],
-        allowMultiple: false,
+      final file = File(result.files.single.path!);
+      final base64String = await CertificatesUserController.getBase64FromFile(file);
+
+      
+
+      await _showSaveCertificateDialog(
+        fileName: result.files.single.name,
+        filePath: result.files.single.path!,
+        base64String: base64String,
+        emailUser: emailUser,
       );
+    } catch (e) {
+      setState(() => _errorMessage = 'Error al seleccionar el archivo: $e');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
-      if (result != null) {
 
-        final file = File(result.files.single.path!);
-        final bytes = await file.readAsBytes();
-        final base64String = base64Encode( bytes );
-        
-        await showDialog<String>(
 
-          context: context,
+  Future<void> _showSaveCertificateDialog({
+    required String fileName,
+    required String filePath,
+    required String base64String,
+    required String emailUser,
+  }) {
+    return showDialog(
+      context: context,
+      builder: (context) {
 
-          builder: (context) {
+        String description = "";
 
-            final nameCertificate = result.files.single.name;
-            String description = '';
+        return ModalLayouts(context).showSimpleModal(
+          child: PaneSaveCertificates(
 
-            return ModalLayouts(context).showSimpleModal(
+            nameCertificate: fileName,
 
-              child: PaneSaveCertificates(
+            onChangedDescription: (value) {
+              description = value;
+            },
 
-                nameCertificate: nameCertificate,
+            onPressedAccept: () async {
 
-                onChangedDescription: (value) {
-                  description = value;
-                },
+              final certificate = CertificateEntity(
+                id: DateTime.now().millisecondsSinceEpoch.toString(),
+                name: fileName,
+                alias: description,
+                emailOwner: emailUser,
+                filePath: filePath,
+                base64: base64String,
+                createdAt: DateTime.now(),
 
-                onPressedAccept: () {
+              );
 
-                  final CertificateEntity certificate = CertificateEntity(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      name: nameCertificate,
-                      alias: description,
-                      emailOwner: emaiUser,
-                      createdAt: DateTime.now(),
-                      lastUsed: null,
-                      filePath: result.files.single.path!,
-                      base64: base64String
-                    ); 
+              await CertificatesUserController.saveCertificateUser(certificate);
 
-                    CertificatesUserController.saveCertificateUser(certificate);
-
-                    context.pop();
-
-                },
-              ),
-            );
-          },
+              if (context.mounted) {
+                context.pop();
+              }
+              
+            },
+          ),
         );
       }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Error al seleccionar el archivo: $e';
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    );
   }
 
 
@@ -105,33 +108,54 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
     final user = ref.watch(userActiveProvider);
 
-    final documentsSelected = ref.read(documentSelectedProvider);
+    return Center(
 
-    return SafeArea(
       child: Padding(
+
         padding: const EdgeInsets.all(16.0),
+
         child: Column(
+
           crossAxisAlignment: CrossAxisAlignment.start,
+
           children: [
 
-            const Text(
-              "Certificados guardados",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-            const SizedBox(height: 8),
-            
-            const Text(
+              children: [
 
-              "Seleccione un certificado para firmar o agregue uno nuevo",
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 16,
-              ),
+                const Text(
 
+                  "Seleccione un certificado",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 16,
+                  ),
+
+                ),
+
+                GestureDetector(
+
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+
+                      Text("Añadir"),
+
+                      Icon(Icons.add_circle_outline_rounded)
+
+                    ],
+                
+                  ),
+
+                  onTap: () async {
+                    await _pickFile(user.email!);
+                  },
+                  
+                )
+
+              ],
             ),
 
             const SizedBox(height: 24),
@@ -139,8 +163,11 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
             Expanded(
 
               child: FutureBuilder(
-                future: CertificateStorage.getCertificates(user.email ?? 'prueba'),
+
+                future: CertificateStorage.getCertificates(user.email!),
+
                 builder: (context, snapshot) {
+
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -202,142 +229,86 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                     itemCount: certificates.length,
                     itemBuilder: (context, index) {
 
-                      final cert = certificates[index];
+                      final certificate = certificates[index];
 
-                      return Card(
+                      return 
+                      
+                      Card(
                         margin: const EdgeInsets.only(bottom: 12),
-                        child: ListTile(
-
-                          leading: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
+                        child: Row(
+                          children: [
+                            Radio<String>(
+                              value: certificate.id,
+                              groupValue: ref.watch(documentSelectedProvider).certificate?.id,
+                              onChanged: (String? value) {
+                                ref.read(documentSelectedProvider.notifier).updateCertificate(certificate);
+                              },
                             ),
-                            child: const Icon(
-                              Icons.verified_user,
-                              color: Colors.blue,
-                            ),
-                          ),
+                            
+                            Expanded(
+                            child: ListTile(
 
-                          title: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  cert.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              leading: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.verified_user,
+                                  color: Colors.blue,
                                 ),
                               ),
-                            ],
-                          ),
 
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-
-                              Text(cert.alias),
-
-                            ],
-                          ),
-
-
-                          trailing: PopupMenuButton(
-
-                            icon: const Icon(Icons.more_vert),
-                            itemBuilder: (context) => [
-
-                              const PopupMenuItem(
-                                value: 'use',
-                                child: Text('Usar certificado'),
+                              title: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      certificate.name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
 
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
 
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: Text('Eliminar'),
+                                  Text(certificate.alias),
+
+                                ],
                               ),
-                            ],
 
+                              trailing: PopupMenuButton(
 
-                            onSelected: (value) async {
+                                icon: const Icon(Icons.more_vert),
+                                itemBuilder: (context) => [
 
-                              if (value == 'use') {
+                                  const PopupMenuItem(
+                                    value: 'delete',
+                                    child: Text('Eliminar'),
+                                  ),
+                                ],
 
-                                final notifierCertificate = ref.read(documentSelectedProvider.notifier);
+                                onSelected: (value) async {
 
-                                notifierCertificate.updateCertificate(cert);
+                                  if (value == 'delete') {
 
-                                await showDialog(
-                                  
-                                  context: context, 
-                                  
-                                  builder: (context) => ModalLayouts(context).showSimpleModal(
+                                    await CertificateStorage.deleteCertificate(certificate.id, user.email!);
 
-                                    child: PaneUseCertificate(
+                                    setState(() {});
 
-                                      certificateEntity: cert,
-                                      
-                                      onChangedPassword: (value) {
-
-                                        notifierCertificate.updatePassword(value);
-
-                                      },
-
-                                      onPressedAccept: () async {
-
-                                        final documentsSelectedState = ref.read(documentSelectedProvider);
-
-                                        if(documentsSelectedState.documentsSelected.isEmpty) {
-
-                                          return;
-                                        }
-
-                                        if( documentsSelectedState.password == null ){
-
-                                          return;
-                                        }
-
-                                        try {
-
-                                          await SignDocumentsController.signDocuments(context, ref);
-
-                                          router.goNamed('documents_signed');
-
-                                        } 
-                                        
-                                        catch (error) {
-
-                                          throw ("$error");
-
-                                        }
-
-                                      }, 
-                                    )
-                                  )
-                                );
-                    
-
-                                await CertificateStorage.updateLastUsed(cert.id, user.email ?? 'prueba');
-
-
-
-                              } else if (value == 'delete') {
-
-                                await CertificateStorage.deleteCertificate(
-
-                                  cert.id, user.email ?? 'prueba'
-                              
-                                );
-
-                                setState(() {});
-
-                              }
-                            },
-                          ),
-                        ),
-                      );
+                                  }
+                                },
+                              ),
+                            ),
+                          )
+                        ]
+                      )
+                      ); 
                     },
                   );
                 },
@@ -349,10 +320,43 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
             PrimaryButton(
 
-              text: "Agregar certificado",
-              onPressed: () {
+              text: "Firmar",
 
-                _pickFile(user.email ?? 'prueba');
+              onPressed: () async {
+
+                final documentsSelectedState = ref.read(documentSelectedProvider);
+
+                if( documentsSelectedState.documentsSelected.isEmpty ) {
+
+                  return;
+                }
+
+                await showDialog(
+
+                  context: context, 
+                  builder: (context) {
+
+                    return ModalLayouts(context).showSimpleModal(
+
+                      child: PaneUseCertificate(
+                        
+                        onPressedAccept: () async {
+
+                          await SignDocumentsOneByOneController.signDocumentsOneByOne(context, ref);
+
+                          await CertificateStorage.updateLastUsed(ref.read(documentSelectedProvider).certificate!.id, user.email!);
+
+                          router.goNamed('documents_signed');
+
+
+                        }, 
+                      
+                        certificateEntity: ref.read(documentSelectedProvider).certificate!
+                        
+                      )
+                    );
+
+                });
 
               },
             ),

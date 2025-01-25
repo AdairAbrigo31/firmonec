@@ -24,8 +24,10 @@ class LoginWithEntraIDView extends ConsumerWidget {
               }
 
               if (snapshot.hasError) {
-                return Center(
-                  child: Text("Error en la autenticación: ${snapshot.error}"),
+                return Text(
+                  snapshot.error.toString().contains("networkError") 
+                    ? "Sin conexión a internet" 
+                    : "Error en la autenticación"
                 );
               }
 

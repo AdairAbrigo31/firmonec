@@ -2,6 +2,7 @@ import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
+import 'package:tesis_firmonec/infrastructure/exceptions/request_failed_exception.dart';
 import 'package:tesis_firmonec/infrastructure/repositories/repositories.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
@@ -21,10 +22,15 @@ class SignDocumentsController {
       try {
 
         final response = await repository.signDocument(
-          docId,
-          batchData.codeUser,
-          batchData.base64Certificate,
-          batchData.keyCertificate,
+          
+          idDocument: docId, 
+          
+          codeUser: batchData.codeUser, 
+          
+          base64Certificate: batchData.base64Certificate, 
+          
+          keyCertificate: batchData.keyCertificate
+          
         );
 
         results.add(
@@ -127,9 +133,12 @@ class SignDocumentsController {
 
       return resultsProcessed;
       
-    } catch (error) {
+    } on RequestFailedException catch (error) {
 
-      throw ("$error");
+      print("$error");
+
+      rethrow;
+
 
     } finally {
 
