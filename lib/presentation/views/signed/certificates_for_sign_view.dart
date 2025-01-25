@@ -1,15 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
-import 'package:tesis_firmonec/infrastructure/persistence/certificate_storage.dart';
+import 'package:tesis_firmonec/infrastructure/persistence/persistence.dart';
 import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
-import 'package:tesis_firmonec/presentation/providers/login/login.dart';
-import 'package:tesis_firmonec/presentation/providers/signed/signed.dart';
+import 'package:tesis_firmonec/presentation/providers/providers.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 class CertificatesForSignView extends ConsumerStatefulWidget {
@@ -231,12 +228,14 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                       final certificate = certificates[index];
 
-                      return 
-                      
-                      Card(
+                      return Card(
+
                         margin: const EdgeInsets.only(bottom: 12),
+
                         child: Row(
+
                           children: [
+
                             Radio<String>(
                               value: certificate.id,
                               groupValue: ref.watch(documentSelectedProvider).certificate?.id,
@@ -326,38 +325,52 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                 final documentsSelectedState = ref.read(documentSelectedProvider);
 
-                if( documentsSelectedState.documentsSelected.isEmpty ) {
+                if( documentsSelectedState.documentsSelected.isEmpty && documentsSelectedState.certificate != null) {
 
                   return;
                 }
 
-                await showDialog(
 
-                  context: context, 
-                  builder: (context) {
+                final stateForSign = ref.read(documentSelectedProvider);
 
-                    return ModalLayouts(context).showSimpleModal(
+                if ( stateForSign.certificate!.password != null ) {
 
-                      child: PaneUseCertificate(
+                  await showDialog(
+
+                    context: context, 
+                    builder: (context) {
+
+                      return ModalLayouts(context).showSimpleModal(
+
+                        child: PaneUseCertificate(
+                          
+                          onPressedAccept: () async {
+
+                            await SignDocumentsOneByOneController.signDocumentsOneByOneWithoutPasswordSaved(context, ref);
+
+                            await CertificateStorage.updateLastUsed(ref.read(documentSelectedProvider).certificate!.id, user.email!);
+
+                            router.goNamed('documents_signed');
+
+
+                          }, 
                         
-                        onPressedAccept: () async {
+                          certificateEntity: stateForSign.certificate!
+                          
+                        )
+                      );
 
-                          await SignDocumentsOneByOneController.signDocumentsOneByOne(context, ref);
+                  });
 
-                          await CertificateStorage.updateLastUsed(ref.read(documentSelectedProvider).certificate!.id, user.email!);
+                } else {
 
-                          router.goNamed('documents_signed');
+                  await SignDocumentsOneByOneController.signDocumentsOneByOneWithPasswordSaved(context, ref);
 
+                  await CertificateStorage.updateLastUsed(ref.read(documentSelectedProvider).certificate!.id, user.email!);
 
-                        }, 
-                      
-                        certificateEntity: ref.read(documentSelectedProvider).certificate!
-                        
-                      )
-                    );
+                  router.goNamed('documents_signed');
 
-                });
-
+                }
               },
             ),
           ],

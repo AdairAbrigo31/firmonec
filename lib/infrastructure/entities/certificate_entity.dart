@@ -22,6 +22,25 @@ class CertificateEntity {
     required this.base64
   });
 
+
+  CertificateEntity copyWith({
+    String? password,
+    DateTime? lastUsed,
+    }) 
+  {
+    return CertificateEntity(
+      id: id,
+      name: name,
+      filePath: filePath,
+      password: password ?? this.password,
+      createdAt: createdAt,
+      lastUsed: lastUsed ?? this.lastUsed ,
+      alias: alias,
+      emailOwner: emailOwner,
+      base64: base64,
+    );
+  }
+
   // Convertir a Map
   Map<String, dynamic> toMap() {
     return {

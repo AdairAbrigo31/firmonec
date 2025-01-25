@@ -22,11 +22,7 @@ class SignDocumentsOneByOneController {
   }
 
 
-  static Future<void> signDocumentsOneByOne(BuildContext context, WidgetRef ref) async {
-
-
-
-
+  static Future<void> signDocumentsOneByOneWithoutPasswordSaved (BuildContext context, WidgetRef ref) async {
 
     LoadingModal.show(context);
 
@@ -51,6 +47,47 @@ class SignDocumentsOneByOneController {
           codeUser: int.parse(rol.codusuario), 
           base64Certificate: certificate!.base64, 
           keyCertificate: keyCertificate!
+        );
+
+        results.add(response);
+      }
+    }
+
+    final resultsProcessed =  _processResults(results);
+
+    ref.read(resultsDocumentsSignedProvider.notifier).update((old) => resultsProcessed);
+
+    if ( context.mounted ) {
+
+    LoadingModal.hide(context);
+
+    }
+
+  }
+
+  static Future<void> signDocumentsOneByOneWithPasswordSaved (BuildContext context, WidgetRef ref) async {
+
+    LoadingModal.show(context);
+
+    final repository = ref.watch(repositoryProvider);
+
+    final documentsSelected = ref.read(documentSelectedProvider);
+
+    final certificate = documentsSelected.certificate;
+
+    final documentsForSign = documentsSelected.documentsSelected;
+
+    final results = <ResponseSignDocument>[];
+
+    for ( final rol in documentsForSign.keys ) {
+
+      for ( final document in documentsForSign[rol]! ){
+
+        final response = await repository.signDocument(
+          idDocument: document.id, 
+          codeUser: int.parse(rol.codusuario), 
+          base64Certificate: certificate!.base64, 
+          keyCertificate: certificate.password!
         );
 
         results.add(response);
