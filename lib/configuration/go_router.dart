@@ -27,7 +27,7 @@ final router = GoRouter(
       GoRoute(
         name: 'roles_documents_quipux',
         path: '/roles_documents_quipux',
-        builder: (context, state) => const RolesDocumentsQuipuxScreen(),
+        builder: (context, state) => const RolesWithDocumentsScreen(),
       ),
 
       GoRoute(

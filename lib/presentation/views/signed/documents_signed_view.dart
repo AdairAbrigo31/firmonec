@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/infrastructure/persistence/persistence.dart';
 import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
@@ -40,8 +41,11 @@ class _DocumentsSignedViewState extends ConsumerState<DocumentsSignedView> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
+
           title: const Text('Guardar contraseña'),
+
           content: const Text('¿Desea guardar la contraseña del certificado?'),
+          
           actions: [
 
             TextButton(
@@ -59,7 +63,9 @@ class _DocumentsSignedViewState extends ConsumerState<DocumentsSignedView> {
 
                 await CertificateStorage.updateLastUsed(updatedCertificate.id, stateUser.email!);
 
-                Navigator.pop(context);
+                if (context.mounted){
+                  context.pop();
+                }
               },
               child: const Text('Sí'),
             ),
@@ -97,7 +103,9 @@ class _DocumentsSignedViewState extends ConsumerState<DocumentsSignedView> {
                 Text("Total de documentos firmados con exito: ${resultsDocumentsSigned['success']}"),
 
                 Text("Total de documentos con error: ${resultsDocumentsSigned['errors']}"),
-                        
+
+                if(resultsDocumentsSigned['errors'] >= 1)
+                const Text("Por favor revise en Quipux su carpeta de No enviados")            
               ]
             )
           ),
