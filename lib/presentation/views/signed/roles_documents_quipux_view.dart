@@ -413,7 +413,7 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: PrimaryButton(
-            text: "Firmar",
+            text: "Firmar todos",
             onPressed: () {
 
               final stateDocumentsSelected = ref.read(documentSelectedProvider.notifier);

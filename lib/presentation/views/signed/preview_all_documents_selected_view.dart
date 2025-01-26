@@ -9,102 +9,136 @@ class PreviewAllDocumentsSelectedView extends ConsumerStatefulWidget {
   const PreviewAllDocumentsSelectedView({super.key});
 
   @override
-  ConsumerState<PreviewAllDocumentsSelectedView> createState() =>
-      _PreviewDocumentViewState();
+  ConsumerState<PreviewAllDocumentsSelectedView> createState() => _PreviewDocumentViewState();
 }
 
 class _PreviewDocumentViewState extends ConsumerState<PreviewAllDocumentsSelectedView> {
+  final PageController _pageController = PageController();
+  int currentPage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final documentsSelectedState = ref.watch(documentSelectedProvider);
     final size = MediaQuery.of(context).size;
     
-    // Aplanar la lista de documentos para más fácil manejo
     final allDocuments = documentsSelectedState.documentsSelected.entries
         .expand((entry) => entry.value.map((doc) => MapEntry(entry.key, doc)))
         .toList();
 
     return Center(
-
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Título con contador de documentos
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
             child: Text(
-              "Documentos seleccionados para firmar (${allDocuments.length})",
+              "Documentos seleccionados para firmar: ${allDocuments.length}",
+              style: Theme.of(context).textTheme.bodyMedium,
               maxLines: 2,
             ),
           ),
           
-          // Área principal de visualización
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Lista horizontal de documentos
-                Expanded(
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: allDocuments.length,
-                    itemBuilder: (_, index) {
-                      final rolDoc = allDocuments[index];
-                      final rol = rolDoc.key;
-                      final doc = rolDoc.value;
-
-                      return Container(
-                        width: size.width - 15, // Ancho del contenedor del PDF
-                        margin: const EdgeInsets.symmetric(horizontal: 2.0),
-                        child: Column(
-                          children: [
-
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(
-                                "Documento del rol ${rol.cargo} con asunto: ${doc.asunto}",
-                                maxLines: 4,
-                              ),
-                            ),
-                            
-                            // Visor PDF
-                            Expanded(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey.shade300),
-                                  borderRadius: const BorderRadius.vertical(
-                                    bottom: Radius.circular(8),
-                                  ),
-                                ),
-                                child: doc.rutaDocumento != null
-                                    ? SfPdfViewer.network(
-                                        doc.rutaDocumento!,
-                                        pageSpacing: 0,
-                                        onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
-                                          // Manejar error de carga si es necesario
-                                        },
-                                      )
-                                    : const Center(
-                                        child: Text("Documento no disponible"),
-                                      ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  height: 90,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Rol: ${allDocuments[currentPage].key.cargo}",
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.amber),
+                        maxLines: 2,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Asunto: ${allDocuments[currentPage].value.asunto}",
+                        maxLines: 3,
+                      ),
+                    ],
                   ),
                 ),
-                
-                // Botón de firmar fijo en la parte inferior
+
+                Expanded(
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 48, // Ancho del IconButton
+                        child: currentPage > 0
+                            ? IconButton(
+                                onPressed: () {
+                                  _pageController.previousPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                                icon: const Icon(Icons.arrow_back_ios_new_outlined),
+                              )
+                            : null,
+                      ),
+
+                      Expanded(
+                        child: SizedBox(
+                          child: PageView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            controller: _pageController,
+                            onPageChanged: (page) {
+                              setState(() {
+                                currentPage = page;
+                              });
+                            },
+                            itemCount: allDocuments.length,
+                            itemBuilder: (_, index) {
+                              final doc = allDocuments[index].value;
+                              return doc.rutaDocumento != null
+                                  ? SfPdfViewer.network(
+                                      doc.rutaDocumento!,
+                                      pageSpacing: 0,
+                                      onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
+                                        // Manejar error de carga
+                                      },
+                                    )
+                                  : const Center(
+                                      child: Text("Documento no disponible"),
+                                    );
+                            },
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(
+                        width: 48, // Ancho del IconButton
+                        child: currentPage < allDocuments.length - 1
+                            ? IconButton(
+                                onPressed: () {
+                                  _pageController.nextPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                                icon: const Icon(Icons.arrow_forward_ios_outlined),
+                              )
+                            : null,
+                      ),
+                    ],
+                  ),
+                ),
+
                 Padding(
-                  padding: const EdgeInsets.all(4.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: PrimaryButton(
-                    text: "Firmar Documentos",
+                    text: "Firmar todos",
                     onPressed: () {
-
                       router.pushNamed("certificates_for_sign");
-
                     },
                   ),
                 ),
