@@ -56,7 +56,7 @@ class _PreviewDocumentViewState extends ConsumerState<PreviewAllDocumentsSelecte
                     children: [
                       Text(
                         "Rol: ${allDocuments[currentPage].key.cargo}",
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.amber),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                         maxLines: 2,
                       ),
                       const SizedBox(height: 8),
@@ -117,17 +117,20 @@ class _PreviewDocumentViewState extends ConsumerState<PreviewAllDocumentsSelecte
 
                       SizedBox(
                         width: 48, // Ancho del IconButton
-                        child: currentPage < allDocuments.length - 1
-                            ? IconButton(
-                                onPressed: () {
-                                  _pageController.nextPage(
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.easeInOut,
-                                  );
-                                },
-                                icon: const Icon(Icons.arrow_forward_ios_outlined),
-                              )
-                            : null,
+
+                        child: currentPage < allDocuments.length - 1 ? 
+                        IconButton(
+                          onPressed: () {
+                            _pageController.nextPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          },
+                          icon: const Icon(Icons.arrow_forward_ios_outlined),
+                        )
+                        : 
+                        null,
+
                       ),
                     ],
                   ),
