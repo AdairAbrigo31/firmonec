@@ -328,6 +328,8 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
 
                     header: Container(
 
+                      color: Theme.of(context).primaryColor,
+
                       width: double.infinity,
 
                       padding: const EdgeInsets.symmetric(
@@ -335,19 +337,6 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                         horizontal: 16  // Aumentado de 4 a 16
                       ),
 
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.blue[700]!, Colors.blue[500]!],
-                          
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.blue.withOpacity(0.3),
-                            blurRadius: 5,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
 
                       child: Row(
 
@@ -358,8 +347,8 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
 
                             child: Text(
                               rol.cargo,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.surface,
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.5,
@@ -375,15 +364,10 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                               horizontal: 10
                             ),
 
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-
                             child: Text(
                               '${documents.length}',
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.surface,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -400,15 +384,22 @@ class RolesDocumentsQuipuxViewState extends ConsumerState<RolesDocumentsQuipuxVi
                       child: documents.isEmpty ? 
                       
                       const Center(child: Text("No tiene documentos para este cargo"))
+
                       : 
+
                       SingleChildScrollView(
+
                         clipBehavior: Clip.none,
+
                         padding: EdgeInsets.zero,
+
                         child: Column(
+
                           children: documents.map((document) => 
                             buildDocumentCard(rol, document)
                           ).toList(),
                         ),
+
                       ),
                     ),
 

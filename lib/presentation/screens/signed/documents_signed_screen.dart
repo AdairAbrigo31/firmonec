@@ -9,9 +9,23 @@ class DocumentsSignedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return const Scaffold(
+    return Scaffold(
+
+      appBar: AppBar(
+
+        backgroundColor: Colors.amber,
+
+        title: const Align( 
+          
+          alignment: Alignment.center, 
+          
+          child: Text("Documentos firmados", style: TextStyle(fontSize: 18),),
+          
+        ),
+        
+      ),
       
-      body: DocumentsSignedView(),
+      body: const DocumentsSignedView(),
     );
   }
 

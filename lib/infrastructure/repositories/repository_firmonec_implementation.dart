@@ -128,7 +128,13 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   @override
   Future<List<RolEntity>> getRolesWithoutToken({required String email}) async {
 
-    final dio = Dio();
+    final dio = Dio(
+
+      BaseOptions(
+        baseUrl: routeBase,
+        connectTimeout: const Duration(seconds: 20),
+      )
+    );
 
     try {
 
@@ -275,10 +281,10 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
       final dio = Dio(
 
-      BaseOptions(
-        baseUrl: routeBase,
-        connectTimeout: const Duration(seconds: 20),
-        receiveTimeout: const Duration(seconds: 20)
+        BaseOptions(
+          baseUrl: routeBase,
+          connectTimeout: const Duration(seconds: 20),
+          receiveTimeout: const Duration(seconds: 20)
         )
       );
 

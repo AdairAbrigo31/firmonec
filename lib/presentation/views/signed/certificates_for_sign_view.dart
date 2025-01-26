@@ -228,86 +228,94 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                       final certificate = certificates[index];
 
-                      return Card(
+                      return Consumer(
+                        
+                        builder: (context, ref, child)  => 
+                        
+                        Card(
 
-                        margin: const EdgeInsets.only(bottom: 12),
+                          margin: const EdgeInsets.only(bottom: 12),
 
-                        child: Row(
+                          child: Row(
 
-                          children: [
+                            children: [
 
-                            Radio<String>(
-                              value: certificate.id,
-                              groupValue: ref.watch(documentSelectedProvider).certificate?.id,
-                              onChanged: (String? value) {
-                                ref.read(documentSelectedProvider.notifier).updateCertificate(certificate);
-                              },
-                            ),
-                            
-                            Expanded(
-                            child: ListTile(
-
-                              leading: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Icon(
-                                  Icons.verified_user,
-                                  color: Colors.blue,
-                                ),
-                              ),
-
-                              title: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      certificate.name,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-
-                                  Text(certificate.alias),
-
-                                ],
-                              ),
-
-                              trailing: PopupMenuButton(
-
-                                icon: const Icon(Icons.more_vert),
-                                itemBuilder: (context) => [
-
-                                  const PopupMenuItem(
-                                    value: 'delete',
-                                    child: Text('Eliminar'),
-                                  ),
-                                ],
-
-                                onSelected: (value) async {
-
-                                  if (value == 'delete') {
-
-                                    await CertificateStorage.deleteCertificate(certificate.id, user.email!);
-
-                                    setState(() {});
-
-                                  }
+                              Radio<String>(
+                                value: certificate.id,
+                                groupValue: ref.watch(documentSelectedProvider).certificate?.id,
+                                onChanged: (String? value) {
+                                  ref.read(documentSelectedProvider.notifier).updateCertificate(certificate);
                                 },
                               ),
+
+                              Expanded(child: child!)
+                              
+                              
+                            ]
+                          ), 
+                          
+                        ),
+                        
+                        child: ListTile(
+
+                          leading: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                          )
-                        ]
-                      )
-                      ); 
+                            child: const Icon(
+                              Icons.verified_user,
+                              color: Colors.blue,
+                            ),
+                          ),
+
+                          title: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  certificate.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+
+                              Text(certificate.alias),
+
+                            ],
+                          ),
+
+                          trailing: PopupMenuButton(
+
+                            icon: const Icon(Icons.more_vert),
+                            itemBuilder: (context) => [
+
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Text('Eliminar'),
+                              ),
+                            ],
+
+                            onSelected: (value) async {
+
+                              if (value == 'delete') {
+
+                                await CertificateStorage.deleteCertificate(certificate.id, user.email!);
+
+                                setState(() {});
+
+                              }
+                            },
+                          ),
+                        ),
+                      );
                     },
                   );
                 },

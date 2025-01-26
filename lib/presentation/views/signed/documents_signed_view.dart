@@ -94,7 +94,7 @@ class _DocumentsSignedViewState extends ConsumerState<DocumentsSignedView> {
 
                 Text(" Ha intentado firmar: ${resultsDocumentsSigned['total']}"),
 
-                Text("Total de documentos firmados cone exito: ${resultsDocumentsSigned['success']}"),
+                Text("Total de documentos firmados con exito: ${resultsDocumentsSigned['success']}"),
 
                 Text("Total de documentos con error: ${resultsDocumentsSigned['errors']}"),
                         
