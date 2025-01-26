@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:tesis_firmonec/presentation/views/signed/signed.dart';
+import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 class PreviewOneDocumentScreen extends StatelessWidget {
   const PreviewOneDocumentScreen({super.key});
@@ -8,9 +9,13 @@ class PreviewOneDocumentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: const PreviewOneDocumentView(),
+
+    return const Scaffold(
+
+      appBar: AppBarFirmonec(title: "Previsuzalización", showBackButton: true),
+
+      body: PreviewOneDocumentView(),
+      
     );
   }
 

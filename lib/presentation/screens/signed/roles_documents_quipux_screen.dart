@@ -12,10 +12,17 @@ class RolesDocumentsQuipuxScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     return Scaffold(
-      appBar: AppBar(
+
+      appBar: AppBarFirmonec(
         
-        backgroundColor: Colors.white,
+        title: "Roles y documentos", 
+        
+        showBackButton: false, 
+
+        automaticallyImplyLeading: false,
+        
         actions: [
 
           IconButton(
@@ -42,12 +49,16 @@ class RolesDocumentsQuipuxScreen extends ConsumerWidget {
                 router.goNamed( "roles_documents_quipux" );
               },
           
-            icon: const Icon(Icons.refresh_outlined))
+            icon: Icon(Icons.refresh_outlined, color: Theme.of(context).colorScheme.surface,)
+            
+          )
+
         ],
         
       ),
+
       body: const RolesDocumentsQuipuxView(),
-      backgroundColor: Colors.white,
+
     );
   }
 

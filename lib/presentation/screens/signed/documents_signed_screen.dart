@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:tesis_firmonec/presentation/views/views.dart';
+import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 class DocumentsSignedScreen extends StatelessWidget {
 
@@ -9,23 +10,11 @@ class DocumentsSignedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return const Scaffold(
 
-      appBar: AppBar(
-
-        backgroundColor: Colors.amber,
-
-        title: const Align( 
-          
-          alignment: Alignment.center, 
-          
-          child: Text("Documentos firmados", style: TextStyle(fontSize: 18),),
-          
-        ),
-        
-      ),
+      appBar: AppBarFirmonec(title: "Documentos firmados", showBackButton: false),
       
-      body: const DocumentsSignedView(),
+      body: DocumentsSignedView(),
     );
   }
 

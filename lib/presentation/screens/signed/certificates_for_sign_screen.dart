@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:tesis_firmonec/presentation/views/signed/certificates_for_sign_view.dart';
+import 'package:tesis_firmonec/presentation/views/signed/signed.dart';
+import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 class CertificatesForSignScreen extends StatelessWidget {
   const CertificatesForSignScreen({super.key});
@@ -8,11 +9,11 @@ class CertificatesForSignScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return const Scaffold(
 
-      appBar: AppBar(),
+      appBar: AppBarFirmonec(title: "Certificados", showBackButton: true),
 
-      body: const CertificatesForSignView(),
+      body: CertificatesForSignView(),
       
     );
   }

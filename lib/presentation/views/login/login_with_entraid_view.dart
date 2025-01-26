@@ -31,7 +31,7 @@ class LoginWithEntraIDView extends ConsumerWidget {
                 );
               }
 
-              return const RolesDocumentsQuipuxScreen();
+              return  const RolesDocumentsQuipuxScreen();
 
             }
         )

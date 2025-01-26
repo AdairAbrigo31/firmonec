@@ -33,7 +33,7 @@ class _DocumentsSignedViewState extends ConsumerState<DocumentsSignedView> {
 
     final stateDocumentsSelected = ref.read(documentSelectedProvider);
 
-    if (resultsDocumentsSigned['success'] > 1 && stateDocumentsSelected.certificate!.password != null) {
+    if (resultsDocumentsSigned['success'] >= 1 && stateDocumentsSelected.certificate!.password != null) {
 
       final stateUser = ref.read(userActiveProvider);
 
