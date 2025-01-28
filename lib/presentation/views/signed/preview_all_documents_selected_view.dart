@@ -4,6 +4,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:tesis_firmonec/configuration/go_router.dart';
 import 'package:tesis_firmonec/presentation/providers/signed/signed.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
+import 'package:tesis_firmonec/theme/app_typography.dart';
 
 class PreviewAllDocumentsSelectedView extends ConsumerStatefulWidget {
   const PreviewAllDocumentsSelectedView({super.key});
@@ -24,8 +25,8 @@ class _PreviewDocumentViewState extends ConsumerState<PreviewAllDocumentsSelecte
 
   @override
   Widget build(BuildContext context) {
+
     final documentsSelectedState = ref.watch(documentSelectedProvider);
-    final size = MediaQuery.of(context).size;
     
     final allDocuments = documentsSelectedState.documentsSelected.entries
         .expand((entry) => entry.value.map((doc) => MapEntry(entry.key, doc)))
@@ -36,10 +37,11 @@ class _PreviewDocumentViewState extends ConsumerState<PreviewAllDocumentsSelecte
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
+            padding: const EdgeInsets.only(top: 15),
             child: Text(
               "Documentos seleccionados para firmar: ${allDocuments.length}",
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: AppTypography.bodyLarge,
+              textAlign: TextAlign.center,
               maxLines: 2,
             ),
           ),
@@ -48,20 +50,21 @@ class _PreviewDocumentViewState extends ConsumerState<PreviewAllDocumentsSelecte
             child: Column(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   height: 90,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Rol: ${allDocuments[currentPage].key.cargo}",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: AppTypography.bodyMedium,
                         maxLines: 2,
                       ),
                       const SizedBox(height: 8),
                       Text(
                         "Asunto: ${allDocuments[currentPage].value.asunto}",
+                        style: AppTypography.bodyMedium,
                         maxLines: 3,
                       ),
                     ],
@@ -72,7 +75,7 @@ class _PreviewDocumentViewState extends ConsumerState<PreviewAllDocumentsSelecte
                   child: Row(
                     children: [
                       SizedBox(
-                        width: 48, // Ancho del IconButton
+                        width: 40, // Ancho del IconButton
                         child: currentPage > 0
                             ? IconButton(
                                 onPressed: () {
@@ -116,7 +119,7 @@ class _PreviewDocumentViewState extends ConsumerState<PreviewAllDocumentsSelecte
                       ),
 
                       SizedBox(
-                        width: 48, // Ancho del IconButton
+                        width: 40, // Ancho del IconButton
 
                         child: currentPage < allDocuments.length - 1 ? 
                         IconButton(

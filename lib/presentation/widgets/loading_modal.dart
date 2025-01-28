@@ -4,31 +4,51 @@ class LoadingModal extends StatelessWidget {
   const LoadingModal({super.key});
 
   // Método estático para mostrar el modal
-  static void show(BuildContext context) {
-    showDialog(
+  static Future<void> show(BuildContext context) async {
+    if (!context.mounted) return;
+    
+    await showDialog(
       context: context,
-      barrierDismissible: false, // Evita que se cierre al tocar fuera
-      builder: (_) => const LoadingModal(),
+      barrierDismissible: false,
+      builder: (_) => WillPopScope(
+        onWillPop: () async => false, // Previene el cierre con el botón atrás
+        child: const LoadingModal(),
+      ),
     );
   }
 
   // Método estático para ocultar el modal
-  static void hide(BuildContext context) {
-    Navigator.pop(context);
+  static Future<void> hide(BuildContext context) async {
+    if (!context.mounted) return;
+    
+    // Verificamos si el diálogo está visible antes de intentar cerrarlo
+    if (Navigator.canPop(context)) {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Dialog(
+    return Dialog(
       backgroundColor: Colors.white,
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 20),
+      elevation: 8, // Añadimos elevación para mejor apariencia
+      shape: RoundedRectangleBorder( // Bordes redondeados
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Padding(
+        padding: EdgeInsets.symmetric(vertical: 24, horizontal: 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             CircularProgressIndicator(),
-            SizedBox(height: 15),
-            Text('Cargando...')
+            SizedBox(height: 20),
+            Text(
+              'Cargando...',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            )
           ],
         ),
       ),

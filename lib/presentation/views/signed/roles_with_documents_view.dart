@@ -5,6 +5,7 @@ import 'package:tesis_firmonec/domain/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
+import 'package:tesis_firmonec/theme/app_typography.dart';
 
 class RolesWithDocumentsView extends ConsumerStatefulWidget {
   const RolesWithDocumentsView({super.key});
@@ -52,13 +53,16 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
                     children: [
                       Text(
                         'Fecha: $fechaFormateada',
-                        style: const TextStyle(fontSize: 13),
+                        textAlign: TextAlign.start,
+                        style: AppTypography.bodyMedium
                       ),
 
                       const SizedBox(height: 5,),
 
                       Text(
-                        'Categoria: ${doc.categoria}'
+                        'Categoria: ${doc.categoria}',
+                        textAlign: TextAlign.start,
+                        style: AppTypography.bodyMedium,
                       ),
 
                     ],
@@ -71,12 +75,9 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
                       borderRadius: BorderRadius.circular(12),
                     ),
 
-                    child: const Text(
+                    child: Text(
                       'Por Elaborar',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppTypography.bodyMedium
                     ),
                   ),
 
@@ -86,11 +87,8 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
 
               // Asunto con manejo de overflow
               Text(
-                doc.asunto,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+                "Asunto: ${doc.asunto}",
+                style: AppTypography.bodyMedium,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.start,
@@ -100,7 +98,7 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
 
               Text(
                 'Para: ${doc.para}',
-                style: const TextStyle(fontSize: 13),
+                style: AppTypography.bodyMedium,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.start,
@@ -114,7 +112,11 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
 
                   if (doc.rutaDocumento != null)
                   TextButton.icon(
-                    label: const Text('Ver PDF'),
+                    label: Text(
+                      'Ver PDF',
+                      style: AppTypography.bodySmall,
+                      
+                    ),
                     onPressed: () {
 
                       oneDocumentSelectedPreviewNotifier.setDocument(doc);
@@ -124,7 +126,10 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
                     },
                   )
                   else 
-                  const Text("No hay PDF"),
+                  Text(
+                    "No hay PDF",
+                    style: AppTypography.bodySmall,
+                  ),
 
                   const SizedBox(width: 8),
 

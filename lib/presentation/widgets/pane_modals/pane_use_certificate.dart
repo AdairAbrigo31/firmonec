@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 import 'package:tesis_firmonec/presentation/widgets/buttons/buttons.dart';
+import 'package:tesis_firmonec/theme/theme.dart';
 
 class PaneUseCertificate extends ConsumerWidget{
   
@@ -42,7 +43,10 @@ class PaneUseCertificate extends ConsumerWidget{
 
         children: [
 
-           Text("El certificado seleccionado es: ${certificateEntity.alias}"),
+           Text(
+            "El certificado seleccionado es: ${certificateEntity.alias}",
+            style: AppTypography.bodyMedium,
+           ),
 
           const SizedBox(height: 16),
 
@@ -50,10 +54,11 @@ class PaneUseCertificate extends ConsumerWidget{
 
           TextField(
 
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
 
               hintText: "Contraseña",
-              border: OutlineInputBorder(),
+              hintStyle: AppTypography.bodyMedium,
+              border: const OutlineInputBorder(),
 
             ),
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tesis_firmonec/theme/theme.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
@@ -45,12 +46,7 @@ class PrimaryButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: TextStyle(
-            color: textColor ?? Colors.white,
-            fontSize: fontSize ?? 16,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-          ),
+          style: AppTypography.button.copyWith(color: Theme.of(context).colorScheme.surface),
         ),
       ),
     );

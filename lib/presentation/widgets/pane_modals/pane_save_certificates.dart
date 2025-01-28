@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/presentation/widgets/buttons/buttons.dart';
+import 'package:tesis_firmonec/theme/theme.dart';
 
 class PaneSaveCertificates extends ConsumerWidget {
   final void Function() onPressedAccept;
@@ -34,24 +35,26 @@ class PaneSaveCertificates extends ConsumerWidget {
           Text(
             "El certificado seleccionado es: $nameCertificate",
             textAlign: TextAlign.center,
+            
           ),
 
           const SizedBox(height: 16),
 
-          const Text(
+          Text(
             "Ingrese una pequeña descripción para el certificado",
             textAlign: TextAlign.center,
+            style: AppTypography.bodyMedium,
           ),
 
           const SizedBox(height: 8),
 
           TextField(
 
-            decoration: const
-             InputDecoration(
+            decoration: InputDecoration(
 
               hintText: "Certificado FirmaEC",
-              border: OutlineInputBorder(),
+              hintStyle: AppTypography.bodyMedium,
+              border: const OutlineInputBorder(),
 
             ),
             onChanged: onChangedDescription,

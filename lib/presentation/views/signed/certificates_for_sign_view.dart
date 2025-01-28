@@ -8,6 +8,7 @@ import 'package:tesis_firmonec/infrastructure/persistence/persistence.dart';
 import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
+import 'package:tesis_firmonec/theme/theme.dart';
 
 class CertificatesForSignView extends ConsumerStatefulWidget {
 
@@ -105,42 +106,57 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
     final user = ref.watch(userActiveProvider);
 
+    final documentsSelectedState = ref.watch(documentSelectedProvider);
+    
+    final allDocuments = documentsSelectedState.documentsSelected.entries
+        .expand((entry) => entry.value.map((doc) => MapEntry(entry.key, doc)))
+        .toList();
+
     return Center(
 
       child: Padding(
 
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(14.0),
 
         child: Column(
 
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
+
+            Padding(
+              padding: const EdgeInsets.only(top: 15),            child: Text(
+              "Documentos seleccionados para firmar: ${allDocuments.length}",
+              style: AppTypography.bodyLarge,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              ),
+            ),
+
+            const SizedBox(height: 20),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
               children: [
 
-                const Text(
-
+                Text(
                   "Seleccione un certificado",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 16,
-                  ),
+                  style: AppTypography.bodyMedium,
 
                 ),
 
                 GestureDetector(
 
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
 
-                      Text("Añadir"),
+                      Text("Añadir", style: AppTypography.bodyMedium,),
 
-                      Icon(Icons.add_circle_outline_rounded)
+                      const SizedBox(width: 10,),
+
+                      const Icon(Icons.add_circle_outline_rounded)
 
                     ],
                 
@@ -264,9 +280,9 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                             ),
+
                             child: const Icon(
                               Icons.verified_user,
-                              color: Colors.blue,
                             ),
                           ),
 
@@ -275,9 +291,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                               Expanded(
                                 child: Text(
                                   certificate.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: AppTypography.bodyMedium,
                                 ),
                               ),
                             ],
@@ -287,7 +301,10 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
 
-                              Text(certificate.alias),
+                              Text(
+                                certificate.alias,
+                                style: AppTypography.bodySmall,
+                              ),
 
                             ],
                           ),
@@ -325,62 +342,79 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
             const SizedBox(height: 16),
 
-            PrimaryButton(
+            Padding(
+              padding: const EdgeInsets.all(4.0),
 
-              text: "Firmar",
+              child: PrimaryButton(
 
-              onPressed: () async {
+                text: "Firmar",
 
-                final documentsSelectedState = ref.read(documentSelectedProvider);
+                onPressed: () async {
 
-                if( documentsSelectedState.documentsSelected.isEmpty && documentsSelectedState.certificate != null) {
+                  try {
 
-                  return;
-                }
+                    print("CLick");
 
+                    final documentsSelectedState = ref.read(documentSelectedProvider);
 
-                final stateForSign = ref.read(documentSelectedProvider);
-
-                if ( stateForSign.certificate!.password != null ) {
-
-                  await showDialog(
-
-                    context: context, 
-                    builder: (context) {
-
-                      return ModalLayouts(context).showSimpleModal(
-
-                        child: PaneUseCertificate(
-                          
-                          onPressedAccept: () async {
-
-                            await SignDocumentsOneByOneController.signDocumentsOneByOneWithoutPasswordSaved(context, ref);
-
-                            await CertificateStorage.updateLastUsed(ref.read(documentSelectedProvider).certificate!.id, user.email!);
-
-                            router.goNamed('documents_signed');
-
-
-                          }, 
-                        
-                          certificateEntity: stateForSign.certificate!
-                          
-                        )
+                    if( documentsSelectedState.certificate == null) {
+                      var snackBar = const SnackBar(
+                        content: Text('Debes seleccionar un certificado')
                       );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      return;
+                    }
 
-                  });
 
-                } else {
+                    final stateForSign = ref.read(documentSelectedProvider);
 
-                  await SignDocumentsOneByOneController.signDocumentsOneByOneWithPasswordSaved(context, ref);
+                    if ( stateForSign.certificate!.password != null ) {
 
-                  await CertificateStorage.updateLastUsed(ref.read(documentSelectedProvider).certificate!.id, user.email!);
+                      await showDialog(
 
-                  router.goNamed('documents_signed');
+                        context: context, 
+                        builder: (context) {
 
-                }
-              },
-            ),
+                          return ModalLayouts(context).showSimpleModal(
+
+                            child: PaneUseCertificate(
+                              
+                              onPressedAccept: () async {
+
+                                await SignDocumentsOneByOneController.signDocumentsOneByOneWithoutPasswordSaved(context, ref);
+
+                                await CertificateStorage.updateLastUsed(ref.read(documentSelectedProvider).certificate!.id, user.email!);
+
+                                router.goNamed('documents_signed');
+
+
+                              }, 
+                            
+                              certificateEntity: stateForSign.certificate!
+                              
+                            )
+                          );
+
+                      });
+
+                    } else {
+
+                      await SignDocumentsOneByOneController.signDocumentsOneByOneWithPasswordSaved(context, ref);
+
+                      await CertificateStorage.updateLastUsed(ref.read(documentSelectedProvider).certificate!.id, user.email!);
+
+                      router.goNamed('documents_signed');
+
+                    }
+
+                  }catch (e) {
+                    throw ("$e");
+                  }
+                },
+              ),
+            )
+
+            
           ],
         ),
       ),

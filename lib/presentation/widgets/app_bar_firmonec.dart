@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tesis_firmonec/theme/app_typography.dart';
 
 class AppBarFirmonec extends StatelessWidget implements PreferredSizeWidget{
 
@@ -54,17 +55,7 @@ class AppBarFirmonec extends StatelessWidget implements PreferredSizeWidget{
           
           title, 
           
-          style: TextStyle(
-            
-            fontSize: 18, 
-            
-            color: Theme.of(context).colorScheme.surface,
-
-            letterSpacing: 0.5,
-            
-          ),
-
-          
+          style: AppTypography.h1.copyWith(color: Theme.of(context).colorScheme.surface)
           
         )
         

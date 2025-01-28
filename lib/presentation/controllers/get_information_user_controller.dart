@@ -40,7 +40,7 @@ class GetInformationUserController {
 
     try {
 
-      LoadingModal.show(context);
+      //await LoadingModal.show(context);
 
       final repository = ref.read(repositoryProvider);
 
@@ -82,11 +82,11 @@ class GetInformationUserController {
 
       if(!context.mounted) return;
 
-      LoadingModal.hide(context);
+      //await LoadingModal.hide(context);
 
     } catch (error) {
 
-      LoadingModal.hide(context);
+      //await LoadingModal.hide(context);
     
         String errorMessage = "Error inesperado";
         if (error.toString().contains("networkError")) {
@@ -119,7 +119,7 @@ class GetInformationUserController {
       final rolDocumentProvider = ref.read(rolDocumentsProvider.notifier);
 
       rolDocumentProvider.clearAllDocuments();
-
+      
       for (final rol in roles) {
 
         final List<DocumentEntity> documentPorElaborar = await repository.getDocumentPorElaborar(rol.codusuario);

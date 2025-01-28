@@ -10,7 +10,7 @@ import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
 
 class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
-  final String routeBase = 'https://8f96-2800-bf0-8045-e58-399c-cf6e-ed5f-61aa.ngrok-free.app/api';
+  final String routeBase = 'https://eb06-2800-bf0-8045-e58-399c-cf6e-ed5f-61aa.ngrok-free.app/api';
 
   //final String routeBase = 'http://10.0.2.2:5299/api';
 
@@ -60,8 +60,7 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   Future<List<RolEntity>> getRoles( {required String email, required String token}) async {
 
     BaseOptions baseOptions = BaseOptions(
-      connectTimeout: const Duration(seconds: 30 * 1000),
-      receiveTimeout: const Duration(seconds: 30 * 1000),
+      connectTimeout: const Duration(seconds: 20),
     );
 
     final Dio dio = Dio(baseOptions);
@@ -188,7 +187,14 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   @override
   Future<Map<String, dynamic>?> getTokenBackend(String tokenEntraID) async {
 
-    final dio = Dio();
+    final dio = Dio(
+
+      BaseOptions(
+        baseUrl: routeBase,
+        connectTimeout: const Duration(seconds: 20),
+      )
+    );
+
     try {
       final response = await dio.post('$routeBase/Auth/Login', data: {
         'accessToken': tokenEntraID,
@@ -201,7 +207,8 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
       return response.data;
     } on DioException catch (e) {
 
-      throw ("Error de conexión: ${e.message}");
+      throw ("Error de conexión: ${e.
+      message}");
 
     } catch (e) {
 

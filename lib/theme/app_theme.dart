@@ -9,10 +9,12 @@ class AppTheme {
     useMaterial3: true,
 
     primaryColor: LightColorPalette.primaryColor(),
+
     colorScheme: ColorScheme.fromSeed(
       seedColor: Colors.deepPurple,
       brightness: Brightness.light,
     ),
+
   );
 
 
@@ -21,9 +23,11 @@ class AppTheme {
     useMaterial3: true,
 
     primaryColor: DarkColorPalette.primaryColor(),
+
     colorScheme: ColorScheme.fromSeed(
       seedColor: Colors.deepPurple,
       brightness: Brightness.dark,
     ),
+
   );
 }
