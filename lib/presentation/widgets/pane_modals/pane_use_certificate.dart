@@ -36,86 +36,86 @@ class PaneUseCertificate extends ConsumerWidget{
 
       ),
 
-      child: Column(
+      child: Padding(
+        
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
 
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Column(
 
-        children: [
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
 
-           Text(
-            "El certificado seleccionado es: ${certificateEntity.alias}",
-            style: AppTypography.bodyMedium,
-           ),
+          children: [
 
-          const SizedBox(height: 16),
+            Text(
+              "El certificado seleccionado es: ${certificateEntity.alias}",
+              style: AppTypography.bodyMedium,
+            ),
 
-          const Text( "Por favor ingrese la contraseña del certificado"),
+            const SizedBox(height: 12),
 
-          TextField(
+            const Text( "Por favor ingrese la contraseña del certificado"),
 
-            decoration: InputDecoration(
+            const SizedBox(height: 10),
 
-              hintText: "Contraseña",
-              hintStyle: AppTypography.bodyMedium,
-              border: const OutlineInputBorder(),
+            TextField(
+
+              decoration: InputDecoration(
+
+                hintText: "Contraseña",
+                hintStyle: AppTypography.bodyMedium,
+                border: const OutlineInputBorder(),
+
+              ),
+
+              onChanged: (value) {
+
+                notifierFormToSign.updatePassword(value);
+
+              },
 
             ),
 
-            onChanged: (value) {
+            const SizedBox(height: 16),
 
-              notifierFormToSign.updatePassword(value);
+            Row(
+              
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribuye botones
+              children: [
+                const Expanded(
 
-            },
+                  child: Padding(
 
-          ),
+                    padding: EdgeInsets.symmetric(horizontal: 2),
+                    child: CancelButton(
 
-          const SizedBox(height: 16),
+                      text: "Cancelar",
 
-          Row(
+                    ),
+                  ),
+                ),
+
+                Expanded(
+
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+
+                    child: PrimaryButton(
+
+                      text: "Aceptar",
+
+                      onPressed: onPressedAccept
+
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
             
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribuye botones
-            children: [
-              Expanded(
 
-                child: Padding(
-
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: PrimaryButton(
-
-                    text: "Cancelar",
-
-                    onPressed: () {
-
-                      if (context.mounted) {
-                        Navigator.of(context).pop();
-                      }
-                    }
-
-                  ),
-                ),
-              ),
-
-              Expanded(
-
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-
-                  child: PrimaryButton(
-
-                    text: "Aceptar",
-
-                    onPressed: onPressedAccept
-
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          
-
-        ],
+          ],
+        )
       )
 
     );

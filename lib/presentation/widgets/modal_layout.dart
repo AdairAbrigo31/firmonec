@@ -29,6 +29,8 @@ class ModalLayouts {
 
           child: Dialog(
 
+            backgroundColor: Colors.white,
+
             shape: RoundedRectangleBorder(
 
               borderRadius: BorderRadius.circular(8)
@@ -51,7 +53,7 @@ class ModalLayouts {
 
                   alignment: Alignment.centerRight,
 
-                  padding: const EdgeInsets.symmetric( horizontal: 8, vertical: 8 ),
+                  padding: const EdgeInsets.symmetric( horizontal: 8, vertical: 2 ),
 
                   child: (quitx == null)
 
@@ -61,7 +63,7 @@ class ModalLayouts {
 
                     highlightColor: Colors.transparent, // Desactivar el color de resaltado
 
-                    child: const Icon(Icons.close, color: Colors.amber),
+                    child: Icon(Icons.close, color: Theme.of(_context).colorScheme.error),
 
                     onTap: () => _context.pop(),
 
@@ -73,15 +75,13 @@ class ModalLayouts {
 
                 Container(
 
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
 
                   child: Column(
 
                     mainAxisSize: MainAxisSize.min,
 
                     children: [
-
-
 
                       if(title != null)
 

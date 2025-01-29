@@ -14,13 +14,36 @@ class RolesWithDocumentsView extends ConsumerStatefulWidget {
   ConsumerState<RolesWithDocumentsView> createState() => RolesWithDocumentsQuipuxViewState();
 }
 
-class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocumentsView> with SingleTickerProviderStateMixin {
+class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocumentsView> with TickerProviderStateMixin {
   late TabController _tabController;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
     _tabController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _centerSelectedTab(int index) {
+    if (!_scrollController.hasClients) return;
+    
+    // Calculamos la posición aproximada de la tab
+    const tabWidth = 150.0; // Ancho aproximado de cada tab
+    final screenWidth = MediaQuery.of(context).size.width;
+    final offset = (tabWidth * index) - (screenWidth / 2) + (tabWidth / 2);
+    
+    // Aseguramos que el offset esté dentro de los límites
+    final maxOffset = _scrollController.position.maxScrollExtent;
+    const minOffset = 0.0;
+    final finalOffset = offset.clamp(minOffset, maxOffset);
+
+    // Animamos el scroll a la posición calculada
+    _scrollController.animateTo(
+      finalOffset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
 
@@ -35,11 +58,12 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
 
       return Card(
 
+
         elevation: 2,
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
 
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 8),
 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,8 +71,12 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
               // Header con badge de tipo
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
+                  Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: 
                   Column(
                     children: [
                       Text(
@@ -67,12 +95,13 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
 
                     ],
                   ),
+                  ),
 
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
                       color: Colors.blue[100],
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(5))
                     ),
 
                     child: Text(
@@ -88,7 +117,7 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
               // Asunto con manejo de overflow
               Text(
                 "Asunto: ${doc.asunto}",
-                style: AppTypography.bodyMedium,
+                style: AppTypography.bodyMediumBool,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.start,
@@ -266,6 +295,18 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
       ),
     );
   }
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Obtenemos los roles iniciales
+    final rolDocProvider = ref.read(rolDocumentsProvider);
+    final roles = rolDocProvider.documentsByRol?.keys.toList() ?? [];
+    
+    // Inicializamos el TabController con la longitud inicial
+    _tabController = TabController(length: roles.length, vsync: this);
+  }
   
 
   @override
@@ -277,13 +318,18 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
 
     final roles = rolDocProvider.documentsByRol?.keys.toList() ?? [];
 
-    _tabController = TabController(length: roles.length, vsync: this);
-
     return Column(
+
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text("Bienvenido ${userProvider.email}", textAlign: TextAlign.center,),
+
+          padding: const EdgeInsets.all(8.0),
+
+          child: Text(
+            "Bienvenido ${userProvider.email}", 
+            textAlign: TextAlign.center, 
+            style: AppTypography.bodyMedium
+          ),
         ),
         
         if (roles.isEmpty) 
@@ -301,6 +347,8 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
                   controller: _tabController,
 
                   isScrollable: true,
+
+                  onTap: _centerSelectedTab,
 
                   tabs: roles.map((rol) => Tab(
 
@@ -356,11 +404,17 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
           ),
 
         Padding(
+
           padding: const EdgeInsets.all(16.0),
+
           child: PrimaryButton(
-            text: "Firmar todos",
+
+            text: "Firmar ( ${ref.watch(documentSelectedProvider).totalDocuments} )",
+
             onPressed: () {
+
               final stateDocumentsSelected = ref.read(documentSelectedProvider.notifier);
+
               if (stateDocumentsSelected.isEmpty()) {
                 var snackBar = const SnackBar(
                   content: Text('Debes seleccionar al menos un documento')
@@ -368,6 +422,7 @@ class RolesWithDocumentsQuipuxViewState extends ConsumerState<RolesWithDocuments
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 return;
               }
+
               router.pushNamed("preview_all_documents_selected");
             },
           ),

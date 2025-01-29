@@ -20,90 +20,94 @@ class PaneSaveCertificates extends ConsumerWidget {
 
     return Container(
 
-      width: double.infinity, // Asegura ancho completo
+      width: double.infinity,
+
       decoration: BoxDecoration(
+
         color: Colors.white,
+
         borderRadius: BorderRadius.circular(12),
+
       ),
       
-      child: Column(
+      child: Padding(
+        
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
 
-        mainAxisSize: MainAxisSize.min, // Importante
-        crossAxisAlignment: CrossAxisAlignment.stretch, // Alinea contenido
-        children: [
+        child: Column(
 
-          Text(
-            "El certificado seleccionado es: $nameCertificate",
-            textAlign: TextAlign.center,
-            
-          ),
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch, 
 
-          const SizedBox(height: 16),
+          children: [
 
-          Text(
-            "Ingrese una pequeña descripción para el certificado",
-            textAlign: TextAlign.center,
-            style: AppTypography.bodyMedium,
-          ),
-
-          const SizedBox(height: 8),
-
-          TextField(
-
-            decoration: InputDecoration(
-
-              hintText: "Certificado FirmaEC",
-              hintStyle: AppTypography.bodyMedium,
-              border: const OutlineInputBorder(),
-
+            Text(
+              "El certificado seleccionado es: $nameCertificate",
+              textAlign: TextAlign.center,
+              
             ),
-            onChanged: onChangedDescription,
-          ),
 
-          const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
-          Row(
-            
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribuye botones
-            children: [
-              Expanded(
+            Text(
+              "Ingrese una pequeña descripción para el certificado",
+              textAlign: TextAlign.center,
+              style: AppTypography.bodyMedium,
+            ),
 
-                child: Padding(
+            const SizedBox(height: 10),
 
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: PrimaryButton(
+            TextField(
 
-                    text: "Cancelar",
+              decoration: InputDecoration(
 
-                    onPressed: () {
+                hintText: "Certificado FirmaEC",
+                hintStyle: AppTypography.bodyMedium,
+                border: const OutlineInputBorder(),
 
-                      if (context.mounted) {
-                        Navigator.of(context).pop();
-                      }
-                    }
+              ),
+              onChanged: onChangedDescription,
+            ),
 
+            const SizedBox(height: 16),
+
+            Row(
+              
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribuye botones
+              children: [
+                const Expanded(
+
+                  child: Padding(
+
+                    padding: EdgeInsets.symmetric(horizontal: 2),
+                    
+                    child: CancelButton(
+
+                      text: "Cancelar",
+
+                    ),
                   ),
                 ),
-              ),
 
-              Expanded(
+                Expanded(
 
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
 
-                  child: PrimaryButton(
+                    child: PrimaryButton(
 
-                    text: "Aceptar",
+                      text: "Aceptar",
 
-                    onPressed: onPressedAccept
+                      onPressed: onPressedAccept
 
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            ),
+          ],
+        ),
+      )
     );
   }
 }

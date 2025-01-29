@@ -23,6 +23,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
   String? _errorMessage;
   bool _isLoading = false;
+  late Future<List<CertificateEntity>> _certificatesFuture;
 
 
   Future<void> _pickFile(String emailUser) async {
@@ -100,6 +101,13 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    final user = ref.read(userActiveProvider);
+    _certificatesFuture = CertificateStorage.getCertificates(user.email!);  // Inicializamos el future
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -123,15 +131,6 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-
-            Padding(
-              padding: const EdgeInsets.only(top: 15),            child: Text(
-              "Documentos seleccionados para firmar: ${allDocuments.length}",
-              style: AppTypography.bodyLarge,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              ),
-            ),
 
             const SizedBox(height: 20),
 
@@ -177,7 +176,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
               child: FutureBuilder(
 
-                future: CertificateStorage.getCertificates(user.email!),
+                future: _certificatesFuture,
 
                 builder: (context, snapshot) {
 
@@ -238,99 +237,87 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                   }
 
                   return ListView.builder(
-
                     itemCount: certificates.length,
                     itemBuilder: (context, index) {
-
                       final certificate = certificates[index];
-
-                      return Consumer(
-                        
-                        builder: (context, ref, child)  => 
-                        
-                        Card(
-
-                          margin: const EdgeInsets.only(bottom: 12),
-
-                          child: Row(
-
-                            children: [
-
-                              Radio<String>(
-                                value: certificate.id,
-                                groupValue: ref.watch(documentSelectedProvider).certificate?.id,
-                                onChanged: (String? value) {
-                                  ref.read(documentSelectedProvider.notifier).updateCertificate(certificate);
-                                },
-                              ),
-
-                              Expanded(child: child!)
-                              
-                              
-                            ]
-                          ), 
-                          
-                        ),
-                        
-                        child: ListTile(
-
-                          leading: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
+                      
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          children: [
+                            // Solo envolvemos el Radio en Consumer
+                            Consumer(
+                              builder: (context, ref, _) {
+                                final selectedCertId = ref.watch(
+                                  documentSelectedProvider.select(
+                                    (state) => state.certificate?.id
+                                  )
+                                );
+                                
+                                return Radio<String>(
+                                  value: certificate.id,
+                                  groupValue: selectedCertId,
+                                  onChanged: (String? value) {
+                                    ref.read(documentSelectedProvider.notifier)
+                                      .updateCertificate(certificate);
+                                  },
+                                );
+                              },
                             ),
-
-                            child: const Icon(
-                              Icons.verified_user,
-                            ),
-                          ),
-
-                          title: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  certificate.name,
-                                  style: AppTypography.bodyMedium,
+                            
+                            // El resto del contenido fuera del Consumer
+                            Expanded(
+                              child: ListTile(
+                                leading: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.verified_user,
+                                  ),
+                                ),
+                                title: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        certificate.name,
+                                        style: AppTypography.bodyMedium,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      certificate.alias,
+                                      style: AppTypography.bodySmall,
+                                    ),
+                                  ],
+                                ),
+                                trailing: PopupMenuButton(
+                                  icon: const Icon(Icons.more_vert),
+                                  itemBuilder: (context) => [
+                                    const PopupMenuItem(
+                                      value: 'delete',
+                                      child: Text('Eliminar'),
+                                    ),
+                                  ],
+                                  onSelected: (value) async {
+                                    if (value == 'delete') {
+                                      await CertificateStorage.deleteCertificate(
+                                        certificate.id, 
+                                        user.email!
+                                      );
+                                      setState(() {});
+                                    }
+                                  },
                                 ),
                               ),
-                            ],
-                          ),
-
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-
-                              Text(
-                                certificate.alias,
-                                style: AppTypography.bodySmall,
-                              ),
-
-                            ],
-                          ),
-
-                          trailing: PopupMenuButton(
-
-                            icon: const Icon(Icons.more_vert),
-                            itemBuilder: (context) => [
-
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: Text('Eliminar'),
-                              ),
-                            ],
-
-                            onSelected: (value) async {
-
-                              if (value == 'delete') {
-
-                                await CertificateStorage.deleteCertificate(certificate.id, user.email!);
-
-                                setState(() {});
-
-                              }
-                            },
-                          ),
+                            ),
+                          ],
                         ),
                       );
                     },
@@ -347,7 +334,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
               child: PrimaryButton(
 
-                text: "Firmar",
+                text: "Firmar ( ${ref.watch(documentSelectedProvider).totalDocuments} )",
 
                 onPressed: () async {
 

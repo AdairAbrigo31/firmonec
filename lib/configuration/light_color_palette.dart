@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class LightColorPalette {
   static Color primaryColor() {
-    return const Color(0xFF223263); // Azul marino oscuro del header
+    return const Color(0xFF223265); // Azul marino oscuro del header
   }
 
   static Color secondaryColor() {

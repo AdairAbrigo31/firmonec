@@ -34,17 +34,10 @@ class _PreviewDocumentViewState extends ConsumerState<PreviewAllDocumentsSelecte
 
     return Center(
       child: Column(
+
         mainAxisAlignment: MainAxisAlignment.center,
+        
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 15),
-            child: Text(
-              "Documentos seleccionados para firmar: ${allDocuments.length}",
-              style: AppTypography.bodyLarge,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-            ),
-          ),
           
           Expanded(
             child: Column(
@@ -142,7 +135,7 @@ class _PreviewDocumentViewState extends ConsumerState<PreviewAllDocumentsSelecte
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: PrimaryButton(
-                    text: "Firmar todos",
+                    text: "Firmar ( ${ref.watch(documentSelectedProvider).totalDocuments} )",
                     onPressed: () {
                       router.pushNamed("certificates_for_sign");
                     },

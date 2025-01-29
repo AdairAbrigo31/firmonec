@@ -29,6 +29,12 @@ class AppTypography {
     fontWeight: FontWeight.normal,
   );
 
+  static TextStyle get bodyMediumBool => const TextStyle(
+    fontFamily: 'Roboto',
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
   static TextStyle get bodySmall => const TextStyle(
     fontFamily: 'Roboto',
     fontSize: 12,
