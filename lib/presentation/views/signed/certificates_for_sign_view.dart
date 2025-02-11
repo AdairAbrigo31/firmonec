@@ -7,6 +7,7 @@ import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/persistence/persistence.dart';
 import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
+import 'package:tesis_firmonec/presentation/widgets/radio_button_certificate.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 import 'package:tesis_firmonec/theme/theme.dart';
 
@@ -89,6 +90,10 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
               );
 
               await CertificatesUserController.saveCertificateUser(certificate);
+
+              setState(() {
+                _certificatesFuture = CertificateStorage.getCertificates(emailUser);
+              });
 
               if (context.mounted) {
                 context.pop();
@@ -246,7 +251,7 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                         child: Row(
                           children: [
                             // Solo envolvemos el Radio en Consumer
-                            Consumer(
+                            /*Consumer(
                               builder: (context, ref, _) {
                                 final selectedCertId = ref.watch(
                                   documentSelectedProvider.select(
@@ -264,6 +269,9 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                                 );
                               },
                             ),
+                            */
+
+                            RadioButtonCertificate(certificate),
                             
                             // El resto del contenido fuera del Consumer
                             Expanded(
