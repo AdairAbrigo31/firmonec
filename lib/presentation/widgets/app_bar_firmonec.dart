@@ -22,6 +22,7 @@ class AppBarFirmonec extends StatelessWidget implements PreferredSizeWidget{
   Widget build(BuildContext context) {
 
     return AppBar(
+      centerTitle: true,
 
       backgroundColor: Theme.of(context).primaryColor,
 
@@ -47,18 +48,15 @@ class AppBarFirmonec extends StatelessWidget implements PreferredSizeWidget{
 
       null ,
 
-      title: Align(
-        
-        alignment: Alignment.center, 
-        
-        child: Text(
-          
-          title, 
-          
-          style: AppTypography.h1.copyWith(color: Theme.of(context).colorScheme.surface)
-          
-        )
-        
+      title: Text(
+
+        title,
+
+        style: AppTypography.h1.copyWith(
+
+          color: Theme.of(context).colorScheme.surface,
+
+        ),
       ),
 
       actions: actions,
