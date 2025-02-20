@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/presentation/controllers/get_information_user_controller.dart';
-import 'package:tesis_firmonec/presentation/screens/signed/roles_documents_quipux_screen.dart';
+import 'package:tesis_firmonec/presentation/screens/screens.dart';
 
 class LoginWithEntraIDView extends ConsumerWidget {
   const LoginWithEntraIDView({super.key});
@@ -31,7 +31,7 @@ class LoginWithEntraIDView extends ConsumerWidget {
                 );
               }
 
-              return  const RolesDocumentsQuipuxScreen();
+              return  const RolesWithDocumentsScreen();
 
             }
         )
