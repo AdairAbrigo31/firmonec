@@ -24,23 +24,9 @@ class LoginQuipuxView extends ConsumerWidget{
             children: [
               Column(
                 children: [
+                  
                   const Text("Login de Quipux"),
-                  Row(
-                    children: [
-                     const Expanded(child: Text("Tipo de Quipux")),
-                     Expanded(
-                         child: DropdownButton(
-                           value: stateLogin.type,
-                             items: [
-                               DropdownMenuItem(value: TypesQuipux.quipuxNatural(),child: const Text("Natural"),),
-                               DropdownMenuItem(value: TypesQuipux.quipuxEspol()  ,child: const Text("ESPOL"),),
-                             ], onChanged: (value){
-                               notifierLogin.updateType(value!);
-                         }
-                         )
-                     )
-                    ],
-                  ),
+
                   InputEmail(
                     
                     example: "correo espol",

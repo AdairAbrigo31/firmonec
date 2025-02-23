@@ -17,7 +17,7 @@ class RolesWithDocumentsScreen extends ConsumerWidget {
 
       appBar: AppBarFirmonec(
         
-        title: "Roles y documentos 2", 
+        title: "Roles y documentos", 
         
         showBackButton: false, 
 

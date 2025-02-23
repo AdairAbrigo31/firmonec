@@ -28,13 +28,15 @@ class _DocumentsSignedViewState extends ConsumerState<DocumentsSignedView> {
   }
 
 
-  void _checkAndShowSavePasswordDialog() {
+  void _checkAndShowSavePasswordDialog() async {
 
     final resultsDocumentsSigned = ref.read(resultsDocumentsSignedProvider);
 
     final stateDocumentsSelected = ref.read(documentSelectedProvider);
 
-    if (resultsDocumentsSigned['success'] >= 1 && stateDocumentsSelected.certificate!.password != null) {
+    final isSavedCertificate = await CertificateStorage.isSavedCertificate(stateDocumentsSelected.certificate!);
+
+    if (resultsDocumentsSigned.success >= 1 && stateDocumentsSelected.certificate!.password != null && isSavedCertificate) {
 
       final stateUser = ref.read(userActiveProvider);
 
@@ -90,27 +92,36 @@ class _DocumentsSignedViewState extends ConsumerState<DocumentsSignedView> {
 
         children: [
 
-          Expanded (
             
-            child: Column ( 
+          Column ( 
 
-              mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
 
-              children: [
+            children: [
 
-                Text(" Ha intentado firmar: ${resultsDocumentsSigned['total']}"),
+              Text(" Se han intentado firmar: ${resultsDocumentsSigned.error + resultsDocumentsSigned.success}"),
 
-                Text("Total de documentos firmados con exito: ${resultsDocumentsSigned['success']}"),
+              Text("Total de documentos firmados con exito: ${resultsDocumentsSigned.success}"),
 
-                Text("Total de documentos con error: ${resultsDocumentsSigned['errors']}"),
+              Text("Total de documentos con error: ${resultsDocumentsSigned.error}"),
 
-                if(resultsDocumentsSigned['errors'] >= 1)
-                const Text("Por favor revise en Quipux su carpeta de No enviados")            
-              ]
-            )
+              if( resultsDocumentsSigned.error >= 1 )
+              const Text("Por favor revise en Quipux su carpeta de No enviados")            
+            ]
           ),
 
           const SizedBox(height: 16),
+
+          Expanded(
+            
+            child: SingleChildScrollView( 
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  return Text(resultsDocumentsSigned.documentsSigned[index].documentId);
+                }
+              )
+            ) 
+          ),
 
           PrimaryButton(
             

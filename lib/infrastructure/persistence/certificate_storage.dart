@@ -39,8 +39,7 @@ class CertificateStorage {
     final prefs = await SharedPreferences.getInstance();
     final certificates = await getCertificates(updatedCertificate.emailOwner);
 
-    final index =
-        certificates.indexWhere((cert) => cert.id == updatedCertificate.id);
+    final index = certificates.indexWhere((cert) => cert.id == updatedCertificate.id);
     if (index == -1) throw Exception('Certificate not found');
 
     certificates[index] = updatedCertificate;
@@ -81,5 +80,14 @@ class CertificateStorage {
     );
 
     await updateCertificate(updatedCertificate);
+  }
+
+
+  static Future<bool> isSavedCertificate ( CertificateEntity certificate) async {
+    
+    final allCertificates = await getCertificates(certificate.emailOwner);
+
+    return allCertificates.contains(certificate);
+    
   }
 }

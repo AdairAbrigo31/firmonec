@@ -103,46 +103,6 @@ class GetInformationUserController {
     }
   }
 
-  
-
-
-  static Future<void> refreshDataQuipux (WidgetRef ref) async {
-
-    try {
-
-      final repository = ref.read(repositoryProvider);
-
-      final stateUserProvider = ref.read(userActiveProvider);
-
-      final List<RolEntity> roles = await repository.getRoles(email: stateUserProvider.email!, token: stateUserProvider.token!);
-
-      final rolDocumentProvider = ref.read(rolDocumentsProvider.notifier);
-
-      rolDocumentProvider.clearAllDocuments();
-      
-      for (final rol in roles) {
-
-        final List<DocumentEntity> documentPorElaborar = await repository.getDocumentPorElaborar(rol.codusuario);
-
-        //final List<DocumentEntity> documentReasignado = await repository.getDocumentReasignado(rol.codusuario);
-
-        final List<DocumentEntity> documentReasignado = [];
-
-        final allDocuments = [...documentPorElaborar, ...documentReasignado];
-
-        rolDocumentProvider.addDocumentToRol(rol, allDocuments);
-
-      }
-
-
-    } catch (error) {
-
-      throw ("$error");
-    
-    }
-
-    
-  }
 
 
 
@@ -200,6 +160,55 @@ class GetInformationUserController {
       rethrow;
 
 
+    }
+
+    
+  }
+
+
+
+
+  static Future<void> refreshDataQuipux (WidgetRef ref, BuildContext context) async {
+
+    try {
+
+      ref.read(documentSelectedProvider.notifier).clearAllDocuments();
+
+      final repository = ref.read(repositoryProvider);
+
+      final stateUserProvider = ref.read(userActiveProvider);
+
+      LoadingModal.show(context);
+
+      final List<RolEntity> roles = await repository.getRoles(email: stateUserProvider.email!, token: stateUserProvider.token!);
+
+      final rolDocumentProvider = ref.read(rolDocumentsProvider.notifier);
+
+      rolDocumentProvider.clearAllDocuments();
+      
+      for (final rol in roles) {
+
+        final List<DocumentEntity> documentPorElaborar = await repository.getDocumentPorElaborar(rol.codusuario);
+
+        //final List<DocumentEntity> documentReasignado = await repository.getDocumentReasignado(rol.codusuario);
+
+        final List<DocumentEntity> documentReasignado = [];
+
+        final allDocuments = [...documentPorElaborar, ...documentReasignado];
+
+        rolDocumentProvider.addDocumentToRol(rol, allDocuments);
+
+      }
+
+
+    } catch (error) {
+
+      throw ("$error");
+    
+    } finally {
+
+      LoadingModal.hide(context);
+      
     }
 
     

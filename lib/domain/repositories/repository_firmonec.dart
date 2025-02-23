@@ -1,4 +1,5 @@
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
+import 'package:tesis_firmonec/presentation/models/models.dart';
 
 enum AuthError { invalidCredentials, networkError, serverError, unknown }
 

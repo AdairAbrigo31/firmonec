@@ -1,23 +1,25 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
+import 'package:tesis_firmonec/presentation/models/models.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 class SignDocumentsOneByOneController {
 
 
-  static Map<String, dynamic> _processResults (List<ResponseSignDocument> results) {
+  static ReportSigned _processResults (List<ResponseSignDocument> documentsSigned) {
 
-    final success = results.where((element) => element.success).length;
-    final errors = results.where((element) => !element.success).length;
+    final success = documentsSigned.where((element) => element.success).length;
+    final errors = documentsSigned.where((element) => !element.success).length;
 
-    return {
-      'success': success,
-      'errors': errors,
-      'total': results.length
-    };
+    final results = ReportSigned(
+      error: errors, 
+      success: success, 
+      documentsSigned: documentsSigned
+    );
+
+    return results;
 
   }
 

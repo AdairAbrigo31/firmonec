@@ -7,6 +7,7 @@ import 'package:tesis_firmonec/infrastructure/dto/dto.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/mapers/document_mapper.dart';
 import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
+import 'package:tesis_firmonec/presentation/models/models.dart';
 
 class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
@@ -264,6 +265,9 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
       dio.close();
     }
   }
+
+
+  
 
   @override
   Future<List<DocumentoPorElaborarEntity>> getDocumentReasignado(
