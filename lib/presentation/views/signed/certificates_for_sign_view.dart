@@ -376,12 +376,19 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                               
                               onPressedAccept: () async {
 
-                                await SignDocumentsOneByOneController.signDocumentsOneByOneWithoutPasswordSaved(context, ref);
+                                try {
 
-                                await CertificateStorage.updateLastUsed(ref.read(documentSelectedProvider).certificate!.id, user.email!);
+                                  await SignDocumentsOneByOneController.signDocumentsOneByOneWithoutPasswordSaved(context, ref);
 
-                                router.goNamed('documents_signed');
+                                  await CertificateStorage.updateLastUsed(ref.read(documentSelectedProvider).certificate!.id, user.email!);
 
+                                  router.goNamed('documents_signed');
+
+
+                                } catch (error) {
+
+                                  print("Error: $error");
+                                }
 
                               }, 
                             
@@ -394,11 +401,22 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
 
                     } else {
 
-                      await SignDocumentsOneByOneController.signDocumentsOneByOneWithPasswordSaved(context, ref);
+                      try {
 
-                      await CertificateStorage.updateLastUsed(ref.read(documentSelectedProvider).certificate!.id, user.email!);
+                        await SignDocumentsOneByOneController.signDocumentsOneByOneWithPasswordSaved(context, ref);
 
-                      router.goNamed('documents_signed');
+                        await CertificateStorage.updateLastUsed(ref.read(documentSelectedProvider).certificate!.id, user.email!);
+
+                        router.goNamed('documents_signed');
+
+
+                      } catch (error) {
+
+                        print("Error: $error");
+
+                      }
+
+                      
 
                     }
 

@@ -1,0 +1,2 @@
+/home/adair/Escritorio/tesis/firmonec/android/app/.cxx/Debug/3s412p23/x86_64/CMakeFiles/edit_cache.dir
+/home/adair/Escritorio/tesis/firmonec/android/app/.cxx/Debug/3s412p23/x86_64/CMakeFiles/rebuild_cache.dir
