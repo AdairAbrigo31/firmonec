@@ -32,7 +32,7 @@ class _PreviewDocumentViewState extends ConsumerState<PreviewAllDocumentsSelecte
         .expand((entry) => entry.value.map((doc) => MapEntry(entry.key, doc)))
         .toList();
 
-    return Center(
+    return SafeArea(
       child: Column(
 
         mainAxisAlignment: MainAxisAlignment.center,

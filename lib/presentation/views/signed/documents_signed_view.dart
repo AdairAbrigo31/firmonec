@@ -72,43 +72,45 @@ class _DocumentsSignedViewState extends ConsumerState<DocumentsSignedView> {
   Widget build(BuildContext context) {
     final resultsDocumentsSigned = ref.read(resultsDocumentsSignedProvider);
 
-    return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(children: [
-          Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text(
-                " Se han intentado firmar: ${resultsDocumentsSigned.error + resultsDocumentsSigned.success}"),
-            Text(
-                "Total de documentos firmados con exito: ${resultsDocumentsSigned.success}"),
-            Text(
-                "Total de documentos con error: ${resultsDocumentsSigned.error}"),
-            if (resultsDocumentsSigned.error >= 1)
-              const Text("Por favor revise en Quipux su carpeta de No enviados")
-          ]),
-          const SizedBox(height: 16),
-          Expanded(
-              child: ListView.builder(
-                  itemCount: resultsDocumentsSigned.documentsSigned.length,
-                  itemBuilder: (context, index) {
-                    return Text(resultsDocumentsSigned
-                        .documentsSigned[index].documentId);
-                  })),
-          PrimaryButton(
-              text: "Continuar",
-              onPressed: () async {
-                try {
-                  LoadingModal.show(context);
+    return SafeArea(
+        child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(children: [
+              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text(
+                    " Se han intentado firmar: ${resultsDocumentsSigned.error + resultsDocumentsSigned.success}"),
+                Text(
+                    "Total de documentos firmados con exito: ${resultsDocumentsSigned.success}"),
+                Text(
+                    "Total de documentos con error: ${resultsDocumentsSigned.error}"),
+                if (resultsDocumentsSigned.error >= 1)
+                  const Text(
+                      "Por favor revise en Quipux su carpeta de No enviados")
+              ]),
+              const SizedBox(height: 16),
+              Expanded(
+                  child: ListView.builder(
+                      itemCount: resultsDocumentsSigned.documentsSigned.length,
+                      itemBuilder: (context, index) {
+                        return Text(resultsDocumentsSigned
+                            .documentsSigned[index].documentId);
+                      })),
+              PrimaryButton(
+                  text: "Continuar",
+                  onPressed: () async {
+                    try {
+                      LoadingModal.show(context);
 
-                  await GetInformationUserController
-                      .refreshDataQuipuxWithoutToken(ref, context);
-                } catch (error) {
-                  throw ("$error");
-                } finally {
-                  LoadingModal.hide(context);
-                }
+                      await GetInformationUserController
+                          .refreshDataQuipuxWithoutToken(ref, context);
+                    } catch (error) {
+                      throw ("$error");
+                    } finally {
+                      LoadingModal.hide(context);
+                    }
 
-                router.goNamed("roles_documents_quipux");
-              })
-        ]));
+                    router.goNamed("roles_documents_quipux");
+                  })
+            ])));
   }
 }

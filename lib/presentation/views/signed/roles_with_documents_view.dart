@@ -86,7 +86,9 @@ class RolesWithDocumentsQuipuxViewState
 
     final roles = rolDocProvider.documentsByRol?.keys.toList() ?? [];
 
-    return Column(
+    return SafeArea(
+      
+      child: Column(
       children: [
         if (roles.isEmpty)
           const Expanded(
@@ -161,6 +163,8 @@ class RolesWithDocumentsQuipuxViewState
           ),
         ),
       ],
+    )
+    
     );
   }
 }

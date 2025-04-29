@@ -117,15 +117,9 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
   @override
   Widget build(BuildContext context) {
 
-    final user = ref.watch(userActiveProvider);
+    final user = ref.watch(userActiveProvider);    
 
-    final documentsSelectedState = ref.watch(documentSelectedProvider);
-    
-    final allDocuments = documentsSelectedState.documentsSelected.entries
-        .expand((entry) => entry.value.map((doc) => MapEntry(entry.key, doc)))
-        .toList();
-
-    return Center(
+    return SafeArea(
 
       child: Padding(
 
@@ -250,26 +244,6 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
                         margin: const EdgeInsets.only(bottom: 12),
                         child: Row(
                           children: [
-                            // Solo envolvemos el Radio en Consumer
-                            /*Consumer(
-                              builder: (context, ref, _) {
-                                final selectedCertId = ref.watch(
-                                  documentSelectedProvider.select(
-                                    (state) => state.certificate?.id
-                                  )
-                                );
-                                
-                                return Radio<String>(
-                                  value: certificate.id,
-                                  groupValue: selectedCertId,
-                                  onChanged: (String? value) {
-                                    ref.read(documentSelectedProvider.notifier)
-                                      .updateCertificate(certificate);
-                                  },
-                                );
-                              },
-                            ),
-                            */
 
                             RadioButtonCertificate(certificate),
                             
@@ -334,11 +308,8 @@ class CertificatesForSignViewState extends ConsumerState<CertificatesForSignView
               ),
             ),
 
-
-            const SizedBox(height: 16),
-
             Padding(
-              padding: const EdgeInsets.all(4.0),
+              padding: const EdgeInsets.all(16.0),
 
               child: PrimaryButton(
 
