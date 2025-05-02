@@ -48,6 +48,7 @@ dependencies:
   shared_preferences: ^2.3.5
   internet_connection_checker: ^3.0.1
   flutter_dotenv: ^5.2.1
+  sidebarx: ^0.17.1
 
 dev_dependencies:
   flutter_test:

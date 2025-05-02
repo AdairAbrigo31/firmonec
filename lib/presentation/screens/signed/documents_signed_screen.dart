@@ -12,7 +12,7 @@ class DocumentsSignedScreen extends StatelessWidget {
 
     return const Scaffold(
 
-      appBar: AppBarFirmonec(title: "Documentos firmados", showBackButton: false),
+      appBar: AppBarFirmonec(title: "Documentos firmados"),
       
       body: DocumentsSignedView(),
     );

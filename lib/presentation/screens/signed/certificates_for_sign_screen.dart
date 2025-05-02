@@ -11,7 +11,7 @@ class CertificatesForSignScreen extends StatelessWidget {
 
     return const Scaffold(
 
-      appBar: AppBarFirmonec(title: "Certificados", showBackButton: true),
+      appBar: AppBarFirmonec(title: "Certificados"),
 
       body: CertificatesForSignView(),
       

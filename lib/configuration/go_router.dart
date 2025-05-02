@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tesis_firmonec/presentation/screens/screens.dart';
+import 'package:tesis_firmonec/presentation/screens/signed/documents_not_sent_screen.dart';
+import 'package:tesis_firmonec/presentation/screens/signed/documents_sent_screen.dart';
 import 'package:tesis_firmonec/presentation/screens/signed/documents_signed_screen.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -42,5 +44,15 @@ final router = GoRouter(
         name: 'documents_signed',
         path: '/documents_signed',
         builder: (context, state) => const DocumentsSignedScreen(),
-      )
+      ),
+      GoRoute(
+        name: 'documents_sent',
+        path: '/documents_sent',
+        builder: (context, state) => const DocumentsSentScreen(),
+      ),
+      GoRoute(
+        name: 'documents_not_sent',
+        path: '/documents_not_sent',
+        builder: (context, state) => const DocumentsNotSentScreen(),
+      ),
     ]);

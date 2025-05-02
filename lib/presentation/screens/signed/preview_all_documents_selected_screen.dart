@@ -11,7 +11,7 @@ class PreviewAllDocumentsSelectedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
 
-      appBar: AppBarFirmonec(title: "Previsualización", showBackButton: true),
+      appBar: AppBarFirmonec(title: "Previsualización"),
 
       body: PreviewAllDocumentsSelectedView(),
     );

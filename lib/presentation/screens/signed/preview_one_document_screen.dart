@@ -12,7 +12,7 @@ class PreviewOneDocumentScreen extends StatelessWidget {
 
     return const Scaffold(
 
-      appBar: AppBarFirmonec(title: "Previsuzalización", showBackButton: true),
+      appBar: AppBarFirmonec(title: "Previsuzalización"),
 
       body: PreviewOneDocumentView(),
       

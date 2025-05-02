@@ -7,7 +7,6 @@ import 'package:tesis_firmonec/presentation/providers/providers.dart';
 import 'package:tesis_firmonec/presentation/widgets/cards_for%20document.dart/card_document_por_elaborar.dart';
 import 'package:tesis_firmonec/presentation/widgets/cards_for%20document.dart/card_document_reasignado.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
-import 'package:tesis_firmonec/theme/app_typography.dart';
 
 class RolesWithDocumentsView extends ConsumerStatefulWidget {
   const RolesWithDocumentsView({super.key});
@@ -80,91 +79,104 @@ class RolesWithDocumentsQuipuxViewState
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = ref.watch(userActiveProvider);
-
     final rolDocProvider = ref.read(rolDocumentsProvider);
 
     final roles = rolDocProvider.documentsByRol?.keys.toList() ?? [];
 
     return SafeArea(
-      
+        child: RefreshIndicator(
       child: Column(
-      children: [
-        if (roles.isEmpty)
-          const Expanded(
-              child: Center(child: Text("No hay roles para este usuario")))
-        else
-          Expanded(
-            child: Column(
-              children: [
-                TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  onTap: _centerSelectedTab,
-                  tabs: roles
-                      .map((rol) => Tab(
-                              child: Row(
-                            children: [
-                              Text(
-                                rol.cargo,
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                "( ${rolDocProvider.getDocumentsForRol(rol).length} )",
-                                style: TextStyle(
-                                    color: Theme.of(context).primaryColor),
-                              )
-                            ],
-                          )))
-                      .toList(),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    physics: const NeverScrollableScrollPhysics(),
+        children: [
+          if (roles.isEmpty)
+            const Expanded(
+                child: Center(child: Text("No hay roles para este usuario")))
+          else
+            Expanded(
+              child: Column(
+                children: [
+                  TabBar(
                     controller: _tabController,
-                    children: roles.map((rol) {
-                      final documents = rolDocProvider.getDocumentsForRol(rol);
-                      return documents.isEmpty
-                          ? const Center(
-                              child:
-                                  Text("No tiene documentos para este cargo"))
-                          : ListView(
-                              children: documents
-                                  .map((doc) => buildDocumentCard(rol, doc))
-                                  .toList(),
-                            );
-                    }).toList(),
+                    isScrollable: true,
+                    onTap: _centerSelectedTab,
+                    tabs: roles
+                        .map((rol) => Tab(
+                                child: Row(
+                              children: [
+                                Text(
+                                  rol.cargo,
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "( ${rolDocProvider.getDocumentsForRol(rol).length} )",
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor),
+                                )
+                              ],
+                            )))
+                        .toList(),
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: TabBarView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      controller: _tabController,
+                      children: roles.map((rol) {
+                        final documents =
+                            rolDocProvider.getDocumentsForRol(rol);
+                        return documents.isEmpty
+                            ? const Center(
+                                child:
+                                    Text("No tiene documentos para este cargo"))
+                            : ListView(
+                                children: documents
+                                    .map((doc) => buildDocumentCard(rol, doc))
+                                    .toList(),
+                              );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: PrimaryButton(
+              text:
+                  "Firmar ( ${ref.watch(documentSelectedProvider).totalDocuments} )",
+              onPressed: () {
+                final stateDocumentsSelected =
+                    ref.read(documentSelectedProvider.notifier);
+
+                if (stateDocumentsSelected.isEmpty()) {
+                  var snackBar = const SnackBar(
+                      content: Text('Debes seleccionar al menos un documento'));
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  return;
+                }
+
+                router.pushNamed("preview_all_documents_selected");
+              },
             ),
           ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: PrimaryButton(
-            text:
-                "Firmar ( ${ref.watch(documentSelectedProvider).totalDocuments} )",
-            onPressed: () {
-              final stateDocumentsSelected =
-                  ref.read(documentSelectedProvider.notifier);
+        ],
+      ),
+      onRefresh: () async {
+        // Recargar los datos de los documentos y roles
+        final rolDocProvider = ref.read(rolDocumentsProvider);
 
-              if (stateDocumentsSelected.isEmpty()) {
-                var snackBar = const SnackBar(
-                    content: Text('Debes seleccionar al menos un documento'));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                return;
-              }
+        final updatedRoles = rolDocProvider.documentsByRol?.keys.toList() ?? [];
+        if (updatedRoles.length != _tabController.length) {
+          setState(() {
+            _tabController =
+                TabController(length: updatedRoles.length, vsync: this);
+          });
+        }
 
-              router.pushNamed("preview_all_documents_selected");
-            },
-          ),
-        ),
-      ],
-    )
-    
-    );
+        return Future
+            .value(); // Completar el Future para que el RefreshIndicator se detenga
+      },
+    ));
   }
 }

@@ -2,35 +2,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/domain/entities/document_entity.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 
-
-final rolDocumentsProvider = StateNotifierProvider<RolDocumentNotifier, RolDocumentsState>((ref) {
+final rolDocumentsProvider =
+    StateNotifierProvider<RolDocumentNotifier, RolDocumentsState>((ref) {
   return RolDocumentNotifier(
-      RolDocumentsState(
-          documentsByRol: {},
-          isLoading: false,
-          errorMessage: null
-      ),
+    RolDocumentsState(documentsByRol: {}, isLoading: false, errorMessage: null),
   );
 });
 
-
 class RolDocumentNotifier extends StateNotifier<RolDocumentsState> {
-
   RolDocumentNotifier(super.state);
 
-  void addDocumentToRol(RolEntity rol, List<DocumentEntity> newDocuments){
-    final currentDocs = Map<RolEntity, List<DocumentEntity>>.from(state.documentsByRol ?? {});
-    if(currentDocs.containsKey(rol)){
+  void addDocumentToRol(RolEntity rol, List<DocumentEntity> newDocuments) {
+    final currentDocs =
+        Map<RolEntity, List<DocumentEntity>>.from(state.documentsByRol ?? {});
+    if (currentDocs.containsKey(rol)) {
       currentDocs[rol] = [...currentDocs[rol]!, ...newDocuments];
-    }else {
-      print("rol ${rol.cargo} agregado");
+    } else {
       currentDocs[rol] = newDocuments;
     }
     state = state.copyWith(documentsByRol: currentDocs);
   }
 
   void clearDocumentsForRol(RolEntity rol) {
-    final currentDocs = Map<RolEntity, List<DocumentEntity>>.from(state.documentsByRol ?? {});
+    final currentDocs =
+        Map<RolEntity, List<DocumentEntity>>.from(state.documentsByRol ?? {});
     currentDocs.remove(rol);
     state = state.copyWith(documentsByRol: currentDocs);
   }
@@ -46,11 +41,10 @@ class RolDocumentsState {
   final bool isLoading;
   final String? errorMessage;
 
-  RolDocumentsState({
-    this.documentsByRol,
-    required this.isLoading,
-    required this.errorMessage
-  });
+  RolDocumentsState(
+      {this.documentsByRol,
+      required this.isLoading,
+      required this.errorMessage});
 
   RolDocumentsState copyWith({
     Map<RolEntity, List<DocumentEntity>>? documentsByRol,
@@ -63,7 +57,6 @@ class RolDocumentsState {
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
-
 
   List<DocumentEntity> getDocumentsForRol(RolEntity rol) {
     return documentsByRol?[rol] ?? [];

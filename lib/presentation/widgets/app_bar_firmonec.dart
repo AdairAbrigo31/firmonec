@@ -1,19 +1,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sidebarx/sidebarx.dart';
 import 'package:tesis_firmonec/theme/app_typography.dart';
 
 class AppBarFirmonec extends StatelessWidget implements PreferredSizeWidget{
 
   final String title;
-  final bool showBackButton;
   final List<Widget>? actions;
   final bool? automaticallyImplyLeading;
 
   const AppBarFirmonec ({
     super.key,
     required this.title,
-    required this.showBackButton,
     this.automaticallyImplyLeading,
     this.actions
   });
@@ -28,25 +27,36 @@ class AppBarFirmonec extends StatelessWidget implements PreferredSizeWidget{
 
       automaticallyImplyLeading: automaticallyImplyLeading ?? true,
 
-      leading: showBackButton ? 
-      
-      IconButton(
+      leading: SidebarX(
         
-        onPressed: () {
-
-          context.pop();
-
-        }, 
+        controller: SidebarXController(selectedIndex: 0), 
         
-        icon: Icon(Icons.arrow_back_ios_new_outlined, color: Theme.of(context).colorScheme.surface,),
+        items: [
 
-        color: Theme.of(context).colorScheme.surface,
+          SidebarXItem(
+            icon: Icons.home,
+            label: 'Pendientes',
+            onTap: () {
+              // Si a se encuentra en esta vista no hacer nada
+            },  
+          ),
 
-      ) 
+          SidebarXItem(
+            icon: Icons.check,
+            label: 'Enviador',
+            onTap: () {
+              // Si a se encuentra en esta vista no hacer nada
+            },  
+          ),
 
-      : 
-
-      null ,
+          SidebarXItem(
+            icon: Icons.error,
+            label: 'No enviados',
+            onTap: () {
+              // Si a se encuentra en esta vista no hacer nada
+            },  
+          )
+        ]),
 
       title: Text(
 
