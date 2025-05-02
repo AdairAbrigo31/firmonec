@@ -3,3 +3,5 @@ export 'document_reasignado_entity.dart';
 export 'rol_entity.dart';
 export 'certificate_entity.dart';
 export 'sign_batch_data.dart';
+export 'document_not_sent.dart';
+export 'document_sent.dart';

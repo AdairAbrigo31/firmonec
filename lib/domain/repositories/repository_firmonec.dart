@@ -26,7 +26,8 @@ abstract class RepositoryFirmonec {
 
   Future<Map<String, dynamic>?> getTokenBackend(String tokenEntraID);
 
-  Future<List<RolEntity>> getRoles({required String email, required String token});
+  Future<List<RolEntity>> getRoles(
+      {required String email, required String token});
 
   Future<List<RolEntity>> getRolesWithoutToken({required String email});
 
@@ -34,16 +35,15 @@ abstract class RepositoryFirmonec {
       String codeRol);
 
   Future<List<DocumentoPorElaborarEntity>> getDocumentPorElaborar(
-      String codeRol
-  );
+      String codeRol);
 
   Future<ResponseSignDocument> signDocument(
-    {
-      required String idDocument, 
-      required int codeUser, 
-      required String base64Certificate, 
-      required String keyCertificate
-    }
-  );
+      {required String idDocument,
+      required int codeUser,
+      required String base64Certificate,
+      required String keyCertificate});
 
+  Future<List<DocumentSent>> getDocumentsSent(String codeRol);
+
+  Future<List<DocumentNotSent>> getDocumentsNotSent(String codeRol);
 }

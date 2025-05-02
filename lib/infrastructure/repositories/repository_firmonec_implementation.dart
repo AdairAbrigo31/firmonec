@@ -4,16 +4,17 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/domain/repositories/repositories.dart';
+import 'package:tesis_firmonec/infrastructure/dto/document_not_sent_dto.dart';
 import 'package:tesis_firmonec/infrastructure/dto/dto.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/mapers/document_mapper.dart';
+import 'package:tesis_firmonec/infrastructure/mapers/document_not_sent_mapper.dart';
+import 'package:tesis_firmonec/infrastructure/mapers/document_sent_mapper.dart';
 import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
 import 'package:tesis_firmonec/presentation/models/models.dart';
 
 class RepositoryFirmonecImplementation extends RepositoryFirmonec {
   final String? routeBase = dotenv.env['ROUTE_API']!;
-
-  //final String routeBase = 'http://10.0.2.2:5299/api';
 
   @override
   Future<AuthResult> login() async {
@@ -284,6 +285,81 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
       return responseProcess;
 
       //throw RequestFailedException();
+    }
+  }
+
+  @override
+  Future<List<DocumentNotSent>> getDocumentsNotSent(String codeRol) async {
+    final dio = Dio();
+    try {
+      final response = await dio.get(
+        '$routeBase/DocumentoPendiente/Pendientes',
+        queryParameters: {
+          'idUsuario': codeRol,
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(
+            'Error al los documentos No enviados: ${response.statusCode}');
+      }
+
+      print(response.data);
+
+      final List<dynamic> jsonList = response.data;
+      if (jsonList.isEmpty) return [];
+
+      final List<DocumentNotSentDto> dtos =
+          jsonList.map((json) => DocumentNotSentDto.fromJson(json)).toList();
+
+      final List<DocumentNotSent> documentsNotSent =
+          DocumentNotSentMapper.fromDtoList(dtos);
+
+      return documentsNotSent;
+    } on DioException catch (e) {
+      throw ("Error de conexión: ${e.message}");
+    } catch (e) {
+      throw Exception("Error inesperado: $e");
+    } finally {
+      dio.close();
+    }
+  }
+
+  @override
+  Future<List<DocumentSent>> getDocumentsSent(String codeRol) async {
+    final dio = Dio();
+
+    try {
+      final response = await dio.get(
+        '$routeBase/DocumentoFirmado/firmados',
+        queryParameters: {
+          'idUsuario': codeRol,
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(
+            'Error al obtener documentos enviados: ${response.statusCode}');
+      }
+
+      print(response.data);
+
+      final List<dynamic> jsonList = response.data;
+      if (jsonList.isEmpty) return [];
+
+      final List<DocumentSentDto> dtos =
+          jsonList.map((json) => DocumentSentDto.fromJson(json)).toList();
+
+      final List<DocumentSent> documentsSent =
+          DocumentSentMapper.fromDtoList(dtos);
+
+      return documentsSent;
+    } on DioException catch (e) {
+      throw ("Error de conexión: ${e.message}");
+    } catch (e) {
+      throw Exception("Error inesperado: $e");
+    } finally {
+      dio.close();
     }
   }
 }
