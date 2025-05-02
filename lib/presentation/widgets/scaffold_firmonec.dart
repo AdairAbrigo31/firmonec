@@ -49,14 +49,8 @@ class _ScaffoldFirmonecState extends ConsumerState<ScaffoldFirmonec> {
               fontWeight: FontWeight.bold,
               fontSize: 16),
         ),
-        leading: IconButton(
-          icon: Icon(
-            Icons.menu,
-            color: theme.colorScheme.surface, // Cambia este color al que desees
-          ),
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
+        iconTheme: IconThemeData(
+          color: theme.colorScheme.surface, // Cambia este color al que desees
         ),
         actions: [
           IconButton(

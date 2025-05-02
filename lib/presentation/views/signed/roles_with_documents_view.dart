@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/domain/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
+import 'package:tesis_firmonec/presentation/controllers/get_information_user_controller.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 import 'package:tesis_firmonec/presentation/widgets/cards_for%20document.dart/card_document_por_elaborar.dart';
 import 'package:tesis_firmonec/presentation/widgets/cards_for%20document.dart/card_document_reasignado.dart';
@@ -163,16 +164,7 @@ class RolesWithDocumentsQuipuxViewState
         ],
       ),
       onRefresh: () async {
-        // Recargar los datos de los documentos y roles
-        final rolDocProvider = ref.read(rolDocumentsProvider);
-
-        final updatedRoles = rolDocProvider.documentsByRol?.keys.toList() ?? [];
-        if (updatedRoles.length != _tabController.length) {
-          setState(() {
-            _tabController =
-                TabController(length: updatedRoles.length, vsync: this);
-          });
-        }
+        GetInformationUserController.refreshDataQuipux(ref, context);
 
         return Future
             .value(); // Completar el Future para que el RefreshIndicator se detenga

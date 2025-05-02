@@ -4,13 +4,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/domain/repositories/repositories.dart';
-import 'package:tesis_firmonec/infrastructure/dto/document_not_sent_dto.dart';
 import 'package:tesis_firmonec/infrastructure/dto/dto.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
-import 'package:tesis_firmonec/infrastructure/mapers/document_mapper.dart';
-import 'package:tesis_firmonec/infrastructure/mapers/document_not_sent_mapper.dart';
-import 'package:tesis_firmonec/infrastructure/mapers/document_sent_mapper.dart';
-import 'package:tesis_firmonec/infrastructure/mapers/rol_mapper.dart';
+import 'package:tesis_firmonec/infrastructure/mappers/mappers.dart';
 import 'package:tesis_firmonec/presentation/models/models.dart';
 
 class RepositoryFirmonecImplementation extends RepositoryFirmonec {
@@ -293,7 +289,7 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
     final dio = Dio();
     try {
       final response = await dio.get(
-        '$routeBase/DocumentoPendiente/Pendientes',
+        '$routeBase/DocumentoNoEnviado/NoEnviados',
         queryParameters: {
           'idUsuario': codeRol,
         },
@@ -331,7 +327,7 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
     try {
       final response = await dio.get(
-        '$routeBase/DocumentoFirmado/firmados',
+        '$routeBase/DocumentoEnviado/Enviados',
         queryParameters: {
           'idUsuario': codeRol,
         },
