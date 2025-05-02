@@ -23,13 +23,6 @@ class RolDocumentNotifier extends StateNotifier<RolDocumentsState> {
     state = state.copyWith(documentsByRol: currentDocs);
   }
 
-  void clearDocumentsForRol(RolEntity rol) {
-    final currentDocs =
-        Map<RolEntity, List<DocumentEntity>>.from(state.documentsByRol ?? {});
-    currentDocs.remove(rol);
-    state = state.copyWith(documentsByRol: currentDocs);
-  }
-
   void clearAllDocuments() {
     state = state.copyWith(documentsByRol: {});
   }
