@@ -1,93 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 
 class DocumentsSentView extends ConsumerStatefulWidget {
   const DocumentsSentView({super.key});
 
   @override
-  ConsumerState<DocumentsSentView> createState() {
-    return DocumentsSentViewState();
-  }
+  ConsumerState<DocumentsSentView> createState() => _DocumentsSentViewState();
 }
 
-class DocumentsSentViewState extends ConsumerState<DocumentsSentView>
-    with TickerProviderStateMixin {
-  late TabController _tabController;
-  final ScrollController _scrollController = ScrollController();
+class _DocumentsSentViewState extends ConsumerState<DocumentsSentView>
+    with SingleTickerProviderStateMixin {
+  TabController? _tabController;
 
   @override
   void dispose() {
-    _tabController.dispose();
-    _scrollController.dispose();
+    _tabController?.dispose();
     super.dispose();
   }
 
-  void _centerSelectedTab(int index) {
-    if (!_scrollController.hasClients) return;
-
-    // Calculamos la posición aproximada de la tab
-    const tabWidth = 150.0; // Ancho aproximado de cada tab
-    final screenWidth = MediaQuery.of(context).size.width;
-    final offset = (tabWidth * index) - (screenWidth / 2) + (tabWidth / 2);
-
-    // Aseguramos que el offset esté dentro de los límites
-    final maxOffset = _scrollController.position.maxScrollExtent;
-    const minOffset = 0.0;
-    final finalOffset = offset.clamp(minOffset, maxOffset);
-
-    // Animamos el scroll a la posición calculada
-    _scrollController.animateTo(
-      finalOffset,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    final documentSentProvider = ref.read(documentsSentProvider);
-    final documents =
-        documentSentProvider.documentsSentByRol?.keys.toList() ?? [];
-
-    print("Documentos enviados: $documents");
-    _tabController = TabController(length: documents.length, vsync: this);
+  Future<void> _onRefresh() async {
+    await GetDocumentsSentController.getDocumentSent(context, ref);
   }
 
   @override
   Widget build(BuildContext context) {
-    final documentSentProvider = ref.read(documentsSentProvider);
+    final documentSentProvider = ref.watch(documentsSentProvider);
     final documents =
         documentSentProvider.documentsSentByRol?.keys.toList() ?? [];
 
-    return SafeArea(
+    // Manage TabController lifecycle based on documents length
+    if (documents.length != (_tabController?.length ?? 0)) {
+      _tabController?.dispose();
+      _tabController = documents.isNotEmpty
+          ? TabController(length: documents.length, vsync: this)
+          : null;
+    }
+
+    if (documents.isEmpty) {
+      return SafeArea(
         child: RefreshIndicator(
-            child: Column(
-              children: [
-                if (documents.isEmpty)
-                  const Expanded(
-                      child:
-                          Center(child: Text("No hay roles para este usuario")))
-                else
-                  Expanded(
-                      child: Column(
-                    children: [Text("Data")],
-                  ))
-              ],
+          onRefresh: _onRefresh,
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: const [
+              SizedBox(
+                height: 300,
+                child: Center(child: Text("No hay roles para este usuario")),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return SafeArea(
+      child: Column(
+        children: [
+          TabBar(
+            controller: _tabController!,
+            isScrollable: true,
+            tabs: documents.map((rol) => Tab(text: rol.cargo)).toList(),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController!,
+              children: documents.map((rol) {
+                final docs = documentSentProvider.getDocumentsSentForRol(rol);
+
+                return RefreshIndicator(
+                  onRefresh: _onRefresh,
+                  child: docs.isEmpty
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: const [
+                            SizedBox(
+                              height: 300,
+                              child: Center(child: Text("No hay documentos")),
+                            ),
+                          ],
+                        )
+                      : ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: docs.length,
+                          itemBuilder: (context, index) {
+                            final doc = docs[index];
+                            return Card(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: ListTile(
+                                title: Text(doc.id),
+                                trailing: const Icon(Icons.arrow_forward_ios),
+                                onTap: () {
+                                  // Navigate to document details
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                );
+              }).toList(),
             ),
-            onRefresh: () async {
-              final documentSentProvider = ref.read(documentsSentProvider);
-
-              final updateDocumentsSent =
-                  documentSentProvider.documentsSentByRol?.keys.toList() ?? [];
-              if (updateDocumentsSent.length != documents.length) {
-                _tabController = TabController(
-                    length: updateDocumentsSent.length, vsync: this);
-              }
-
-              return Future.value();
-            }));
+          ),
+        ],
+      ),
+    );
   }
 }

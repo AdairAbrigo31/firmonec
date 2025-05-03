@@ -120,7 +120,8 @@ class _ScaffoldFirmonecState extends ConsumerState<ScaffoldFirmonec> {
           SidebarXItem(
             icon: Icons.task_alt,
             label: 'Enviados',
-            onTap: () {
+            onTap: () async {
+              await GetDocumentsSentController.getDocumentSent(context, ref);
               router.goNamed("documents_sent");
               Navigator.pop(context); // Cierra el drawer
             },

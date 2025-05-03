@@ -15,6 +15,17 @@ final documentsSentProvider =
 class DocumentsSentNotifier extends StateNotifier<DocumentsSentState> {
   DocumentsSentNotifier(super.state);
 
+  void addDocumentSentToRol(RolEntity rol, List<DocumentSent> newDocuments) {
+    final currentDocs =
+        Map<RolEntity, List<DocumentSent>>.from(state.documentsSentByRol ?? {});
+    if (currentDocs.containsKey(rol)) {
+      currentDocs[rol] = [...currentDocs[rol]!, ...newDocuments];
+    } else {
+      currentDocs[rol] = newDocuments;
+    }
+    state = state.copyWith(documentsSentByRol: currentDocs);
+  }
+
   void clearAllDocuments() {
     state = state.copyWith(documentsSentByRol: {});
   }

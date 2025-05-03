@@ -4,8 +4,10 @@ import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
 class DocumentNotSentMapper {
   static DocumentNotSent fromDto(DocumentNotSentDto dto) {
     return DocumentNotSent(
-      id: dto.id,
-    );
+        id: dto.id,
+        para: dto.para,
+        asunto: dto.asunto,
+        datFechaDocumento: dto.datFechaDocumento);
   }
 
   static List<DocumentNotSent> fromDtoList(List<DocumentNotSentDto> dtos) {

@@ -16,6 +16,18 @@ final documentsNotSentProvider =
 class DocumentsNotSentNotifier extends StateNotifier<DocumentsNotSentState> {
   DocumentsNotSentNotifier(super.state);
 
+  void addDocumentNotSentToRol(
+      RolEntity rol, List<DocumentNotSent> newDocuments) {
+    final currentDocs = Map<RolEntity, List<DocumentNotSent>>.from(
+        state.documentsNotSentByRol ?? {});
+    if (currentDocs.containsKey(rol)) {
+      currentDocs[rol] = [...currentDocs[rol]!, ...newDocuments];
+    } else {
+      currentDocs[rol] = newDocuments;
+    }
+    state = state.copyWith(documentsNotSentByRol: currentDocs);
+  }
+
   void clearAllDocuments() {
     state = state.copyWith(documentsNotSentByRol: {});
   }
