@@ -28,8 +28,6 @@ class GetDocumentsSentController {
         final List<DocumentSent> documentsSent =
             await repository.getDocumentsSent(rol.codusuario);
 
-        print(documentsSent);
-
         documentsSentProv.addDocumentSentToRol(rol, documentsSent);
       }
     } catch (error) {

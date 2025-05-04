@@ -112,8 +112,6 @@ class GetInformationUserController {
         final List<DocumentEntity> documentPorElaborar =
             await repository.getDocumentPorElaborar(rol.codusuario);
 
-        print(documentPorElaborar);
-
         //final List<DocumentEntity> documentReasignado = await repository.getDocumentReasignado(rol.codusuario);
 
         final List<DocumentEntity> documentReasignado = [];
@@ -175,6 +173,8 @@ class GetInformationUserController {
   static Future<void> refreshDataQuipuxWithoutToken(
       WidgetRef ref, BuildContext context) async {
     try {
+      ref.read(oneDocumentSelectedPreviewProvider.notifier).clearDocument();
+
       ref.read(documentSelectedProvider.notifier).clearAllDocuments();
 
       final repository = ref.read(repositoryProvider);
@@ -203,6 +203,7 @@ class GetInformationUserController {
         rolDocumentProvider.addDocumentToRol(rol, allDocuments);
       }
     } catch (error) {
+      print(error);
       throw ("$error");
     } finally {
       LoadingModal.hide(context);

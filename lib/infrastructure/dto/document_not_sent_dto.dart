@@ -3,13 +3,16 @@ class DocumentNotSentDto {
   final String para;
   final String asunto;
   final String datFechaDocumento;
+  final String categoria;
+  final String? rutaDocumento;
 
-  const DocumentNotSentDto({
-    required this.id,
-    required this.para,
-    required this.asunto,
-    required this.datFechaDocumento,
-  });
+  const DocumentNotSentDto(
+      {required this.id,
+      required this.para,
+      required this.asunto,
+      required this.datFechaDocumento,
+      required this.categoria,
+      this.rutaDocumento});
 
   factory DocumentNotSentDto.fromJson(Map<String, dynamic> json) {
     return DocumentNotSentDto(
@@ -17,6 +20,8 @@ class DocumentNotSentDto {
       para: json['para'] ?? '',
       asunto: json['asunto'] ?? '',
       datFechaDocumento: json['DAT_Fecha_Documento'] ?? '',
+      rutaDocumento: json['ruta_documento'],
+      categoria: json['Categoría'] ?? '',
     );
   }
 
@@ -26,11 +31,13 @@ class DocumentNotSentDto {
       'para': para,
       'asunto': asunto,
       'DAT_Fecha_Documento': datFechaDocumento,
+      'rutaDocumento': rutaDocumento,
+      'Categoría': categoria,
     };
   }
 
   @override
   String toString() {
-    return 'Documento NOO Nenviado(id: $id para: $para, asunto: $asunto, fecha: $datFechaDocumento)';
+    return 'Documento NOO Nenviado(id: $id para: $para, asunto: $asunto, fecha: $datFechaDocumento, categoria: $categoria)';
   }
 }

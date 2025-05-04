@@ -9,6 +9,8 @@ class RolesWithDocumentsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ScaffoldFirmonec(
-        title: "Roles  documentos", children: RolesWithDocumentsView());
+        title: "Roles  documentos",
+        hideRefresh: true,
+        children: RolesWithDocumentsView());
   }
 }

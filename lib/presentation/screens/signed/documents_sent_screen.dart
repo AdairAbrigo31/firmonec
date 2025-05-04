@@ -10,6 +10,7 @@ class DocumentsSentScreen extends StatelessWidget {
     return ScaffoldFirmonec(
         title: "Documentos Enviados",
         initialSelectedIndex: 1,
+        hideRefresh: true,
         children: DocumentsSentView());
   }
 }

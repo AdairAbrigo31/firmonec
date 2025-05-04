@@ -55,4 +55,14 @@ final router = GoRouter(
         path: '/documents_not_sent',
         builder: (context, state) => const DocumentsNotSentScreen(),
       ),
+      GoRoute(
+        name: 'preview_documents_sent',
+        path: '/preview_documents_sent',
+        builder: (context, state) => const PreviewDocumentSentScreen(),
+      ),
+      GoRoute(
+        name: 'preview_documents_not_sent',
+        path: '/preview_documents_not_sent',
+        builder: (context, state) => const PreviewDocumentNotSentScreen(),
+      ),
     ]);

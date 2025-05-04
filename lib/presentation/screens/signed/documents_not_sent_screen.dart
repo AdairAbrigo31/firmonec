@@ -11,6 +11,7 @@ class DocumentsNotSentScreen extends ConsumerWidget {
     return ScaffoldFirmonec(
       title: "Documentos No Enviados",
       initialSelectedIndex: 2,
+      hideRefresh: true,
       children: DocumentsNotSentView(),
     );
   }

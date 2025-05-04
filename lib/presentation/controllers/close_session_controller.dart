@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tesis_firmonec/configuration/go_router.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
@@ -15,6 +16,7 @@ class CloseSessionController {
       throw ("$error");
     } finally {
       LoadingModal.hide(context);
+      router.goNamed("login_quipux");
     }
   }
 }

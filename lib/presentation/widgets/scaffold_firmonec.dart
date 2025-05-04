@@ -11,12 +11,14 @@ class ScaffoldFirmonec extends ConsumerStatefulWidget {
   final String title;
   final Widget children;
   final int initialSelectedIndex;
+  final bool? hideRefresh;
 
   const ScaffoldFirmonec({
     super.key,
     required this.title,
     required this.children,
     this.initialSelectedIndex = 0,
+    this.hideRefresh,
   });
 
   @override
@@ -52,28 +54,31 @@ class _ScaffoldFirmonecState extends ConsumerState<ScaffoldFirmonec> {
         iconTheme: IconThemeData(
           color: theme.colorScheme.surface, // Cambia este color al que desees
         ),
-        actions: [
-          IconButton(
-              onPressed: () async {
-                try {
-                  LoadingModal.show(context);
-                  await GetInformationUserController
-                      .refreshDataQuipuxWithoutToken(ref, context);
-                } catch (error) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text('Error: $error')));
-                  }
-                } finally {
-                  LoadingModal.hide(context);
-                }
-                if (context.mounted) router.goNamed("roles_documents_quipux");
-              },
-              icon: Icon(
-                Icons.refresh_outlined,
-                color: theme.colorScheme.surface,
-              ))
-        ],
+        actions: widget.hideRefresh != true
+            ? [
+                IconButton(
+                    onPressed: () async {
+                      try {
+                        LoadingModal.show(context);
+                        await GetInformationUserController
+                            .refreshDataQuipuxWithoutToken(ref, context);
+                      } catch (error) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $error')));
+                        }
+                      } finally {
+                        LoadingModal.hide(context);
+                      }
+                      if (context.mounted)
+                        router.goNamed("roles_documents_quipux");
+                    },
+                    icon: Icon(
+                      Icons.refresh_outlined,
+                      color: theme.colorScheme.surface,
+                    ))
+              ]
+            : null,
       ),
       drawer: SidebarX(
         controller: SidebarXController(
@@ -129,7 +134,9 @@ class _ScaffoldFirmonecState extends ConsumerState<ScaffoldFirmonec> {
           SidebarXItem(
             icon: Icons.error_outline,
             label: 'No enviados',
-            onTap: () {
+            onTap: () async {
+              await GetDocumentsNotSentController.getDocumentsNotSent(
+                  context, ref);
               router.goNamed("documents_not_sent");
               Navigator.pop(context); // Cierra el drawer
             },

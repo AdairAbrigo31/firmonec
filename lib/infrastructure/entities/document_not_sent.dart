@@ -2,17 +2,21 @@ class DocumentNotSent {
   final String id;
   final String para;
   final String asunto;
-  final String datFechaDocumento;
+  final String fechaDocumento;
+  final String? rutaDocumento;
+  final String? categoria;
 
   DocumentNotSent({
     required this.id,
     required this.para,
     required this.asunto,
-    required this.datFechaDocumento,
+    required this.fechaDocumento,
+    this.rutaDocumento,
+    this.categoria,
   });
 
   @override
   String toString() {
-    return 'Documento NOO enviado(id: $id para: $para, asunto: $asunto, fecha: $datFechaDocumento)';
+    return 'Documento NOO enviado(id: $id para: $para, asunto: $asunto, fecha: $fechaDocumento, categoria: $categoria)';
   }
 }

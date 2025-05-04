@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
+import 'package:tesis_firmonec/presentation/widgets/cards_for%20document.dart/card_document_sent.dart';
 
 class DocumentsSentView extends ConsumerStatefulWidget {
   const DocumentsSentView({super.key});
@@ -86,17 +87,7 @@ class _DocumentsSentViewState extends ConsumerState<DocumentsSentView>
                           itemCount: docs.length,
                           itemBuilder: (context, index) {
                             final doc = docs[index];
-                            return Card(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              child: ListTile(
-                                title: Text(doc.id),
-                                trailing: const Icon(Icons.arrow_forward_ios),
-                                onTap: () {
-                                  // Navigate to document details
-                                },
-                              ),
-                            );
+                            return CardDocumentSent(doc: doc, rol: rol);
                           },
                         ),
                 );

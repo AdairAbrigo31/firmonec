@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tesis_firmonec/configuration/configuration.dart';
 import 'package:tesis_firmonec/domain/entities/entities.dart';
 import 'package:tesis_firmonec/infrastructure/entities/entities.dart';
-import 'package:tesis_firmonec/presentation/controllers/get_information_user_controller.dart';
+import 'package:tesis_firmonec/presentation/controllers/controllers.dart';
 import 'package:tesis_firmonec/presentation/providers/providers.dart';
-import 'package:tesis_firmonec/presentation/widgets/cards_for%20document.dart/card_document_por_elaborar.dart';
-import 'package:tesis_firmonec/presentation/widgets/cards_for%20document.dart/card_document_reasignado.dart';
 import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
 
 class RolesWithDocumentsView extends ConsumerStatefulWidget {
@@ -14,41 +12,17 @@ class RolesWithDocumentsView extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<RolesWithDocumentsView> createState() =>
-      RolesWithDocumentsQuipuxViewState();
+      _RolesWithDocumentsViewState();
 }
 
-class RolesWithDocumentsQuipuxViewState
-    extends ConsumerState<RolesWithDocumentsView>
+class _RolesWithDocumentsViewState extends ConsumerState<RolesWithDocumentsView>
     with TickerProviderStateMixin {
-  late TabController _tabController;
-  final ScrollController _scrollController = ScrollController();
+  TabController? _tabController;
 
   @override
   void dispose() {
-    _tabController.dispose();
-    _scrollController.dispose();
+    _tabController?.dispose();
     super.dispose();
-  }
-
-  void _centerSelectedTab(int index) {
-    if (!_scrollController.hasClients) return;
-
-    // Calculamos la posición aproximada de la tab
-    const tabWidth = 150.0; // Ancho aproximado de cada tab
-    final screenWidth = MediaQuery.of(context).size.width;
-    final offset = (tabWidth * index) - (screenWidth / 2) + (tabWidth / 2);
-
-    // Aseguramos que el offset esté dentro de los límites
-    final maxOffset = _scrollController.position.maxScrollExtent;
-    const minOffset = 0.0;
-    final finalOffset = offset.clamp(minOffset, maxOffset);
-
-    // Animamos el scroll a la posición calculada
-    _scrollController.animateTo(
-      finalOffset,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
   }
 
   Widget buildDocumentCard(RolEntity rol, DocumentEntity doc) {
@@ -66,81 +40,98 @@ class RolesWithDocumentsQuipuxViewState
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-
-    // Obtenemos los roles iniciales
-    final rolDocProvider = ref.read(rolDocumentsProvider);
-    final roles = rolDocProvider.documentsByRol?.keys.toList() ?? [];
-
-    // Inicializamos el TabController con la longitud inicial
-    _tabController = TabController(length: roles.length, vsync: this);
+  Future<void> _onRefresh() async {
+    await GetInformationUserController.refreshDataQuipuxWithoutToken(
+        ref, context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final rolDocProvider = ref.read(rolDocumentsProvider);
-
+    final rolDocProvider = ref.watch(rolDocumentsProvider);
     final roles = rolDocProvider.documentsByRol?.keys.toList() ?? [];
 
-    return SafeArea(
+    // Manage TabController lifecycle based on roles length
+    if (roles.length != (_tabController?.length ?? 0)) {
+      _tabController?.dispose();
+      _tabController = roles.isNotEmpty
+          ? TabController(length: roles.length, vsync: this)
+          : null;
+    }
+
+    if (roles.isEmpty) {
+      return SafeArea(
         child: RefreshIndicator(
+          onRefresh: _onRefresh,
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: const [
+              SizedBox(
+                height: 300,
+                child: Center(child: Text("No hay roles para este usuario")),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return SafeArea(
       child: Column(
         children: [
-          if (roles.isEmpty)
-            const Expanded(
-                child: Center(child: Text("No hay roles para este usuario")))
-          else
-            Expanded(
-              child: Column(
-                children: [
-                  TabBar(
-                    controller: _tabController,
-                    isScrollable: true,
-                    onTap: _centerSelectedTab,
-                    tabs: roles
-                        .map((rol) => Tab(
-                                child: Row(
-                              children: [
-                                Text(
-                                  rol.cargo,
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  "( ${rolDocProvider.getDocumentsForRol(rol).length} )",
-                                  style: TextStyle(
-                                      color: Theme.of(context).primaryColor),
-                                )
-                              ],
-                            )))
-                        .toList(),
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      controller: _tabController,
-                      children: roles.map((rol) {
-                        final documents =
-                            rolDocProvider.getDocumentsForRol(rol);
-                        return documents.isEmpty
-                            ? const Center(
+          TabBar(
+            controller: _tabController!,
+            isScrollable: true,
+            tabs: roles
+                .map((rol) => Tab(
+                      child: Row(
+                        children: [
+                          Text(
+                            rol.cargo,
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            "( ${rolDocProvider.getDocumentsForRol(rol).length} )",
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor),
+                          )
+                        ],
+                      ),
+                    ))
+                .toList(),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController!,
+              children: roles.map((rol) {
+                final documents = rolDocProvider.getDocumentsForRol(rol);
+                return RefreshIndicator(
+                  onRefresh: _onRefresh,
+                  child: documents.isEmpty
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: const [
+                            SizedBox(
+                              height: 300,
+                              child: Center(
                                 child:
-                                    Text("No tiene documentos para este cargo"))
-                            : ListView(
-                                children: documents
-                                    .map((doc) => buildDocumentCard(rol, doc))
-                                    .toList(),
-                              );
-                      }).toList(),
-                    ),
-                  ),
-                ],
-              ),
+                                    Text("No tiene documentos para este cargo"),
+                              ),
+                            ),
+                          ],
+                        )
+                      : ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: documents.length,
+                          itemBuilder: (context, index) {
+                            final doc = documents[index];
+                            return buildDocumentCard(rol, doc);
+                          },
+                        ),
+                );
+              }).toList(),
             ),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: PrimaryButton(
@@ -163,12 +154,6 @@ class RolesWithDocumentsQuipuxViewState
           ),
         ],
       ),
-      onRefresh: () async {
-        GetInformationUserController.refreshDataQuipux(ref, context);
-
-        return Future
-            .value(); // Completar el Future para que el RefreshIndicator se detenga
-      },
-    ));
+    );
   }
 }

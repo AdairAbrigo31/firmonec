@@ -28,8 +28,6 @@ class GetDocumentsNotSentController {
         final List<DocumentNotSent> documentsNotSent =
             await repository.getDocumentsNotSent(rol.codusuario);
 
-        print(documentsNotSent);
-
         documentsSentProv.addDocumentNotSentToRol(rol, documentsNotSent);
       }
     } catch (error) {

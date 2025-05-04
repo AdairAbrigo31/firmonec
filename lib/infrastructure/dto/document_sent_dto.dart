@@ -3,13 +3,16 @@ class DocumentSentDto {
   final String para;
   final String asunto;
   final String datFechaDocumento;
+  final String categoria;
+  final String? rutaDocumento;
 
-  const DocumentSentDto({
-    required this.id,
-    required this.para,
-    required this.asunto,
-    required this.datFechaDocumento,
-  });
+  const DocumentSentDto(
+      {required this.id,
+      required this.para,
+      required this.asunto,
+      required this.datFechaDocumento,
+      required this.categoria,
+      this.rutaDocumento});
 
   factory DocumentSentDto.fromJson(Map<String, dynamic> json) {
     return DocumentSentDto(
@@ -17,6 +20,8 @@ class DocumentSentDto {
       para: json['para'] ?? '',
       asunto: json['asunto'] ?? '',
       datFechaDocumento: json['DAT_Fecha_Documento'] ?? '',
+      categoria: json['Categoría'] ?? '',
+      rutaDocumento: json['ruta_documento'],
     );
   }
 
@@ -26,11 +31,13 @@ class DocumentSentDto {
       'para': para,
       'asunto': asunto,
       'DAT_Fecha_Documento': datFechaDocumento,
+      'Categoría': categoria,
+      'rutaDocumento': rutaDocumento,
     };
   }
 
   @override
   String toString() {
-    return 'Documento enviado(id: $id para: $para, asunto: $asunto, fecha: $datFechaDocumento)';
+    return 'Documento enviado(id: $id para: $para, asunto: $asunto, fecha: $datFechaDocumento, categoria: $categoria)';
   }
 }

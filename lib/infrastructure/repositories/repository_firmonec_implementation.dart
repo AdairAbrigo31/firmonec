@@ -234,8 +234,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
           connectTimeout: const Duration(seconds: 20),
           receiveTimeout: const Duration(seconds: 20)));
 
-      print("Id doc por firmar: $idDocument");
-
       final response = await dio.post('/FirmarDocumento/Firmar', data: {
         'radicado_numero': idDocument,
         'idusuario': codeUser,
@@ -252,9 +250,6 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
 
         return responseProcess;
       }
-
-      print("response data ======> ${response.data}");
-
       final data = response.data[0];
 
       if (data['est'] == 0 || data['est'] == '0') {
@@ -295,12 +290,14 @@ class RepositoryFirmonecImplementation extends RepositoryFirmonec {
         },
       );
 
-      if (response.statusCode != 200) {
+      if (response.statusCode != 200 && response.statusCode != 204) {
         throw Exception(
             'Error al los documentos No enviados: ${response.statusCode}');
       }
 
-      print(response.data);
+      if (response.data == "") {
+        return [];
+      }
 
       final List<dynamic> jsonList = response.data;
       if (jsonList.isEmpty) return [];

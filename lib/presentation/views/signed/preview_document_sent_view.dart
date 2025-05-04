@@ -1,28 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:tesis_firmonec/configuration/configuration.dart';
-import 'package:tesis_firmonec/presentation/providers/providers.dart';
-import 'package:tesis_firmonec/presentation/widgets/widgets.dart';
+import 'package:tesis_firmonec/presentation/providers/signed/document_sent_preview_provider.dart';
 import 'package:tesis_firmonec/theme/theme.dart';
 
-class PreviewOneDocumentView extends ConsumerStatefulWidget {
-  const PreviewOneDocumentView({super.key});
+class PreviewDocumentSentView extends ConsumerStatefulWidget {
+  const PreviewDocumentSentView({super.key});
 
   @override
-  ConsumerState<PreviewOneDocumentView> createState() =>
-      PreviewOneDocumentViewState();
+  ConsumerState<PreviewDocumentSentView> createState() =>
+      _PreviewOneDocumentViewState();
 }
 
-class PreviewOneDocumentViewState
-    extends ConsumerState<PreviewOneDocumentView> {
+class _PreviewOneDocumentViewState
+    extends ConsumerState<PreviewDocumentSentView> {
   bool isLoading = true;
 
   @override
   Widget build(BuildContext context) {
-    final oneDocumentSelectedState =
-        ref.read(oneDocumentSelectedPreviewProvider);
-    final pdfUrl = oneDocumentSelectedState.currentDocument?.rutaDocumento;
+    final documentSentState = ref.read(documentSentPreviewProvider);
+    final pdfUrl = documentSentState.currentDocument?.rutaDocumento;
 
     return SafeArea(
       child: Column(
@@ -35,13 +32,13 @@ class PreviewOneDocumentViewState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Rol: ${oneDocumentSelectedState.rol!.cargo}",
+                  "Rol: ${documentSentState.rol!.cargo}",
                   style: AppTypography.bodyMedium,
                   maxLines: 2,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "Asunto: ${oneDocumentSelectedState.currentDocument!.asunto}",
+                  "Asunto: ${documentSentState.currentDocument!.asunto}",
                   style: AppTypography.bodyMedium,
                   maxLines: 3,
                 ),
@@ -72,15 +69,6 @@ class PreviewOneDocumentViewState
                               "El documento seleccionado no tiene ruta de documento"),
                         ),
                 )),
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: PrimaryButton(
-                    text: "Firmar documento",
-                    onPressed: () {
-                      router.pushNamed("certificates_for_sign");
-                    },
-                  ),
-                ),
               ],
             ),
           ),

@@ -76,7 +76,7 @@ class _DocumentsSignedViewState extends ConsumerState<DocumentsSignedView> {
         child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(children: [
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                 Text(
                     " Se han intentado firmar: ${resultsDocumentsSigned.error + resultsDocumentsSigned.success}"),
                 Text(
